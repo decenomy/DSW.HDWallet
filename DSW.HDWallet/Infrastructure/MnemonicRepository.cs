@@ -2,7 +2,7 @@
 
 namespace DSW.HDWallet.Infrastructure
 {
-    public class MnemonicRepository
+    public class MnemonicRepository: IAddressRepository
     {
         public Mnemonic GenerateMnemonic()
         {

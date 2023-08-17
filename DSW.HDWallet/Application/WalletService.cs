@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DSW.HDWallet.Domain.Wallets;
+using NBitcoin;
 
 namespace DSW.HDWallet.Application
 {
-    internal class WalletService
+    public class WalletService : IWalletService
     {
+        public Wallet CreateWallet()
+        {
+            throw new NotImplementedException();
+        }
+
+        public BitcoinAddress RecoverWalletAddress(string mnemonicWords)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
