@@ -1,0 +1,12 @@
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\bin\Debug\net7.0\DSW.HDWallet.deps.json
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\bin\Debug\net7.0\DSW.HDWallet.dll
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\bin\Debug\net7.0\DSW.HDWallet.pdb
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\DSW.HDWallet.csproj.AssemblyReference.cache
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\DSW.HDWallet.GeneratedMSBuildEditorConfig.editorconfig
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\DSW.HDWallet.AssemblyInfoInputs.cache
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\DSW.HDWallet.AssemblyInfo.cs
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\DSW.HDWallet.csproj.CoreCompileInputs.cache
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\DSW.HDWallet.dll
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\refint\DSW.HDWallet.dll
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\DSW.HDWallet.pdb
+C:\decenomy\DSW.HDWallet\DSW.HDWallet\obj\Debug\net7.0\ref\DSW.HDWallet.dll
