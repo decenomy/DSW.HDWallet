@@ -3,3 +3,4 @@ DSW.HDWallet/bin
 DSW.HDWallet/obj
 DSW.HDWallet.Console/bin
 DSW.HDWallet.Console/obj
+*.cache
