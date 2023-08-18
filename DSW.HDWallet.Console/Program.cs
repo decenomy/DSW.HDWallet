@@ -1,4 +1,8 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Application;
+using DSW.HDWallet.Domain.Wallets;
+using DSW.HDWallet.Infrastructure;
+using NBitcoin;
+using Microsoft.Extensions.DependencyInjection;
 
 Decenomy.Project.HDWallet();
 
@@ -8,58 +12,103 @@ namespace Decenomy
     {
         public static void HDWallet()
         {
-            #region Recovery Address
-            // Criar config Network
-            #endregion
+            var serviceProvider = new ServiceCollection()
+                .AddScoped<IWalletService, WalletService>()
+                .AddScoped<IWalletRepository, WalletRepository>()
+                .AddScoped<IMnemonicRepository, MnemonicRepository>()
+                .BuildServiceProvider();
 
-            #region Create Wallet
-            // Gera uma nova frase mnemônica com 12 palavras em inglês
-            Mnemonic mnemo = new Mnemonic(Wordlist.English, WordCount.Twelve);
+            var walletAppService = serviceProvider.GetService<IWalletService>();
+            var createdWallet = walletAppService?.CreateWallet();
 
-            // Cria uma chave mestre a partir das palavras mnemônicas
-            ExtKey masterKey = mnemo.DeriveExtKey();
-
-            // Deriva a chave pública mestre
-            ExtPubKey masterPubKey = masterKey.Neuter();
-
-            // Obtém o endereço público a partir da chave pública mestre
-            BitcoinAddress address = masterPubKey.PubKey.GetAddress(ScriptPubKeyType.Legacy, Network.Main);
-
-
-            WriteLabel("\nMaster key : " + masterKey.ToString(Network.Main) + "\n");
-            WriteLine($"Wallet Address =:  {address}", ConsoleColor.DarkGreen);
-            WriteLine($"Secrect Words =: {mnemo}", ConsoleColor.DarkYellow);
-
-            WriteLine($"\nSecrect Words INDEX =:", ConsoleColor.Magenta);
-            for (int i = 0; i < 12; i++)
+            while (true)
             {
-                WriteLine($"[{i}] {mnemo.Words[i]}", ConsoleColor.Magenta);
+                #region Menu
+                WriteLine($" __      __         _   _         _       ___                                               ", ConsoleColor.DarkGreen);
+                WriteLine($" \\ \\    / /  __ _  | | | |  ___  | |_    |   \\   ___   __   ___   _ _    ___   _ __    _  _ ", ConsoleColor.DarkGreen);
+                WriteLine($"  \\ \\/\\/ /  / _` | | | | | / -_) |  _|   | |) | / -_) / _| / -_) | ' \\  / _ \\ | '  \\  | || |", ConsoleColor.DarkGreen);
+                WriteLine($"   \\_/\\_/   \\__,_| |_| |_| \\___|  \\__|   |___/  \\___| \\__| \\___| |_||_| \\___/ |_|_|_|  \\_, |", ConsoleColor.DarkGreen);
+                WriteLine($"                                                                                       |__/ ", ConsoleColor.DarkGreen);
+                WriteLine($"                                                                HDWallet Decenomy v.1.0 2023    ", ConsoleColor.DarkGreen);
+                Console.WriteLine(" Select a option: \n");
+                Console.WriteLine(" 1 - Create Wallet");
+                Console.WriteLine(" 2 - Recover Wallet");
+                Console.WriteLine(" 3 - Random Secrect Words");
+                Console.WriteLine(" 9 - Exit");
+                Console.Write("\n Opção: ");
+                #endregion
+
+                #region Menu Option
+                string option = Console.ReadLine();
+
+                switch (option)
+                {
+                    case "1":
+                        Console.WriteLine("\n\n Wallet Created");
+                        // Exibindo informações da carteira criada
+                        WriteLine($"\n Master key :  {createdWallet?.MasterKey}", ConsoleColor.DarkCyan);
+                        WriteLine($" Wallet Address :  {createdWallet?.Address}", ConsoleColor.DarkGreen);
+                        WriteLine($" Secrect Words : {createdWallet?.SecretWords}", ConsoleColor.DarkGreen);
+
+                        WriteLine($"\n Secrect Words INDEX :", ConsoleColor.DarkYellow);
+                        for (int i = 0; i < 12; i++)
+                        {
+                            WriteLine($" [{i}] {createdWallet?.SecrectWordsArray?[i]}", ConsoleColor.DarkYellow);
+                        }
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "2":
+                        WriteLine($"\n Recover Wallett Address", ConsoleColor.DarkRed);
+                        Console.Write(" Input your Secrets Words: ");
+                        string mnemonicWords = Console.ReadLine();
+
+                        BitcoinAddress? address = null;
+
+                        if (mnemonicWords != null)
+                            address = walletAppService?.RecoverWallet(mnemonicWords);
+
+                        // Imprime o endereço da carteira recuperado            
+                        WriteLine($" Recovery Wallett Address : {address?.ToString()}", ConsoleColor.Green);
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "3":
+                        // Chamando o método para gerar as palavras aleatoria
+                        string[]? randomWords = createdWallet?.GetRandomSecretWords(3);
+
+                        WriteLine($"\n Secrect Words Random :", ConsoleColor.White);
+                        foreach (var word in randomWords)
+                        {
+                            WriteLine($" {word}", ConsoleColor.DarkCyan);
+                        }
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "9":
+                        Console.WriteLine(" Exit...");                        
+                        Console.Clear();
+                        return;
+
+                    default:
+                        Console.WriteLine("\n Invalid option. Please! Choose again.");
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                }
+
+                Console.WriteLine();
+                #endregion
             }
-            Console.ReadLine();
-            #endregion
 
-            #region Recovery Address
-            Console.Write("\n\nRecover Wallett Address");
-            Console.Write("\nInput your Secrets Words: ");
-            string mnemonicWords = Console.ReadLine();
 
-            // Cria uma instância de Mnemonic a partir das palavras secretas
-            Mnemonic mnemo3 = new Mnemonic(mnemonicWords, Wordlist.English);
-            BitcoinAddress address1 = GetAddressFromMnemonic(mnemo3);
 
-            // Imprime o endereço da carteira recuperado            
-            WriteLine($"Recovery Wallett Address =:  {address1.ToString()}", ConsoleColor.Green);
-            #endregion
-
-            Console.ReadLine();
-        }
-
-        static BitcoinAddress GetAddressFromMnemonic(Mnemonic mnemonic)
-        {
-            ExtKey masterKey = mnemonic.DeriveExtKey();
-            ExtPubKey masterPubKey = masterKey.Neuter();
-            BitcoinAddress address = masterPubKey.PubKey.GetAddress(ScriptPubKeyType.Legacy, Network.Main);
-            return address;
         }
 
         #region Helper Methods
