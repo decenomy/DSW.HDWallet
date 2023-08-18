@@ -2,19 +2,16 @@
 
 namespace DSW.HDWallet.Infrastructure
 {
-    public class MnemonicRepository: IAddressRepository
+    public class MnemonicRepository: IMnemonicRepository
     {
         public Mnemonic GenerateMnemonic()
         {
             return new Mnemonic(Wordlist.English, WordCount.Twelve);
         }
 
-        public BitcoinAddress GetAddressFromMnemonic(Mnemonic mnemonic)
+        public Mnemonic GetMnemonic(string secretWords)
         {
-            ExtKey masterKey = mnemonic.DeriveExtKey();
-            ExtPubKey masterPubKey = masterKey.Neuter();
-            BitcoinAddress address = masterPubKey.PubKey.GetAddress(ScriptPubKeyType.Legacy, Network.Main);
-            return address;
+            return new Mnemonic(secretWords, Wordlist.English);
         }
     }
 }

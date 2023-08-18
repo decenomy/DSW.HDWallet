@@ -6,6 +6,6 @@ namespace DSW.HDWallet.Application
     public interface IWalletService
     {
         Wallet CreateWallet();
-        BitcoinAddress RecoverWalletAddress(string mnemonicWords);
+        BitcoinAddress RecoverWallet(string secretWords);
     }
 }

@@ -1,7 +1,10 @@
-﻿namespace DSW.HDWallet.Domain.Wallets
+﻿using NBitcoin;
+
+namespace DSW.HDWallet.Domain.Wallets
 {
     public interface IWalletRepository
     {
-        Wallet Create(Wallet wallet);
+        Wallet Create(Mnemonic mnemonic);
+        BitcoinAddress Recover(Mnemonic mnemonic);
     }
 }
