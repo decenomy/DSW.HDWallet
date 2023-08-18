@@ -1,15 +1,11 @@
-﻿
-using System;
-using System.Linq;
-using NBitcoin;
-using NBitcoin.AltCoins.HashX11;
+﻿using NBitcoin;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 
 namespace DSW.HDWallet.AltCoins
 {
-    
+
     public class Azzure : NetworkSetBase
     {
         public static Azzure Instance { get; } = new Azzure();
