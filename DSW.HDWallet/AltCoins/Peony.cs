@@ -1,15 +1,12 @@
-﻿
-using System;
-using System.Linq;
-using NBitcoin;
-using NBitcoin.AltCoins.HashX11;
+﻿using NBitcoin;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
+using NBitcoin.Altcoins.HashX11;
 
 namespace DSW.HDWallet.AltCoins
 {
-    
+
     public class Peony : NetworkSetBase
     {
         public static Peony Instance { get; } = new Peony();

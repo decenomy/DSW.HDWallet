@@ -1,4 +1,5 @@
 ﻿using NBitcoin;
+using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;

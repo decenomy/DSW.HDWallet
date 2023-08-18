@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="NBitcoin" Version="7.0.27" />
+    <PackageReference Include="NBitcoin.Altcoins" Version="3.0.19" />
   </ItemGroup>
 
 </Project>
