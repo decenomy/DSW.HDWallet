@@ -111,9 +111,9 @@ namespace DSW.HDWallet.AltCoins
                 .AddAlias("Sapphire-mainnet")
                 .AddDNSSeeds(new[]
                 {
-                    new DNSSeedData("sapp1", "seed1.sappcoin.com"),
-                    new DNSSeedData("sapp2", "seed2.sappcoin.com"),
-                    new DNSSeedData("sapp3", "seed3.sappcoin.com")
+                    new DNSSeedData("seed1", "seed1.sappcoin.com"),
+                    new DNSSeedData("seed2", "seed2.sappcoin.com"),
+                    new DNSSeedData("seed3", "seed3.sappcoin.com")
                 })
                 .AddSeeds(new NetworkAddress[0])
                 .SetGenesis("01000000000000000000000000000000000000000000000000000000000000000000000014e427b75837280517873799a954e87b8b0484f3f1df927888a0ff4fd3a0c9f7bb2eac56f0ff0f1edfa624000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff8604ffff001d01044c7d323031372d30392d32312032323a30313a3034203a20426974636f696e20426c6f636b204861736820666f722048656967687420343836333832203a2030303030303030303030303030303030303039326431356535623365366538323639333938613834613630616535613264626434653766343331313939643033ffffffff0100ba1dd205000000434104c10e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9ac00000000");

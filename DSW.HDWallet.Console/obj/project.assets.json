@@ -1642,23 +1642,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Rafael Ghezzi\\.nuget\\packages\\": {},
+    "C:\\Users\\Hugo Rodrigues\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\decenomy\\DSW.HDWallet\\DSW.HDWallet.Console\\DSW.HDWallet.Console.csproj",
+      "projectUniqueName": "C:\\Users\\Hugo Rodrigues\\Desktop\\CLOSER\\Trabalho_Em_Clientes\\DECENOMY\\Projetos\\DSW.HDWallet\\DSW.HDWallet.Console\\DSW.HDWallet.Console.csproj",
       "projectName": "DSW.HDWallet.Console",
-      "projectPath": "C:\\decenomy\\DSW.HDWallet\\DSW.HDWallet.Console\\DSW.HDWallet.Console.csproj",
-      "packagesPath": "C:\\Users\\Rafael Ghezzi\\.nuget\\packages\\",
-      "outputPath": "C:\\decenomy\\DSW.HDWallet\\DSW.HDWallet.Console\\obj\\",
+      "projectPath": "C:\\Users\\Hugo Rodrigues\\Desktop\\CLOSER\\Trabalho_Em_Clientes\\DECENOMY\\Projetos\\DSW.HDWallet\\DSW.HDWallet.Console\\DSW.HDWallet.Console.csproj",
+      "packagesPath": "C:\\Users\\Hugo Rodrigues\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Hugo Rodrigues\\Desktop\\CLOSER\\Trabalho_Em_Clientes\\DECENOMY\\Projetos\\DSW.HDWallet\\DSW.HDWallet.Console\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Rafael Ghezzi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Hugo Rodrigues\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1707,7 +1707,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.307\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
       }
     }
   }

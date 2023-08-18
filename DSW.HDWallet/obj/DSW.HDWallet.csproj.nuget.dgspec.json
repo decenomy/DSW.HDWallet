@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\decenomy\\DSW.HDWallet\\DSW.HDWallet\\DSW.HDWallet.csproj": {}
+    "C:\\Users\\Hugo Rodrigues\\Desktop\\CLOSER\\Trabalho_Em_Clientes\\DECENOMY\\Projetos\\DSW.HDWallet\\DSW.HDWallet\\DSW.HDWallet.csproj": {}
   },
   "projects": {
-    "C:\\decenomy\\DSW.HDWallet\\DSW.HDWallet\\DSW.HDWallet.csproj": {
+    "C:\\Users\\Hugo Rodrigues\\Desktop\\CLOSER\\Trabalho_Em_Clientes\\DECENOMY\\Projetos\\DSW.HDWallet\\DSW.HDWallet\\DSW.HDWallet.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\decenomy\\DSW.HDWallet\\DSW.HDWallet\\DSW.HDWallet.csproj",
+        "projectUniqueName": "C:\\Users\\Hugo Rodrigues\\Desktop\\CLOSER\\Trabalho_Em_Clientes\\DECENOMY\\Projetos\\DSW.HDWallet\\DSW.HDWallet\\DSW.HDWallet.csproj",
         "projectName": "DSW.HDWallet",
-        "projectPath": "C:\\decenomy\\DSW.HDWallet\\DSW.HDWallet\\DSW.HDWallet.csproj",
-        "packagesPath": "C:\\Users\\Rafael Ghezzi\\.nuget\\packages\\",
-        "outputPath": "C:\\decenomy\\DSW.HDWallet\\DSW.HDWallet\\obj\\",
+        "projectPath": "C:\\Users\\Hugo Rodrigues\\Desktop\\CLOSER\\Trabalho_Em_Clientes\\DECENOMY\\Projetos\\DSW.HDWallet\\DSW.HDWallet\\DSW.HDWallet.csproj",
+        "packagesPath": "C:\\Users\\Hugo Rodrigues\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Hugo Rodrigues\\Desktop\\CLOSER\\Trabalho_Em_Clientes\\DECENOMY\\Projetos\\DSW.HDWallet\\DSW.HDWallet\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Rafael Ghezzi\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Hugo Rodrigues\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -44,6 +44,12 @@
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
+          "dependencies": {
+            "NBitcoin": {
+              "target": "Package",
+              "version": "[7.0.27, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -60,7 +66,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.307\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
         }
       }
     }
