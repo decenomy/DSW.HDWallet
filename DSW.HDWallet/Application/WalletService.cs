@@ -21,11 +21,11 @@ namespace DSW.HDWallet.Application
             return _walletRepository.Create(mnemo);
         }
 
-        public BitcoinAddress RecoverWallet(string secretWords)
+        public string RecoverWallet(string secretWords)
         {
             Mnemonic mnemo = _mnemonicRepository.GetMnemonic(secretWords);
 
-            return _walletRepository.Recover(mnemo);
+            return _walletRepository.Recover(mnemo).ToString();
         }
     }
 }

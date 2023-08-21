@@ -1,8 +1,5 @@
-﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.Domain.Wallets;
-using DSW.HDWallet.Infrastructure;
-using NBitcoin;
-using Microsoft.Extensions.DependencyInjection;
+﻿
+using DSW.HDWallet.Application.Provider;
 
 Decenomy.Project.HDWallet();
 
@@ -12,14 +9,11 @@ namespace Decenomy
     {
         public static void HDWallet()
         {
-            var serviceProvider = new ServiceCollection()
-                .AddScoped<IWalletService, WalletService>()
-                .AddScoped<IWalletRepository, WalletRepository>()
-                .AddScoped<IMnemonicRepository, MnemonicRepository>()
-                .BuildServiceProvider();
+            HDWalletServiceProvider.Initialize();
+            var walletAppService = HDWalletServiceProvider.GetWalletService();
 
-            var walletAppService = serviceProvider.GetService<IWalletService>();
-            var createdWallet = walletAppService?.CreateWallet();
+            // Chamando o método CreateWallet() usando a extensão
+            var createdWallet = walletAppService.CreateWallet();
 
             while (true)
             {
@@ -65,13 +59,13 @@ namespace Decenomy
                         Console.Write(" Input your Secrets Words: ");
                         string mnemonicWords = Console.ReadLine();
 
-                        BitcoinAddress? address = null;
+                        string address = string.Empty;
 
                         if (mnemonicWords != null)
                             address = walletAppService?.RecoverWallet(mnemonicWords);
 
                         // Imprime o endereço da carteira recuperado            
-                        WriteLine($" Recovery Wallett Address : {address?.ToString()}", ConsoleColor.Green);
+                        WriteLine($" Recovery Wallett Address : {address}", ConsoleColor.Green);
 
                         Console.ReadLine();
                         Console.Clear();
@@ -106,9 +100,6 @@ namespace Decenomy
                 Console.WriteLine();
                 #endregion
             }
-
-
-
         }
 
         #region Helper Methods

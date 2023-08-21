@@ -6,6 +6,8 @@ namespace DSW.HDWallet.Infrastructure
     {
         public Mnemonic GenerateMnemonic()
         {
+            // TO DO Adicionar suporte a senha
+
             return new Mnemonic(Wordlist.English, WordCount.Twelve);
         }
 
