@@ -13,6 +13,8 @@ namespace Decenomy
             var walletAppService = HDWalletServiceProvider.GetWalletService();
 
             // Chamando o método CreateWallet() usando a extensão
+
+            // Normal
             var createdWallet = walletAppService.CreateWallet();
 
             while (true)
@@ -25,10 +27,12 @@ namespace Decenomy
                 WriteLine($"                                                                                       |__/ ", ConsoleColor.DarkGreen);
                 WriteLine($"                                                                HDWallet Decenomy v.1.0 2023    ", ConsoleColor.DarkGreen);
                 Console.WriteLine(" Select a option: \n");
-                Console.WriteLine(" 1 - Create Wallet");
-                Console.WriteLine(" 2 - Recover Wallet");
-                Console.WriteLine(" 3 - Random Secrect Words");
-                Console.WriteLine(" 9 - Exit");
+                Console.WriteLine(" [ 1 ] - Create Wallet");
+                Console.WriteLine(" [ 2 ] - Create Wallet With Password");
+                Console.WriteLine(" ");
+                Console.WriteLine(" [ 8 ] - Recover Wallet");
+                Console.WriteLine(" [ 9 ] - Random Secrect Words");
+                Console.WriteLine(" [ 0 ] - Exit");
                 Console.Write("\n Opção: ");
                 #endregion
 
@@ -55,14 +59,40 @@ namespace Decenomy
                         break;
 
                     case "2":
+                        Console.WriteLine("\n\n Wallet Created With Password");
+
+                        Console.Write("\n Input your Password: ");
+                        string password = Console.ReadLine();
+                        // With Password
+                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(password);
+
+                        // Exibindo informações da carteira criada
+                        WriteLine($"\n Master key :  {createWalletWithPassword?.MasterKey}", ConsoleColor.DarkCyan);
+                        WriteLine($" Wallet Address :  {createWalletWithPassword?.Address}", ConsoleColor.DarkGreen);
+                        WriteLine($" Secrect Words : {createWalletWithPassword?.SecretWords}", ConsoleColor.DarkGreen);
+
+                        WriteLine($"\n Secrect Words INDEX :", ConsoleColor.DarkYellow);
+                        for (int i = 0; i < 12; i++)
+                        {
+                            WriteLine($" [{i}] {createWalletWithPassword?.SecrectWordsArray?[i]}", ConsoleColor.DarkYellow);
+                        }
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "8":
                         WriteLine($"\n Recover Wallett Address", ConsoleColor.DarkRed);
                         Console.Write(" Input your Secrets Words: ");
                         string mnemonicWords = Console.ReadLine();
 
-                        string address = string.Empty;
+                        Console.Write("\n Input your Password: ");
+                        string passwordRecorver = Console.ReadLine();
+
+                        string? address = string.Empty;
 
                         if (mnemonicWords != null)
-                            address = walletAppService?.RecoverWallet(mnemonicWords);
+                            address = walletAppService?.RecoverWallet(mnemonicWords, passwordRecorver);
 
                         // Imprime o endereço da carteira recuperado            
                         WriteLine($" Recovery Wallett Address : {address}", ConsoleColor.Green);
@@ -71,7 +101,7 @@ namespace Decenomy
                         Console.Clear();
                         break;
 
-                    case "3":
+                    case "9":
                         // Chamando o método para gerar as palavras aleatoria
                         string[]? randomWords = createdWallet?.GetRandomSecretWords(3);
 
@@ -85,7 +115,7 @@ namespace Decenomy
                         Console.Clear();
                         break;
 
-                    case "9":
+                    case "0":
                         Console.WriteLine(" Exit...");                        
                         Console.Clear();
                         return;
