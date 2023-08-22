@@ -31,18 +31,35 @@ namespace DSW.HDWallet.Infrastructure
             return wallet;
         }
 
-        public BitcoinAddress Recover(Mnemonic mnemo)
+        public Wallet CreateWithPassword(Mnemonic mnemo, string? password = null)
         {
-            return GetAddress(mnemo);
+            BitcoinAddress address = GetAddress(mnemo, password);
+
+            var wallet = new Wallet
+            {
+                MasterKey = mnemo.DeriveExtKey().ToString(Network.Main),
+                Address = address.ToString(),
+                SecretWords = mnemo.ToString(),
+                SecrectWordsArray = mnemo.Words
+            };
+
+            return wallet;
         }
 
-        private static BitcoinAddress GetAddress(Mnemonic mnemo)
+        public BitcoinAddress Recover(Mnemonic mnemo, string? password = null)
         {
-            ExtKey masterKey = mnemo.DeriveExtKey();
+            return GetAddress(mnemo, password);
+        }
+
+        private static BitcoinAddress GetAddress(Mnemonic mnemo, string? password = null)
+        {
+            ExtKey masterKey = string.IsNullOrEmpty(password) ? mnemo.DeriveExtKey() : mnemo.DeriveExtKey(password);
             ExtPubKey masterPubKey = masterKey.Neuter();
             BitcoinAddress address = masterPubKey.PubKey.GetAddress(ScriptPubKeyType.Legacy, Network.Main);
 
             return address;
         }
+
+
     }
 }
