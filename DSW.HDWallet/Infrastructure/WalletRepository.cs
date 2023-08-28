@@ -32,7 +32,7 @@ namespace DSW.HDWallet.Infrastructure
         }
 
         public Wallet CreateWithPassword(Mnemonic mnemo, string? password = null)
-        {
+        {            
             BitcoinAddress address = GetAddress(mnemo, password);
 
             var wallet = new Wallet
@@ -60,6 +60,9 @@ namespace DSW.HDWallet.Infrastructure
             return address;
         }
 
-
+        public BitcoinExtKey CreateDeriveKey(ExtKey masterKey, KeyPath keyPath)
+        {
+            return new BitcoinExtKey(masterKey.Derive(keyPath), Network.Main);
+        }
     }
 }

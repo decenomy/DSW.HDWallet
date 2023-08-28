@@ -1,4 +1,5 @@
 ﻿using DSW.HDWallet.Domain.Wallets;
+using NBitcoin;
 
 namespace DSW.HDWallet.Application
 {
@@ -7,5 +8,6 @@ namespace DSW.HDWallet.Application
         Wallet CreateWallet();
         Wallet CreateWalletWithPassword(string? password = null);
         string RecoverWallet(string secretWords, string? password = null);
+        BitcoinExtKey CreateDerivedKey(KeyPath keyPath);
     }
 }
