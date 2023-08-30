@@ -4,40 +4,40 @@ using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 
-namespace DSW.HDWallet.AltCoins
+namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Suvereno : NetworkSetBase
+    public class EskaCoin : NetworkSetBase
     {
-        public static Suvereno Instance { get; } = new Suvereno();
+        public static EskaCoin Instance { get; } = new EskaCoin();
 
-        public override string CryptoCode => "SUV";
+        public override string CryptoCode => "ESK";
 
-        private Suvereno()
+        private EskaCoin()
         {
         }
 
-        public class SuverenoConsensusFactory : ConsensusFactory
+        public class EskaCoinConsensusFactory : ConsensusFactory
         {
-            private SuverenoConsensusFactory()
+            private EskaCoinConsensusFactory()
             {
             }
 
-            public static SuverenoConsensusFactory Instance { get; } = new SuverenoConsensusFactory();
+            public static EskaCoinConsensusFactory Instance { get; } = new EskaCoinConsensusFactory();
 
             public override BlockHeader CreateBlockHeader()
             {
-                return new SuverenoBlockHeader();
+                return new EskaCoinBlockHeader();
             }
 
             public override Block CreateBlock()
             {
-                return new SuverenoBlock(new SuverenoBlockHeader());
+                return new EskaCoinBlock(new EskaCoinBlockHeader());
             }
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public class SuverenoBlockHeader : BlockHeader
+        public class EskaCoinBlockHeader : BlockHeader
         {
             private static byte[] CalculateHash(byte[] data, int offset, int count)
             {
@@ -52,9 +52,9 @@ namespace DSW.HDWallet.AltCoins
             }
         }
 
-        public class SuverenoBlock : Block
+        public class EskaCoinBlock : Block
         {
-            public SuverenoBlock(SuverenoBlockHeader h) : base(h)
+            public EskaCoinBlock(EskaCoinBlockHeader h) : base(h)
             {
             }
 
@@ -67,7 +67,7 @@ namespace DSW.HDWallet.AltCoins
 
         protected override void PostInit()
         {
-            RegisterDefaultCookiePath("SUV");
+            RegisterDefaultCookiePath("ESK");
         }
 
         protected override NetworkBuilder CreateMainnet()
@@ -85,32 +85,32 @@ namespace DSW.HDWallet.AltCoins
                 PowTargetTimespan = TimeSpan.FromSeconds(24 * 60 * 60),
                 PowTargetSpacing = TimeSpan.FromSeconds(1 * 60),
                 PowAllowMinDifficultyBlocks = true,
-                CoinbaseMaturity = 120,
+                CoinbaseMaturity = 100,
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = SuverenoConsensusFactory.Instance,
+                ConsensusFactory = EskaCoinConsensusFactory.Instance,
                 SupportSegwit = false,
-                CoinType = 844
+                CoinType = 845
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 63 })
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 33 })
                 .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 13 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 212 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 145 })
                 .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Suvereno"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Suvereno"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("EskaCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("EskaCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(18976)
-                .SetRPCPort(18977)
+                .SetPort(14215)
+                .SetRPCPort(14214)
                 .SetMaxP2PVersion(70920)
-                .SetName("Suvereno-main")
-                .AddAlias("Suvereno-mainnet")
+                .SetName("EskaCoin-main")
+                .AddAlias("EskaCoin-mainnet")
                 .AddDNSSeeds(new[]
                 {
-                    new DNSSeedData("seed1", "seed1.suvcoin.net"),
-                    new DNSSeedData("seed2", "seed2.suvcoin.net"),
-                    new DNSSeedData("seed3", "seed3.suvcoin.net")
+                    new DNSSeedData("seed1", "seed1.eskacoin.com"),
+                    new DNSSeedData("seed2", "seed2.eskacoin.com"),
+                    new DNSSeedData("seed3", "seed3.eskacoin.com")
                 })
                 .AddSeeds(new NetworkAddress[0])
                 .SetGenesis("01000000000000000000000000000000000000000000000000000000000000000000000014e427b75837280517873799a954e87b8b0484f3f1df927888a0ff4fd3a0c9f7bb2eac56f0ff0f1edfa624000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff8604ffff001d01044c7d323031372d30392d32312032323a30313a3034203a20426974636f696e20426c6f636b204861736820666f722048656967687420343836333832203a2030303030303030303030303030303030303039326431356535623365366538323639333938613834613630616535613264626434653766343331313939643033ffffffff0100ba1dd205000000434104c10e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9ac00000000");
@@ -137,23 +137,23 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1512,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = SuverenoConsensusFactory.Instance,
+                ConsensusFactory = EskaCoinConsensusFactory.Instance,
                 SupportSegwit = false,
                 CoinType = 1
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 63 })
+               .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 33 })
                 .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 13 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 212 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 145 })
                 .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Suvereno"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Suvereno"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("EskaCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("EskaCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(18976)
-                .SetRPCPort(18977)
+                .SetPort(14215)
+                .SetRPCPort(14214)
                 .SetMaxP2PVersion(70920)
-                .SetName("Suvereno-test")
-                .AddAlias("Suvereno-testnet")
+                .SetName("EskaCoin-test")
+                .AddAlias("EskaCoin-testnet")
                 .AddSeeds(new NetworkAddress[0])
                 //testnet down for now
                 .SetGenesis("0100000000000000000000000000000000000000000000000000000000000000000000008c5b00d67050180b3a90addb9cd1aabbb3dd79ce20fc071d428ce374581b3f7cde30df5cf0ff0f1e1a1754000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3b04ffff001d010433446f676543617368205265706f7765726564204c61756e6368202d20616b736861796e65787573202d204c6971756964333639ffffffff0100000000000000004341047a7df379bd5e6b93b164968c10fcbb141ecb3c6dc1a5e181c2a62328405cf82311dd5b40bf45430320a4f30add05c8e3e16dd56c52d65f7abe475189564bf2b1ac00000000");
@@ -180,22 +180,22 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = true,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = SuverenoConsensusFactory.Instance,
+                ConsensusFactory = EskaCoinConsensusFactory.Instance,
                 SupportSegwit = false
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 63 })
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 33 })
                 .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 13 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 212 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 145 })
                 .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Suvereno"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Suvereno"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("EskaCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("EskaCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(18976)
-                .SetRPCPort(18977)
+                .SetPort(14215)
+                .SetRPCPort(14214)
                 .SetMaxP2PVersion(70920)
-                .SetName("Suvereno-reg")
-                .AddAlias("Suvereno-regtest")
+                .SetName("EskaCoin-reg")
+                .AddAlias("EskaCoin-regtest")
                 .AddDNSSeeds(new DNSSeedData[0])
                 .AddSeeds(new NetworkAddress[0])
                 //No regtest at the moment

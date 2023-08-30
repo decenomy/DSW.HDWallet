@@ -4,40 +4,40 @@ using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 
-namespace DSW.HDWallet.AltCoins
+namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class CryptoFlow : NetworkSetBase
+    public class DashDiamond : NetworkSetBase
     {
-        public static CryptoFlow Instance { get; } = new CryptoFlow();
+        public static DashDiamond Instance { get; } = new DashDiamond();
 
-        public override string CryptoCode => "CFL";
+        public override string CryptoCode => "DASHD";
 
-        private CryptoFlow()
+        private DashDiamond()
         {
         }
 
-        public class CryptoFlowConsensusFactory : ConsensusFactory
+        public class DashDiamondConsensusFactory : ConsensusFactory
         {
-            private CryptoFlowConsensusFactory()
+            private DashDiamondConsensusFactory()
             {
             }
 
-            public static CryptoFlowConsensusFactory Instance { get; } = new CryptoFlowConsensusFactory();
+            public static DashDiamondConsensusFactory Instance { get; } = new DashDiamondConsensusFactory();
 
             public override BlockHeader CreateBlockHeader()
             {
-                return new CryptoFlowBlockHeader();
+                return new DashDiamondBlockHeader();
             }
 
             public override Block CreateBlock()
             {
-                return new CryptoFlowBlock(new CryptoFlowBlockHeader());
+                return new DashDiamondBlock(new DashDiamondBlockHeader());
             }
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public class CryptoFlowBlockHeader : BlockHeader
+        public class DashDiamondBlockHeader : BlockHeader
         {
             private static byte[] CalculateHash(byte[] data, int offset, int count)
             {
@@ -52,9 +52,9 @@ namespace DSW.HDWallet.AltCoins
             }
         }
 
-        public class CryptoFlowBlock : Block
+        public class DashDiamondBlock : Block
         {
-            public CryptoFlowBlock(CryptoFlowBlockHeader h) : base(h)
+            public DashDiamondBlock(DashDiamondBlockHeader h) : base(h)
             {
             }
 
@@ -67,7 +67,7 @@ namespace DSW.HDWallet.AltCoins
 
         protected override void PostInit()
         {
-            RegisterDefaultCookiePath("CFL");
+            RegisterDefaultCookiePath("DASHD");
         }
 
         protected override NetworkBuilder CreateMainnet()
@@ -79,38 +79,38 @@ namespace DSW.HDWallet.AltCoins
                 MajorityEnforceBlockUpgrade = 8100,
                 MajorityRejectBlockOutdated = 10260,
                 MajorityWindow = 10800,
-                BIP34Hash = new uint256("000004024ce90ca90b3d840e8561944882d31a35ee9700fdc4a4187f0e25bcb3"),
+                BIP34Hash = new uint256("00000e474f09929213ecad858b8c24002f8146cb459b98e5f665c27eea85f279"),
                 PowLimit = new Target(0 >> 1),
                 MinimumChainWork = new uint256("000000000000000000000000000000000000000000000000c2ba8ca4fb1f06cb"),
                 PowTargetTimespan = TimeSpan.FromSeconds(24 * 60 * 60),
                 PowTargetSpacing = TimeSpan.FromSeconds(1 * 60),
                 PowAllowMinDifficultyBlocks = true,
-                CoinbaseMaturity = 100,
+                CoinbaseMaturity = 15,
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = CryptoFlowConsensusFactory.Instance,
+                ConsensusFactory = DashDiamondConsensusFactory.Instance,
                 SupportSegwit = false,
-                CoinType = 836
+                CoinType = 837
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 87 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 95 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 102 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 30 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 83 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 125 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("CryptoFlow"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("CryptoFlow"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("DashDiamond"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("DashDiamond"))
                 .SetMagic(0x191643a0)
-                .SetPort(13333)
-                .SetRPCPort(13334)
+                .SetPort(12341)
+                .SetRPCPort(23452)
                 .SetMaxP2PVersion(70920)
-                .SetName("CryptoFlow-main")
-                .AddAlias("CryptoFlow-mainnet")
+                .SetName("DashDiamond-main")
+                .AddAlias("DashDiamond-mainnet")
                 .AddDNSSeeds(new[]
                 {
-                    new DNSSeedData("seed1", "seed1.cryptoflow.eu"),
-                    new DNSSeedData("seed2", "seed2.cryptoflow.eu"),
-                    new DNSSeedData("seed3", "seed3.cryptoflow.eu")
+                    new DNSSeedData("seed1", "seed1.dashdiamond.net"),
+                    new DNSSeedData("seed2", "seed2.dashdiamond.net"),
+                    new DNSSeedData("seed3", "seed3.dashdiamond.net")
                 })
                 .AddSeeds(new NetworkAddress[0])
                 .SetGenesis("01000000000000000000000000000000000000000000000000000000000000000000000014e427b75837280517873799a954e87b8b0484f3f1df927888a0ff4fd3a0c9f7bb2eac56f0ff0f1edfa624000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff8604ffff001d01044c7d323031372d30392d32312032323a30313a3034203a20426974636f696e20426c6f636b204861736820666f722048656967687420343836333832203a2030303030303030303030303030303030303039326431356535623365366538323639333938613834613630616535613264626434653766343331313939643033ffffffff0100ba1dd205000000434104c10e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9ac00000000");
@@ -137,23 +137,23 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1512,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = CryptoFlowConsensusFactory.Instance,
+                ConsensusFactory = DashDiamondConsensusFactory.Instance,
                 SupportSegwit = false,
                 CoinType = 1
             })
-                 .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 87 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 95 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 102 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
+                 .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 30 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 83 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 125 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("CryptoFlow"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("CryptoFlow"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("DashDiamond"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("DashDiamond"))
                 .SetMagic(0x191643a0)
-                .SetPort(13333)
-                .SetRPCPort(13334)
+                .SetPort(12341)
+                .SetRPCPort(23452)
                 .SetMaxP2PVersion(70920)
-                .SetName("CryptoFlow-test")
-                .AddAlias("CryptoFlow-testnet")
+                .SetName("DashDiamond-test")
+                .AddAlias("DashDiamond-testnet")
                 .AddSeeds(new NetworkAddress[0])
                 //testnet down for now
                 .SetGenesis("0100000000000000000000000000000000000000000000000000000000000000000000008c5b00d67050180b3a90addb9cd1aabbb3dd79ce20fc071d428ce374581b3f7cde30df5cf0ff0f1e1a1754000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3b04ffff001d010433446f676543617368205265706f7765726564204c61756e6368202d20616b736861796e65787573202d204c6971756964333639ffffffff0100000000000000004341047a7df379bd5e6b93b164968c10fcbb141ecb3c6dc1a5e181c2a62328405cf82311dd5b40bf45430320a4f30add05c8e3e16dd56c52d65f7abe475189564bf2b1ac00000000");
@@ -180,22 +180,22 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = true,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = CryptoFlowConsensusFactory.Instance,
+                ConsensusFactory = DashDiamondConsensusFactory.Instance,
                 SupportSegwit = false
             })
-                 .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 87 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 95 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 102 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 30 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 83 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 125 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("CryptoFlow"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("CryptoFlow"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("DashDiamond"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("DashDiamond"))
                 .SetMagic(0x191643a0)
-                .SetPort(13333)
-                .SetRPCPort(13334)
+                .SetPort(12341)
+                .SetRPCPort(23452)
                 .SetMaxP2PVersion(70920)
-                .SetName("CryptoFlow-reg")
-                .AddAlias("CryptoFlow-regtest")
+                .SetName("DashDiamond-reg")
+                .AddAlias("DashDiamond-regtest")
                 .AddDNSSeeds(new DNSSeedData[0])
                 .AddSeeds(new NetworkAddress[0])
                 //No regtest at the moment

@@ -4,40 +4,40 @@ using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 
-namespace DSW.HDWallet.AltCoins
+namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class DashDiamond : NetworkSetBase
+    public class CryptoSaga : NetworkSetBase
     {
-        public static DashDiamond Instance { get; } = new DashDiamond();
+        public static CryptoSaga Instance { get; } = new CryptoSaga();
 
-        public override string CryptoCode => "DASHD";
+        public override string CryptoCode => "SAGA";
 
-        private DashDiamond()
+        private CryptoSaga()
         {
         }
 
-        public class DashDiamondConsensusFactory : ConsensusFactory
+        public class CryptoSagaConsensusFactory : ConsensusFactory
         {
-            private DashDiamondConsensusFactory()
+            private CryptoSagaConsensusFactory()
             {
             }
 
-            public static DashDiamondConsensusFactory Instance { get; } = new DashDiamondConsensusFactory();
+            public static CryptoSagaConsensusFactory Instance { get; } = new CryptoSagaConsensusFactory();
 
             public override BlockHeader CreateBlockHeader()
             {
-                return new DashDiamondBlockHeader();
+                return new CryptoSagaBlockHeader();
             }
 
             public override Block CreateBlock()
             {
-                return new DashDiamondBlock(new DashDiamondBlockHeader());
+                return new CryptoSagaBlock(new CryptoSagaBlockHeader());
             }
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public class DashDiamondBlockHeader : BlockHeader
+        public class CryptoSagaBlockHeader : BlockHeader
         {
             private static byte[] CalculateHash(byte[] data, int offset, int count)
             {
@@ -52,9 +52,9 @@ namespace DSW.HDWallet.AltCoins
             }
         }
 
-        public class DashDiamondBlock : Block
+        public class CryptoSagaBlock : Block
         {
-            public DashDiamondBlock(DashDiamondBlockHeader h) : base(h)
+            public CryptoSagaBlock(CryptoSagaBlockHeader h) : base(h)
             {
             }
 
@@ -67,7 +67,7 @@ namespace DSW.HDWallet.AltCoins
 
         protected override void PostInit()
         {
-            RegisterDefaultCookiePath("DASHD");
+            RegisterDefaultCookiePath("SAGA");
         }
 
         protected override NetworkBuilder CreateMainnet()
@@ -79,38 +79,38 @@ namespace DSW.HDWallet.AltCoins
                 MajorityEnforceBlockUpgrade = 8100,
                 MajorityRejectBlockOutdated = 10260,
                 MajorityWindow = 10800,
-                BIP34Hash = new uint256("00000e474f09929213ecad858b8c24002f8146cb459b98e5f665c27eea85f279"),
+                BIP34Hash = new uint256("00000eef0583695d6da23a78bab1c39939bbb54cf9bd5f0d4881c8eef364cd26"),
                 PowLimit = new Target(0 >> 1),
                 MinimumChainWork = new uint256("000000000000000000000000000000000000000000000000c2ba8ca4fb1f06cb"),
                 PowTargetTimespan = TimeSpan.FromSeconds(24 * 60 * 60),
                 PowTargetSpacing = TimeSpan.FromSeconds(1 * 60),
                 PowAllowMinDifficultyBlocks = true,
-                CoinbaseMaturity = 15,
+                CoinbaseMaturity = 100,
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = DashDiamondConsensusFactory.Instance,
+                ConsensusFactory = CryptoSagaConsensusFactory.Instance,
                 SupportSegwit = false,
-                CoinType = 837
+                CoinType = 843
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 30 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 83 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 125 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] {0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("DashDiamond"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("DashDiamond"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 125 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 44 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 142 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x88, 0xB2, 0x1E })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x88, 0xAD, 0xE4 })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("CryptoSaga"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("CryptoSaga"))
                 .SetMagic(0x191643a0)
-                .SetPort(12341)
-                .SetRPCPort(23452)
+                .SetPort(37552)
+                .SetRPCPort(37553)
                 .SetMaxP2PVersion(70920)
-                .SetName("DashDiamond-main")
-                .AddAlias("DashDiamond-mainnet")
+                .SetName("CryptoSaga-main")
+                .AddAlias("CryptoSaga-mainnet")
                 .AddDNSSeeds(new[]
                 {
-                    new DNSSeedData("seed1", "seed1.dashdiamond.net"),
-                    new DNSSeedData("seed2", "seed2.dashdiamond.net"),
-                    new DNSSeedData("seed3", "seed3.dashdiamond.net")
+                    new DNSSeedData("seed1", "seed1.cryptosaga.net"),
+                    new DNSSeedData("seed2", "seed2.cryptosaga.net"),
+                    new DNSSeedData("seed3", "seed3.cryptosaga.net")
                 })
                 .AddSeeds(new NetworkAddress[0])
                 .SetGenesis("01000000000000000000000000000000000000000000000000000000000000000000000014e427b75837280517873799a954e87b8b0484f3f1df927888a0ff4fd3a0c9f7bb2eac56f0ff0f1edfa624000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff8604ffff001d01044c7d323031372d30392d32312032323a30313a3034203a20426974636f696e20426c6f636b204861736820666f722048656967687420343836333832203a2030303030303030303030303030303030303039326431356535623365366538323639333938613834613630616535613264626434653766343331313939643033ffffffff0100ba1dd205000000434104c10e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9ac00000000");
@@ -137,23 +137,23 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1512,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = DashDiamondConsensusFactory.Instance,
+                ConsensusFactory = CryptoSagaConsensusFactory.Instance,
                 SupportSegwit = false,
                 CoinType = 1
             })
-                 .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 30 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 83 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 125 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("DashDiamond"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("DashDiamond"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 125 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 44 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 142 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x88, 0xB2, 0x1E })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x88, 0xAD, 0xE4 })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("CryptoSaga"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("CryptoSaga"))
                 .SetMagic(0x191643a0)
-                .SetPort(12341)
-                .SetRPCPort(23452)
+                .SetPort(37552)
+                .SetRPCPort(37553)
                 .SetMaxP2PVersion(70920)
-                .SetName("DashDiamond-test")
-                .AddAlias("DashDiamond-testnet")
+                .SetName("CryptoSaga-test")
+                .AddAlias("CryptoSaga-testnet")
                 .AddSeeds(new NetworkAddress[0])
                 //testnet down for now
                 .SetGenesis("0100000000000000000000000000000000000000000000000000000000000000000000008c5b00d67050180b3a90addb9cd1aabbb3dd79ce20fc071d428ce374581b3f7cde30df5cf0ff0f1e1a1754000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3b04ffff001d010433446f676543617368205265706f7765726564204c61756e6368202d20616b736861796e65787573202d204c6971756964333639ffffffff0100000000000000004341047a7df379bd5e6b93b164968c10fcbb141ecb3c6dc1a5e181c2a62328405cf82311dd5b40bf45430320a4f30add05c8e3e16dd56c52d65f7abe475189564bf2b1ac00000000");
@@ -180,22 +180,22 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = true,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = DashDiamondConsensusFactory.Instance,
+                ConsensusFactory = CryptoSagaConsensusFactory.Instance,
                 SupportSegwit = false
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 30 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 83 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 125 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("DashDiamond"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("DashDiamond"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 125 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 44 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 142 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x04, 0x88, 0xB2, 0x1E })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x88, 0xAD, 0xE4 })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("CryptoSaga"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("CryptoSaga"))
                 .SetMagic(0x191643a0)
-                .SetPort(12341)
-                .SetRPCPort(23452)
+                .SetPort(37552)
+                .SetRPCPort(37553)
                 .SetMaxP2PVersion(70920)
-                .SetName("DashDiamond-reg")
-                .AddAlias("DashDiamond-regtest")
+                .SetName("CryptoSaga-reg")
+                .AddAlias("CryptoSaga-regtest")
                 .AddDNSSeeds(new DNSSeedData[0])
                 .AddSeeds(new NetworkAddress[0])
                 //No regtest at the moment

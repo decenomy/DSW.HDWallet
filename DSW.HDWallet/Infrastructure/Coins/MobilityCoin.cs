@@ -4,40 +4,40 @@ using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 
-namespace DSW.HDWallet.AltCoins
+namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Sapphire : NetworkSetBase
+    public class MobilityCoin : NetworkSetBase
     {
-        public static Sapphire Instance { get; } = new Sapphire();
+        public static MobilityCoin Instance { get; } = new MobilityCoin();
 
-        public override string CryptoCode => "SAPP";
+        public override string CryptoCode => "MOBIC";
 
-        private Sapphire()
+        private MobilityCoin()
         {
         }
 
-        public class SapphireConsensusFactory : ConsensusFactory
+        public class MobilityCoinConsensusFactory : ConsensusFactory
         {
-            private SapphireConsensusFactory()
+            private MobilityCoinConsensusFactory()
             {
             }
 
-            public static SapphireConsensusFactory Instance { get; } = new SapphireConsensusFactory();
+            public static MobilityCoinConsensusFactory Instance { get; } = new MobilityCoinConsensusFactory();
 
             public override BlockHeader CreateBlockHeader()
             {
-                return new SapphireBlockHeader();
+                return new MobilityCoinBlockHeader();
             }
 
             public override Block CreateBlock()
             {
-                return new SapphireBlock(new SapphireBlockHeader());
+                return new MobilityCoinBlock(new MobilityCoinBlockHeader());
             }
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public class SapphireBlockHeader : BlockHeader
+        public class MobilityCoinBlockHeader : BlockHeader
         {
             private static byte[] CalculateHash(byte[] data, int offset, int count)
             {
@@ -52,9 +52,9 @@ namespace DSW.HDWallet.AltCoins
             }
         }
 
-        public class SapphireBlock : Block
+        public class MobilityCoinBlock : Block
         {
-            public SapphireBlock(SapphireBlockHeader h) : base(h)
+            public MobilityCoinBlock(MobilityCoinBlockHeader h) : base(h)
             {
             }
 
@@ -67,7 +67,7 @@ namespace DSW.HDWallet.AltCoins
 
         protected override void PostInit()
         {
-            RegisterDefaultCookiePath("SAPP");
+            RegisterDefaultCookiePath("MOBIC");
         }
 
         protected override NetworkBuilder CreateMainnet()
@@ -89,28 +89,28 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = SapphireConsensusFactory.Instance,
+                ConsensusFactory = MobilityCoinConsensusFactory.Instance,
                 SupportSegwit = false,
-                CoinType = 832
+                CoinType = 849
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 63 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 18 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 25 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x63 })
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 51 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 13 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 212 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Sapphire"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Sapphire"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("MobilityCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("MobilityCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(45328)
-                .SetRPCPort(45329)
+                .SetPort(22487)
+                .SetRPCPort(22488)
                 .SetMaxP2PVersion(70920)
-                .SetName("Sapphire-main")
-                .AddAlias("Sapphire-mainnet")
+                .SetName("MobilityCoin-main")
+                .AddAlias("MobilityCoin-mainnet")
                 .AddDNSSeeds(new[]
                 {
-                    new DNSSeedData("seed1", "seed1.sappcoin.com"),
-                    new DNSSeedData("seed2", "seed2.sappcoin.com"),
-                    new DNSSeedData("seed3", "seed3.sappcoin.com")
+                    new DNSSeedData("seed1", "seed1.mobic.net"),
+                    new DNSSeedData("seed2", "seed2.mobic.net"),
+                    new DNSSeedData("seed3", "seed3.mobic.net")
                 })
                 .AddSeeds(new NetworkAddress[0])
                 .SetGenesis("01000000000000000000000000000000000000000000000000000000000000000000000014e427b75837280517873799a954e87b8b0484f3f1df927888a0ff4fd3a0c9f7bb2eac56f0ff0f1edfa624000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff8604ffff001d01044c7d323031372d30392d32312032323a30313a3034203a20426974636f696e20426c6f636b204861736820666f722048656967687420343836333832203a2030303030303030303030303030303030303039326431356535623365366538323639333938613834613630616535613264626434653766343331313939643033ffffffff0100ba1dd205000000434104c10e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9ac00000000");
@@ -137,23 +137,23 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1512,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = SapphireConsensusFactory.Instance,
+                ConsensusFactory = MobilityCoinConsensusFactory.Instance,
                 SupportSegwit = false,
                 CoinType = 1
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 63 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 18 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 25 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x63 })
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 51 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 13 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 212 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("tSapphire"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("tSapphire"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("MobilityCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("MobilityCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(45328)
-                .SetRPCPort(45329)
+                .SetPort(22487)
+                .SetRPCPort(22488)
                 .SetMaxP2PVersion(70920)
-                .SetName("Sapphire-test")
-                .AddAlias("Sapphire-testnet")
+                .SetName("MobilityCoin-test")
+                .AddAlias("MobilityCoin-testnet")
                 .AddSeeds(new NetworkAddress[0])
                 //testnet down for now
                 .SetGenesis("0100000000000000000000000000000000000000000000000000000000000000000000008c5b00d67050180b3a90addb9cd1aabbb3dd79ce20fc071d428ce374581b3f7cde30df5cf0ff0f1e1a1754000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3b04ffff001d010433446f676543617368205265706f7765726564204c61756e6368202d20616b736861796e65787573202d204c6971756964333639ffffffff0100000000000000004341047a7df379bd5e6b93b164968c10fcbb141ecb3c6dc1a5e181c2a62328405cf82311dd5b40bf45430320a4f30add05c8e3e16dd56c52d65f7abe475189564bf2b1ac00000000");
@@ -180,22 +180,22 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = true,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = SapphireConsensusFactory.Instance,
+                ConsensusFactory = MobilityCoinConsensusFactory.Instance,
                 SupportSegwit = false
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 63 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 18 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 25 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x63 })
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 51 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 13 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 212 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
                 .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("tSapphire"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("tSapphire"))
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("MobilityCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("MobilityCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(45328)
-                .SetRPCPort(45329)
+                .SetPort(22487)
+                .SetRPCPort(22488)
                 .SetMaxP2PVersion(70920)
-                .SetName("Sapphire-reg")
-                .AddAlias("Sapphire-regtest")
+                .SetName("MobilityCoin-reg")
+                .AddAlias("MobilityCoin-regtest")
                 .AddDNSSeeds(new DNSSeedData[0])
                 .AddSeeds(new NetworkAddress[0])
                 //No regtest at the moment
