@@ -1,43 +1,43 @@
 ﻿using NBitcoin;
+using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
-using NBitcoin.Altcoins.HashX11;
 
-namespace DSW.HDWallet.AltCoins
+namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Peony : NetworkSetBase
+    public class Monk : NetworkSetBase
     {
-        public static Peony Instance { get; } = new Peony();
+        public static Monk Instance { get; } = new Monk();
 
-        public override string CryptoCode => "PNY";
+        public override string CryptoCode => "MONK";
 
-        private Peony()
+        private Monk()
         {
         }
 
-        public class PeonyConsensusFactory : ConsensusFactory
+        public class MonkConsensusFactory : ConsensusFactory
         {
-            private PeonyConsensusFactory()
+            private MonkConsensusFactory()
             {
             }
 
-            public static PeonyConsensusFactory Instance { get; } = new PeonyConsensusFactory();
+            public static MonkConsensusFactory Instance { get; } = new MonkConsensusFactory();
 
             public override BlockHeader CreateBlockHeader()
             {
-                return new PeonyBlockHeader();
+                return new MonkBlockHeader();
             }
 
             public override Block CreateBlock()
             {
-                return new PeonyBlock(new PeonyBlockHeader());
+                return new MonkBlock(new MonkBlockHeader());
             }
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public class PeonyBlockHeader : BlockHeader
+        public class MonkBlockHeader : BlockHeader
         {
             private static byte[] CalculateHash(byte[] data, int offset, int count)
             {
@@ -52,9 +52,9 @@ namespace DSW.HDWallet.AltCoins
             }
         }
 
-        public class PeonyBlock : Block
+        public class MonkBlock : Block
         {
-            public PeonyBlock(PeonyBlockHeader h) : base(h)
+            public MonkBlock(MonkBlockHeader h) : base(h)
             {
             }
 
@@ -67,7 +67,7 @@ namespace DSW.HDWallet.AltCoins
 
         protected override void PostInit()
         {
-            RegisterDefaultCookiePath("PNY");
+            RegisterDefaultCookiePath("MONK");
         }
 
         protected override NetworkBuilder CreateMainnet()
@@ -89,28 +89,28 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = PeonyConsensusFactory.Instance,
+                ConsensusFactory = MonkConsensusFactory.Instance,
                 SupportSegwit = false,
-                CoinType = 840
+                CoinType = 842
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 55 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 117 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 118 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x2D, 0x02, 0x31, 0x33 })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] {0x02, 0x21, 0x25, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Peony"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Peony"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 51 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 33 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 53 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Monk"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Monk"))
                 .SetMagic(0x191643a0)
-                .SetPort(36779)
-                .SetRPCPort(36780)
+                .SetPort(32270)
+                .SetRPCPort(32271)
                 .SetMaxP2PVersion(70920)
-                .SetName("Peony-main")
-                .AddAlias("Peony-mainnet")
+                .SetName("Monk-main")
+                .AddAlias("Monk-mainnet")
                 .AddDNSSeeds(new[]
                 {
-                    new DNSSeedData("seed1", "seed1.peony.net"),
-                    new DNSSeedData("seed2", "seed2.peony.net"),
-                    new DNSSeedData("seed3", "seed3.peony.net")
+                    new DNSSeedData("seed1", "seed1.monkcoin.net"),
+                    new DNSSeedData("seed2", "seed2.monkcoin.net"),
+                    new DNSSeedData("seed3", "seed3.monkcoin.net")
                 })
                 .AddSeeds(new NetworkAddress[0])
                 .SetGenesis("01000000000000000000000000000000000000000000000000000000000000000000000014e427b75837280517873799a954e87b8b0484f3f1df927888a0ff4fd3a0c9f7bb2eac56f0ff0f1edfa624000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff8604ffff001d01044c7d323031372d30392d32312032323a30313a3034203a20426974636f696e20426c6f636b204861736820666f722048656967687420343836333832203a2030303030303030303030303030303030303039326431356535623365366538323639333938613834613630616535613264626434653766343331313939643033ffffffff0100ba1dd205000000434104c10e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9ac00000000");
@@ -137,23 +137,23 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1512,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = PeonyConsensusFactory.Instance,
+                ConsensusFactory = MonkConsensusFactory.Instance,
                 SupportSegwit = false,
                 CoinType = 1
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 55 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 117 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 118 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x2D, 0x02, 0x31, 0x33 })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x25, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Peony"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Peony"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 51 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 33 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 53 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Monk"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Monk"))
                 .SetMagic(0x191643a0)
-                .SetPort(36779)
-                .SetRPCPort(36780)
+                .SetPort(32270)
+                .SetRPCPort(32271)
                 .SetMaxP2PVersion(70920)
-                .SetName("Peony-test")
-                .AddAlias("Peony-testnet")
+                .SetName("Monk-test")
+                .AddAlias("Monk-testnet")
                 .AddSeeds(new NetworkAddress[0])
                 //testnet down for now
                 .SetGenesis("0100000000000000000000000000000000000000000000000000000000000000000000008c5b00d67050180b3a90addb9cd1aabbb3dd79ce20fc071d428ce374581b3f7cde30df5cf0ff0f1e1a1754000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3b04ffff001d010433446f676543617368205265706f7765726564204c61756e6368202d20616b736861796e65787573202d204c6971756964333639ffffffff0100000000000000004341047a7df379bd5e6b93b164968c10fcbb141ecb3c6dc1a5e181c2a62328405cf82311dd5b40bf45430320a4f30add05c8e3e16dd56c52d65f7abe475189564bf2b1ac00000000");
@@ -180,22 +180,22 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = true,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = PeonyConsensusFactory.Instance,
+                ConsensusFactory = MonkConsensusFactory.Instance,
                 SupportSegwit = false
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 55 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 117 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 118 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x2D, 0x02, 0x31, 0x33 })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x25, 0x2B })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Peony"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Peony"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 51 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 33 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 53 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x73 })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Monk"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Monk"))
                 .SetMagic(0x191643a0)
-                .SetPort(36779)
-                .SetRPCPort(36780)
+                .SetPort(32270)
+                .SetRPCPort(32271)
                 .SetMaxP2PVersion(70920)
-                .SetName("Peony-reg")
-                .AddAlias("Peony-regtest")
+                .SetName("Monk-reg")
+                .AddAlias("Monk-regtest")
                 .AddDNSSeeds(new DNSSeedData[0])
                 .AddSeeds(new NetworkAddress[0])
                 //No regtest at the moment

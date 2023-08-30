@@ -1,4 +1,5 @@
-﻿using DSW.HDWallet.Domain.Wallets;
+﻿using DSW.HDWallet.Domain.Coins;
+using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure;
 using NBitcoin;
 
@@ -15,43 +16,37 @@ namespace DSW.HDWallet.Application
             _mnemonicRepository = mnemonicRepository;
         }
 
-        public Wallet CreateWallet()
+        public Wallet CreateWallet(CoinType coinType)
+        {
+            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();               
+
+            return _walletRepository.Create(mnemo, coinType);
+        }
+
+        public Wallet CreateWalletWithPassword(CoinType coinType, string? password = null)
         {
             Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();
 
-            return _walletRepository.Create(mnemo);
+            return _walletRepository.CreateWithPassword(coinType, mnemo, password);
         }
 
-        public Wallet CreateWalletWithPassword(string? password = null)
-        {
-            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();
-
-            return _walletRepository.CreateWithPassword(mnemo, password);
-        }
-
-        public string RecoverWallet(string secretWords, string? password = null)
+        public string RecoverWallet(CoinType coinType, string secretWords, string? password = null)
         {
             Mnemonic mnemo = _mnemonicRepository.GetMnemonic(secretWords);
 
-            return _walletRepository.Recover(mnemo, password).ToString();
+            return _walletRepository.Recover(coinType, mnemo, password).ToString();
         }
 
-        public BitcoinExtKey CreateDerivedKey(KeyPath keyPath)
+        public BitcoinExtKey CreateDerivedKey(CoinType coinType, int index)
         {
-            // KeyPath precisar ser criado de acordo com as configurações da rede
-            /*
-                string accounting = "1'";
-                int customerId = 5;
-                int paymentId = 50;
-                KeyPath path = new KeyPath(accounting + "/" + customerId + "/" + paymentId);
-                //Path : "1'/5/50"
-            */
-
             // TO DO Mnemonic precisa ser recuperado para criar as derivadas e para recuperar o Mneminic preciso das secrets words
             Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();
             ExtKey masterKey = mnemo.DeriveExtKey();
 
-            return _walletRepository.CreateDeriveKey(masterKey, keyPath);
+            string coin_type = Bip44.GetCoinCodeBySymbol(coinType.ToString());
+            KeyPath path = new KeyPath($"m/44'/{coin_type}'/0'/0/{index}");
+
+            return _walletRepository.CreateDeriveKey(coinType, masterKey, path);
         }
     }
 }

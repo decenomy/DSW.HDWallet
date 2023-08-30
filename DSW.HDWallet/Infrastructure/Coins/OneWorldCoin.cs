@@ -4,40 +4,40 @@ using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 
-namespace DSW.HDWallet.AltCoins
+namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Trittium : NetworkSetBase
+    public class OneWorldCoin : NetworkSetBase
     {
-        public static Trittium Instance { get; } = new Trittium();
+        public static OneWorldCoin Instance { get; } = new OneWorldCoin();
 
-        public override string CryptoCode => "TRTT";
+        public override string CryptoCode => "OWO";
 
-        private Trittium()
+        private OneWorldCoin()
         {
         }
 
-        public class TrittiumConsensusFactory : ConsensusFactory
+        public class OneWorldCoinConsensusFactory : ConsensusFactory
         {
-            private TrittiumConsensusFactory()
+            private OneWorldCoinConsensusFactory()
             {
             }
 
-            public static TrittiumConsensusFactory Instance { get; } = new TrittiumConsensusFactory();
+            public static OneWorldCoinConsensusFactory Instance { get; } = new OneWorldCoinConsensusFactory();
 
             public override BlockHeader CreateBlockHeader()
             {
-                return new TrittiumBlockHeader();
+                return new OneWorldCoinBlockHeader();
             }
 
             public override Block CreateBlock()
             {
-                return new TrittiumBlock(new TrittiumBlockHeader());
+                return new OneWorldCoinBlock(new OneWorldCoinBlockHeader());
             }
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete
-        public class TrittiumBlockHeader : BlockHeader
+        public class OneWorldCoinBlockHeader : BlockHeader
         {
             private static byte[] CalculateHash(byte[] data, int offset, int count)
             {
@@ -52,9 +52,9 @@ namespace DSW.HDWallet.AltCoins
             }
         }
 
-        public class TrittiumBlock : Block
+        public class OneWorldCoinBlock : Block
         {
-            public TrittiumBlock(TrittiumBlockHeader h) : base(h)
+            public OneWorldCoinBlock(OneWorldCoinBlockHeader h) : base(h)
             {
             }
 
@@ -67,7 +67,7 @@ namespace DSW.HDWallet.AltCoins
 
         protected override void PostInit()
         {
-            RegisterDefaultCookiePath("TRTT");
+            RegisterDefaultCookiePath("OWO");
         }
 
         protected override NetworkBuilder CreateMainnet()
@@ -89,28 +89,28 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = TrittiumConsensusFactory.Instance,
+                ConsensusFactory = OneWorldCoinConsensusFactory.Instance,
                 SupportSegwit = false,
-                CoinType = 838
+                CoinType = 846
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 65 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 19 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 239 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x80, 0x00, 0x03, 0x46 })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Trittium"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Trittium"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 115 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 112 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 92 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("OneWorldCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("OneWorldCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(31001)
-                .SetRPCPort(31002)
+                .SetPort(32112)
+                .SetRPCPort(32113)
                 .SetMaxP2PVersion(70920)
-                .SetName("Trittium-main")
-                .AddAlias("Trittium-mainnet")
+                .SetName("OneWorldCoin-main")
+                .AddAlias("OneWorldCoin-mainnet")
                 .AddDNSSeeds(new[]
                 {
-                    new DNSSeedData("seed1", "seed1.trittium.net"),
-                    new DNSSeedData("seed2", "seed2.trittium.net"),
-                    new DNSSeedData("seed3", "seed3.trittium.net")
+                    new DNSSeedData("seed1", "seed1.owocoin.net"),
+                    new DNSSeedData("seed2", "seed2.owocoin.net"),
+                    new DNSSeedData("seed3", "seed3.owocoin.net")
                 })
                 .AddSeeds(new NetworkAddress[0])
                 .SetGenesis("01000000000000000000000000000000000000000000000000000000000000000000000014e427b75837280517873799a954e87b8b0484f3f1df927888a0ff4fd3a0c9f7bb2eac56f0ff0f1edfa624000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff8604ffff001d01044c7d323031372d30392d32312032323a30313a3034203a20426974636f696e20426c6f636b204861736820666f722048656967687420343836333832203a2030303030303030303030303030303030303039326431356535623365366538323639333938613834613630616535613264626434653766343331313939643033ffffffff0100ba1dd205000000434104c10e83b2703ccf322f7dbd62dd5855ac7c10bd055814ce121ba32607d573b8810c02c0582aed05b4deb9c4b77b26d92428c61256cd42774babea0a073b2ed0c9ac00000000");
@@ -137,23 +137,23 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = false,
                 RuleChangeActivationThreshold = 1512,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = TrittiumConsensusFactory.Instance,
+                ConsensusFactory = OneWorldCoinConsensusFactory.Instance,
                 SupportSegwit = false,
                 CoinType = 1
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 65 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 19 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 239 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x80, 0x00, 0x03, 0x46 })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Trittium"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Trittium"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 115 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 112 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 92 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("OneWorldCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("OneWorldCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(31001)
-                .SetRPCPort(31002)
+                .SetPort(32112)
+                .SetRPCPort(32113)
                 .SetMaxP2PVersion(70920)
-                .SetName("Trittium-test")
-                .AddAlias("Trittium-testnet")
+                .SetName("OneWorldCoin-test")
+                .AddAlias("OneWorldCoin-testnet")
                 .AddSeeds(new NetworkAddress[0])
                 //testnet down for now
                 .SetGenesis("0100000000000000000000000000000000000000000000000000000000000000000000008c5b00d67050180b3a90addb9cd1aabbb3dd79ce20fc071d428ce374581b3f7cde30df5cf0ff0f1e1a1754000101000000010000000000000000000000000000000000000000000000000000000000000000ffffffff3b04ffff001d010433446f676543617368205265706f7765726564204c61756e6368202d20616b736861796e65787573202d204c6971756964333639ffffffff0100000000000000004341047a7df379bd5e6b93b164968c10fcbb141ecb3c6dc1a5e181c2a62328405cf82311dd5b40bf45430320a4f30add05c8e3e16dd56c52d65f7abe475189564bf2b1ac00000000");
@@ -180,22 +180,22 @@ namespace DSW.HDWallet.AltCoins
                 PowNoRetargeting = true,
                 RuleChangeActivationThreshold = 1916,
                 MinerConfirmationWindow = 2016,
-                ConsensusFactory = TrittiumConsensusFactory.Instance,
+                ConsensusFactory = OneWorldCoinConsensusFactory.Instance,
                 SupportSegwit = false
             })
-                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 65 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 19 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 239 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x80, 0x00, 0x03, 0x46 })
-                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Trittium"))
-                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Trittium"))
+                .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 115 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 112 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 92 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x02, 0x2D, 0x25, 0x33 })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x02, 0x21, 0x31, 0x2B })
+                .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("OneWorldCoin"))
+                .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("OneWorldCoin"))
                 .SetMagic(0x191643a0)
-                .SetPort(31001)
-                .SetRPCPort(31002)
+                .SetPort(32112)
+                .SetRPCPort(32113)
                 .SetMaxP2PVersion(70920)
-                .SetName("Trittium-reg")
-                .AddAlias("Trittium-regtest")
+                .SetName("OneWorldCoin-reg")
+                .AddAlias("OneWorldCoin-regtest")
                 .AddDNSSeeds(new DNSSeedData[0])
                 .AddSeeds(new NetworkAddress[0])
                 //No regtest at the moment

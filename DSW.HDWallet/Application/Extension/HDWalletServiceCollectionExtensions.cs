@@ -11,8 +11,6 @@ namespace DSW.HDWallet.Application.Extension
             services.AddScoped<IWalletService, WalletService>();
             services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddScoped<IMnemonicRepository, MnemonicRepository>();
-
-            // Tras
         }
     }
 }
