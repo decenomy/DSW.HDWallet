@@ -16,37 +16,30 @@ namespace DSW.HDWallet.Application
             _mnemonicRepository = mnemonicRepository;
         }
 
-        public Wallet CreateWallet(CoinType coinType)
+        public Wallet CreateWallet()
         {
             Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();               
 
-            return _walletRepository.Create(mnemo, coinType);
+            return _walletRepository.Create(mnemo);
         }
 
-        public Wallet CreateWalletWithPassword(CoinType coinType, string? password = null)
+        public Wallet CreateWalletWithPassword(string? password = null)
         {
             Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();
 
-            return _walletRepository.CreateWithPassword(coinType, mnemo, password);
+            return _walletRepository.CreateWithPassword(mnemo, password);
         }
 
-        public string RecoverWallet(CoinType coinType, string secretWords, string? password = null)
+        public string RecoverWallet(string secretWords, string? password = null)
         {
             Mnemonic mnemo = _mnemonicRepository.GetMnemonic(secretWords);
 
-            return _walletRepository.Recover(coinType, mnemo, password).ToString();
+            return _walletRepository.Recover(mnemo, password).ToString();
         }
 
-        public BitcoinExtKey CreateDerivedKey(CoinType coinType, int index)
+        public DeriveKeyDetails CreateDerivedKey(CoinType coinType, string masterKey, int index)
         {
-            // TO DO Mnemonic precisa ser recuperado para criar as derivadas e para recuperar o Mneminic preciso das secrets words
-            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();
-            ExtKey masterKey = mnemo.DeriveExtKey();
-
-            string coin_type = Bip44.GetCoinCodeBySymbol(coinType.ToString());
-            KeyPath path = new KeyPath($"m/44'/{coin_type}'/0'/0/{index}");
-
-            return _walletRepository.CreateDeriveKey(coinType, masterKey, path);
+            return _walletRepository.CreateDeriveKey(coinType, masterKey, index);
         }
     }
 }

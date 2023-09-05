@@ -10,13 +10,11 @@ namespace Decenomy
     {
         public static void HDWallet()
         {
-            HDWalletServiceProvider.Initialize();
-
             CoinType coinType = CoinType.SAPP;
 
+            HDWalletServiceProvider.Initialize();            
             var walletAppService = HDWalletServiceProvider.GetWalletService();
-            var createdWallet = walletAppService.CreateWallet(coinType);
-
+            
             while (true)
             {
                 #region Menu
@@ -33,6 +31,7 @@ namespace Decenomy
                 Console.WriteLine(" ");
                 Console.WriteLine(" [ 8 ] - Recover Wallet");
                 Console.WriteLine(" [ 9 ] - Random Secrect Words");
+                Console.WriteLine(" ");
                 Console.WriteLine(" [ 0 ] - Exit");
                 Console.Write("\n Opção: ");
                 #endregion
@@ -43,6 +42,8 @@ namespace Decenomy
                 switch (option)
                 {
                     case "1":
+                        var createdWallet = walletAppService?.CreateWallet();
+
                         Console.WriteLine("\n\n Wallet Created");
                         // Exibindo informações da carteira criada
                         WriteLine($"\n Master key :  {createdWallet?.MasterKey}", ConsoleColor.DarkCyan);
@@ -65,7 +66,7 @@ namespace Decenomy
                         Console.Write("\n Input your Password: ");
                         string password = Console.ReadLine();
                         // With Password
-                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(coinType, password);
+                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(password);
 
                         // Exibindo informações da carteira criada
                         WriteLine($"\n Master key :  {createWalletWithPassword?.MasterKey}", ConsoleColor.DarkCyan);
@@ -83,15 +84,49 @@ namespace Decenomy
                         break;
 
                     case "3":
-                        Console.WriteLine("\n\n Create Derived Key");
+                        WriteLine($"\n\n Create Derived Key", ConsoleColor.DarkGreen);
+                        Console.Write(" Master Key: ");
+                        string masterKey = Console.ReadLine();
 
-                        Console.Write("\n Input your derived number of keys: ");
+                        WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
+
+                        foreach (CoinType coin in Enum.GetValues(typeof(CoinType)))
+                        {
+                            Console.WriteLine($" {(int)coin}: {coin}");
+                        }
+
+                        int choice;
+                        bool validChoice = false;
+
+                        do
+                        {
+                            Console.Write(" Enter the coin code: ");
+                            if (int.TryParse(Console.ReadLine(), out choice))
+                            {
+                                if (Enum.IsDefined(typeof(CoinType), choice))
+                                {
+                                    validChoice = true;
+                                }
+                                else
+                                {
+                                    WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
+                                }
+                            }
+                            else
+                            {
+                                WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
+                            }
+                        } while (!validChoice);
+
+                        CoinType selectedCoin = (CoinType)choice;
+
+                        Console.Write("\n Enter derived number of keys: ");
                         string index = Console.ReadLine();
 
                         for (int i = 0; i < Convert.ToInt32(index); i++)
                         {
-                            var createDeriveKey = walletAppService?.CreateDerivedKey(coinType, Convert.ToInt32(i));
-                            WriteLine($" Derive Key [{i}] :  {createDeriveKey?.ToString()}", ConsoleColor.DarkCyan);
+                            var createDeriveKey = walletAppService?.CreateDerivedKey(selectedCoin, masterKey, Convert.ToInt32(i));
+                            WriteLine($" Index [{i}] Address: {createDeriveKey?.Address} KeyPath: {createDeriveKey?.Path}", ConsoleColor.DarkCyan);
                         }
 
                         Console.ReadLine();
@@ -109,9 +144,8 @@ namespace Decenomy
                         string? address = string.Empty;
 
                         if (mnemonicWords != null)
-                            address = walletAppService?.RecoverWallet(coinType, mnemonicWords, passwordRecorver);
-
-                        // Imprime o endereço da carteira recuperado            
+                            address = walletAppService?.RecoverWallet(mnemonicWords, passwordRecorver);
+         
                         WriteLine($" Recovery Wallett Address : {address}", ConsoleColor.Green);
 
                         Console.ReadLine();
@@ -119,8 +153,8 @@ namespace Decenomy
                         break;
 
                     case "9":
-                        // Chamando o método para gerar as palavras aleatoria
-                        string[]? randomWords = createdWallet?.GetRandomSecretWords(3);
+                        var secretWords = walletAppService?.CreateWallet();
+                        string[]? randomWords = secretWords?.GetRandomSecretWords(3);
 
                         WriteLine($"\n Secrect Words Random :", ConsoleColor.White);
                         foreach (var word in randomWords)
