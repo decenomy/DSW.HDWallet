@@ -37,6 +37,8 @@
             new CoinInfo(832, "0x80000340", "SAPP", "Sapphire"),
             new CoinInfo(844, "0x8000034c", "SUV", "Suvereno"),
             new CoinInfo(839, "0x80000347", "UCR", "Ultra Clear")
+
+            // TO DO BTC
         };
 
         public static string GetCoinCodeBySymbol(string symbol)

@@ -5,9 +5,9 @@ namespace DSW.HDWallet.Domain.Wallets
 {
     public interface IWalletRepository
     {
-        Wallet Create(Mnemonic mnemonic, CoinType coinType);
-        Wallet CreateWithPassword(CoinType coinType, Mnemonic mnemonic, string? password = null);
-        BitcoinAddress Recover(CoinType coinType, Mnemonic mnemo, string? password = null);
-        BitcoinExtKey CreateDeriveKey(CoinType coinType, ExtKey masterKey, KeyPath keyPath);
+        Wallet Create(Mnemonic mnemonic);
+        Wallet CreateWithPassword(Mnemonic mnemonic, string? password = null);
+        BitcoinAddress Recover(Mnemonic mnemo, string? password = null);
+        DeriveKeyDetails CreateDeriveKey(CoinType coinType, string masterKey, int index);
     }
 }
