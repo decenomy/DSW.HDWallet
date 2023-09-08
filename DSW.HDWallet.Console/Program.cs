@@ -1,4 +1,6 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Application.Provider;
+using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 
 Decenomy.Project.HDWallet();
 
@@ -8,58 +10,177 @@ namespace Decenomy
     {
         public static void HDWallet()
         {
-            #region Recovery Address
-            // Criar config Network
-            #endregion
-
-            #region Create Wallet
-            // Gera uma nova frase mnemônica com 12 palavras em inglês
-            Mnemonic mnemo = new Mnemonic(Wordlist.English, WordCount.Twelve);
-
-            // Cria uma chave mestre a partir das palavras mnemônicas
-            ExtKey masterKey = mnemo.DeriveExtKey();
-
-            // Deriva a chave pública mestre
-            ExtPubKey masterPubKey = masterKey.Neuter();
-
-            // Obtém o endereço público a partir da chave pública mestre
-            BitcoinAddress address = masterPubKey.PubKey.GetAddress(ScriptPubKeyType.Legacy, Network.Main);
-
-
-            WriteLabel("\nMaster key : " + masterKey.ToString(Network.Main) + "\n");
-            WriteLine($"Wallet Address =:  {address}", ConsoleColor.DarkGreen);
-            WriteLine($"Secrect Words =: {mnemo}", ConsoleColor.DarkYellow);
-
-            WriteLine($"\nSecrect Words INDEX =:", ConsoleColor.Magenta);
-            for (int i = 0; i < 12; i++)
+            WordCount wordCount = WordCount.TwentyFour;
+            HDWalletServiceProvider.Initialize();            
+            var walletAppService = HDWalletServiceProvider.GetWalletService();
+            
+            while (true)
             {
-                WriteLine($"[{i}] {mnemo.Words[i]}", ConsoleColor.Magenta);
+                #region Menu
+                WriteLine($" __      __         _   _         _       ___                                               ", ConsoleColor.DarkGreen);
+                WriteLine($" \\ \\    / /  __ _  | | | |  ___  | |_    |   \\   ___   __   ___   _ _    ___   _ __    _  _ ", ConsoleColor.DarkGreen);
+                WriteLine($"  \\ \\/\\/ /  / _` | | | | | / -_) |  _|   | |) | / -_) / _| / -_) | ' \\  / _ \\ | '  \\  | || |", ConsoleColor.DarkGreen);
+                WriteLine($"   \\_/\\_/   \\__,_| |_| |_| \\___|  \\__|   |___/  \\___| \\__| \\___| |_||_| \\___/ |_|_|_|  \\_, |", ConsoleColor.DarkGreen);
+                WriteLine($"                                                                                       |__/ ", ConsoleColor.DarkGreen);
+                WriteLine($"                                                                HDWallet Decenomy v.1.0 2023    ", ConsoleColor.DarkGreen);
+                Console.WriteLine(" Select a option: \n");
+                Console.WriteLine(" [ 1 ] - Create Wallet");
+                Console.WriteLine(" [ 2 ] - Create Wallet With Password");
+                Console.WriteLine(" [ 3 ] - Create Derived Key");                
+                Console.WriteLine(" ");
+                Console.WriteLine(" [ 8 ] - Recover Wallet");
+                Console.WriteLine(" [ 9 ] - Random Secrect Words");
+                Console.WriteLine(" ");
+                Console.WriteLine(" [ 0 ] - Exit");
+                Console.Write("\n Opção: ");
+                #endregion
+
+                #region Menu Option
+                string option = Console.ReadLine();
+
+                switch (option)
+                {
+                    case "1":
+                        var createdWallet = walletAppService?.CreateWallet(wordCount);
+
+                        Console.WriteLine("\n\n Wallet Created");
+                        // Exibindo informações da carteira criada
+                        WriteLine($"\n Seed Hex : {createdWallet?.SeedHex}", ConsoleColor.DarkGreen);
+                        WriteLine($" Mnemonic : {createdWallet?.Mnemonic}", ConsoleColor.DarkGreen);
+
+                        WriteLine($"\n Mnemonic Index :", ConsoleColor.DarkYellow);
+                        for (int i = 0; i < Convert.ToInt32(wordCount); i++)
+                        {
+                            WriteLine($" [{i}] {createdWallet?.MnemonicArray?[i]}", ConsoleColor.DarkYellow);
+                        }
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "2":
+                        Console.WriteLine("\n\n Wallet Created With Password");
+
+                        Console.Write("\n Enter your Password: ");
+                        string password = Console.ReadLine();
+                        // With Password
+                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, password);
+
+                        // Exibindo informações da carteira criada                        
+                        WriteLine($"\n Seed Hex : {createWalletWithPassword?.SeedHex}", ConsoleColor.DarkGreen);
+                        WriteLine($" Mnemonic : {createWalletWithPassword?.Mnemonic}", ConsoleColor.DarkGreen);
+
+                        WriteLine($"\n Mnemonic Index :", ConsoleColor.DarkYellow);
+                        for (int i = 0; i < Convert.ToInt32(wordCount); i++)
+                        {
+                            WriteLine($" [{i}] {createWalletWithPassword?.MnemonicArray?[i]}", ConsoleColor.DarkYellow);
+                        }
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "3":
+                        WriteLine($"\n\n Create Derived Key", ConsoleColor.DarkGreen);
+                        Console.Write(" Mnemonic : ");
+                        string mnemonic = Console.ReadLine();
+
+                        Console.Write("\n Password : ");
+                        string _password = Console.ReadLine();
+
+                        WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
+
+                        foreach (CoinType coin in Enum.GetValues(typeof(CoinType)))
+                        {
+                            Console.WriteLine($" {(int)coin}: {coin}");
+                        }
+
+                        int choice;
+                        bool validChoice = false;
+
+                        do
+                        {
+                            Console.Write(" Enter the coin code: ");
+                            if (int.TryParse(Console.ReadLine(), out choice))
+                            {
+                                if (Enum.IsDefined(typeof(CoinType), choice))
+                                {
+                                    validChoice = true;
+                                }
+                                else
+                                {
+                                    WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
+                                }
+                            }
+                            else
+                            {
+                                WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
+                            }
+                        } while (!validChoice);
+
+                        CoinType selectedCoin = (CoinType)choice;
+
+                        Console.Write("\n Enter derived number of keys: ");
+                        string index = Console.ReadLine();
+
+                        for (int i = 0; i < Convert.ToInt32(index); i++)
+                        {
+                            var createDeriveKey = walletAppService?.CreateDerivedKey(selectedCoin, mnemonic, Convert.ToInt32(i), _password);
+                            WriteLine($"\n Index [{i}] Address={createDeriveKey?.Address} KeyPath={createDeriveKey?.Path} \n {createDeriveKey?.PubKey}", ConsoleColor.DarkGreen);
+                        }
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "8":
+                        WriteLine($"\n Recover Wallett Address", ConsoleColor.DarkRed);
+                        Console.Write(" Enter Mnemonic: ");
+                        string mnemonicWords = Console.ReadLine();
+
+                        Console.Write("\n Enter your Password: ");
+                        string passwordRecorver = Console.ReadLine();
+
+                        string? address = string.Empty;
+
+                        if (mnemonicWords != null)
+                            address = walletAppService?.RecoverWallet(mnemonicWords, passwordRecorver);
+         
+                        WriteLine($" Seed Hex : {address}", ConsoleColor.Green);
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "9":
+                        var secretWords = walletAppService?.CreateWallet(WordCount.TwentyFour);
+                        string[]? randomWords = secretWords?.GetRandomMnemonic(3);
+
+                        WriteLine($"\n Mnemonic Random :", ConsoleColor.White);
+                        foreach (var word in randomWords)
+                        {
+                            WriteLine($" {word}", ConsoleColor.DarkCyan);
+                        }
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+
+                    case "0":
+                        Console.WriteLine(" Exit...");                        
+                        Console.Clear();
+                        return;
+
+                    default:
+                        Console.WriteLine("\n Invalid option. Please! Choose again.");
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                }
+
+                Console.WriteLine();
+                #endregion
             }
-            Console.ReadLine();
-            #endregion
-
-            #region Recovery Address
-            Console.Write("\n\nRecover Wallett Address");
-            Console.Write("\nInput your Secrets Words: ");
-            string mnemonicWords = Console.ReadLine();
-
-            // Cria uma instância de Mnemonic a partir das palavras secretas
-            Mnemonic mnemo3 = new Mnemonic(mnemonicWords, Wordlist.English);
-            BitcoinAddress address1 = GetAddressFromMnemonic(mnemo3);
-
-            // Imprime o endereço da carteira recuperado            
-            WriteLine($"Recovery Wallett Address =:  {address1.ToString()}", ConsoleColor.Green);
-            #endregion
-
-            Console.ReadLine();
-        }
-
-        static BitcoinAddress GetAddressFromMnemonic(Mnemonic mnemonic)
-        {
-            ExtKey masterKey = mnemonic.DeriveExtKey();
-            ExtPubKey masterPubKey = masterKey.Neuter();
-            BitcoinAddress address = masterPubKey.PubKey.GetAddress(ScriptPubKeyType.Legacy, Network.Main);
-            return address;
         }
 
         #region Helper Methods

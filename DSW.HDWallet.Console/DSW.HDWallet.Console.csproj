@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NBitcoin" Version="7.0.27" />
+    <ProjectReference Include="..\DSW.HDWallet\DSW.HDWallet.csproj" />
   </ItemGroup>
 
 </Project>
