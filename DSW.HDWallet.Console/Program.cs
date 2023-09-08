@@ -1,6 +1,6 @@
-﻿
-using DSW.HDWallet.Application.Provider;
+﻿using DSW.HDWallet.Application.Provider;
 using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 
 Decenomy.Project.HDWallet();
 
@@ -10,8 +10,7 @@ namespace Decenomy
     {
         public static void HDWallet()
         {
-            CoinType coinType = CoinType.SAPP;
-
+            WordCount wordCount = WordCount.TwentyFour;
             HDWalletServiceProvider.Initialize();            
             var walletAppService = HDWalletServiceProvider.GetWalletService();
             
@@ -42,18 +41,17 @@ namespace Decenomy
                 switch (option)
                 {
                     case "1":
-                        var createdWallet = walletAppService?.CreateWallet();
+                        var createdWallet = walletAppService?.CreateWallet(wordCount);
 
                         Console.WriteLine("\n\n Wallet Created");
                         // Exibindo informações da carteira criada
-                        WriteLine($"\n Master key :  {createdWallet?.MasterKey}", ConsoleColor.DarkCyan);
-                        WriteLine($" Wallet Address :  {createdWallet?.Address}", ConsoleColor.DarkGreen);
-                        WriteLine($" Secrect Words : {createdWallet?.SecretWords}", ConsoleColor.DarkGreen);
+                        WriteLine($"\n Seed Hex : {createdWallet?.SeedHex}", ConsoleColor.DarkGreen);
+                        WriteLine($" Mnemonic : {createdWallet?.Mnemonic}", ConsoleColor.DarkGreen);
 
-                        WriteLine($"\n Secrect Words INDEX :", ConsoleColor.DarkYellow);
-                        for (int i = 0; i < 12; i++)
+                        WriteLine($"\n Mnemonic Index :", ConsoleColor.DarkYellow);
+                        for (int i = 0; i < Convert.ToInt32(wordCount); i++)
                         {
-                            WriteLine($" [{i}] {createdWallet?.SecrectWordsArray?[i]}", ConsoleColor.DarkYellow);
+                            WriteLine($" [{i}] {createdWallet?.MnemonicArray?[i]}", ConsoleColor.DarkYellow);
                         }
 
                         Console.ReadLine();
@@ -63,20 +61,19 @@ namespace Decenomy
                     case "2":
                         Console.WriteLine("\n\n Wallet Created With Password");
 
-                        Console.Write("\n Input your Password: ");
+                        Console.Write("\n Enter your Password: ");
                         string password = Console.ReadLine();
                         // With Password
-                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(password);
+                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, password);
 
-                        // Exibindo informações da carteira criada
-                        WriteLine($"\n Master key :  {createWalletWithPassword?.MasterKey}", ConsoleColor.DarkCyan);
-                        WriteLine($" Wallet Address :  {createWalletWithPassword?.Address}", ConsoleColor.DarkGreen);
-                        WriteLine($" Secrect Words : {createWalletWithPassword?.SecretWords}", ConsoleColor.DarkGreen);
+                        // Exibindo informações da carteira criada                        
+                        WriteLine($"\n Seed Hex : {createWalletWithPassword?.SeedHex}", ConsoleColor.DarkGreen);
+                        WriteLine($" Mnemonic : {createWalletWithPassword?.Mnemonic}", ConsoleColor.DarkGreen);
 
-                        WriteLine($"\n Secrect Words INDEX :", ConsoleColor.DarkYellow);
-                        for (int i = 0; i < 12; i++)
+                        WriteLine($"\n Mnemonic Index :", ConsoleColor.DarkYellow);
+                        for (int i = 0; i < Convert.ToInt32(wordCount); i++)
                         {
-                            WriteLine($" [{i}] {createWalletWithPassword?.SecrectWordsArray?[i]}", ConsoleColor.DarkYellow);
+                            WriteLine($" [{i}] {createWalletWithPassword?.MnemonicArray?[i]}", ConsoleColor.DarkYellow);
                         }
 
                         Console.ReadLine();
@@ -85,8 +82,11 @@ namespace Decenomy
 
                     case "3":
                         WriteLine($"\n\n Create Derived Key", ConsoleColor.DarkGreen);
-                        Console.Write(" Master Key: ");
-                        string masterKey = Console.ReadLine();
+                        Console.Write(" Mnemonic : ");
+                        string mnemonic = Console.ReadLine();
+
+                        Console.Write("\n Password : ");
+                        string _password = Console.ReadLine();
 
                         WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
 
@@ -125,8 +125,8 @@ namespace Decenomy
 
                         for (int i = 0; i < Convert.ToInt32(index); i++)
                         {
-                            var createDeriveKey = walletAppService?.CreateDerivedKey(selectedCoin, masterKey, Convert.ToInt32(i));
-                            WriteLine($" Index [{i}] Address: {createDeriveKey?.Address} KeyPath: {createDeriveKey?.Path}", ConsoleColor.DarkCyan);
+                            var createDeriveKey = walletAppService?.CreateDerivedKey(selectedCoin, mnemonic, Convert.ToInt32(i), _password);
+                            WriteLine($"\n Index [{i}] Address={createDeriveKey?.Address} KeyPath={createDeriveKey?.Path} \n {createDeriveKey?.PubKey}", ConsoleColor.DarkGreen);
                         }
 
                         Console.ReadLine();
@@ -135,10 +135,10 @@ namespace Decenomy
 
                     case "8":
                         WriteLine($"\n Recover Wallett Address", ConsoleColor.DarkRed);
-                        Console.Write(" Input your Secrets Words: ");
+                        Console.Write(" Enter Mnemonic: ");
                         string mnemonicWords = Console.ReadLine();
 
-                        Console.Write("\n Input your Password: ");
+                        Console.Write("\n Enter your Password: ");
                         string passwordRecorver = Console.ReadLine();
 
                         string? address = string.Empty;
@@ -146,17 +146,17 @@ namespace Decenomy
                         if (mnemonicWords != null)
                             address = walletAppService?.RecoverWallet(mnemonicWords, passwordRecorver);
          
-                        WriteLine($" Recovery Wallett Address : {address}", ConsoleColor.Green);
+                        WriteLine($" Seed Hex : {address}", ConsoleColor.Green);
 
                         Console.ReadLine();
                         Console.Clear();
                         break;
 
                     case "9":
-                        var secretWords = walletAppService?.CreateWallet();
-                        string[]? randomWords = secretWords?.GetRandomSecretWords(3);
+                        var secretWords = walletAppService?.CreateWallet(WordCount.TwentyFour);
+                        string[]? randomWords = secretWords?.GetRandomMnemonic(3);
 
-                        WriteLine($"\n Secrect Words Random :", ConsoleColor.White);
+                        WriteLine($"\n Mnemonic Random :", ConsoleColor.White);
                         foreach (var word in randomWords)
                         {
                             WriteLine($" {word}", ConsoleColor.DarkCyan);
