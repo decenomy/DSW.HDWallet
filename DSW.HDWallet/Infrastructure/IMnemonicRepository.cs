@@ -4,7 +4,7 @@ namespace DSW.HDWallet.Infrastructure
 {
     public interface IMnemonicRepository
     {
-        Mnemonic GenerateMnemonic();
-        Mnemonic GetMnemonic(string secretWords);
+        Mnemonic GenerateMnemonic(WordCount wordCount);
+        Mnemonic GetMnemonic(string mnemonic);
     }
 }

@@ -1,4 +1,5 @@
-﻿using DSW.HDWallet.Domain.Coins;
+﻿using DSW.HDWallet.Application.Extension;
+using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Wallets;
 using NBitcoin;
 
@@ -8,14 +9,14 @@ namespace DSW.HDWallet.Infrastructure
     {
         public Wallet Create(Mnemonic mnemo)
         {
-            BitcoinAddress address = GetAddress(mnemo);
+            byte[] seed = mnemo.DeriveSeed();
+            string seedHex = seed.ToHexString();
 
             var wallet = new Wallet
             {
-                MasterKey = mnemo.DeriveExtKey().ToString(Network.Main),
-                Address = address.ToString(),
-                SecretWords = mnemo.ToString(),
-                SecrectWordsArray = mnemo.Words
+                SeedHex = seedHex,
+                Mnemonic = mnemo.ToString(),
+                MnemonicArray = mnemo.Words
             };
 
             return wallet;
@@ -23,22 +24,24 @@ namespace DSW.HDWallet.Infrastructure
 
         public Wallet CreateWithPassword(Mnemonic mnemo, string? password = null)
         {
-            BitcoinAddress address = GetAddress(mnemo, password);
+            byte[] seed = mnemo.DeriveSeed(password);
+            string seedHex = seed.ToHexString();
 
             var wallet = new Wallet
             {
-                MasterKey = mnemo.DeriveExtKey().ToString(Network.Main),
-                Address = address.ToString(),
-                SecretWords = mnemo.ToString(),
-                SecrectWordsArray = mnemo.Words
+                SeedHex = seedHex,
+                Mnemonic = mnemo.ToString(),
+                MnemonicArray = mnemo.Words
             };
 
             return wallet;
         }
 
-        public BitcoinAddress Recover(Mnemonic mnemo, string? password = null)
+        public string Recover(Mnemonic mnemo, string? password = null)
         {
-            return GetAddress(mnemo, password);
+            byte[] seed = string.IsNullOrEmpty(password) ? mnemo.DeriveSeed() : mnemo.DeriveSeed(password);
+
+            return seed.ToHexString();
         }
 
         private static BitcoinAddress GetAddress(Mnemonic mnemo, string? password = null)
@@ -60,23 +63,29 @@ namespace DSW.HDWallet.Infrastructure
             return address;
         }
 
-        public DeriveKeyDetails CreateDeriveKey(CoinType coinType, string masterKey, int index)
+        public DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null)
         {
+            var purpose = 44;
+            var accountIndex = 0;
+            var changeType = 0;
+
             Network network = CoinNetwork.GetMainnet(coinType);
-            ExtKey master = ExtKey.Parse(masterKey, network);
-
             string coin_type = Bip44.GetCoinCodeBySymbol(coinType.ToString());
-            KeyPath keyPath = new KeyPath($"m/44'/{coin_type}'/0'/0'/{index}'");
 
-            ExtKey derivedKey = master.Derive(keyPath);
-            Key privateKey = derivedKey.PrivateKey;
-            PubKey publicKey = privateKey.PubKey;
+            ExtKey masterPrivKey = string.IsNullOrEmpty(password) ? 
+                                   mnemo.DeriveExtKey() : 
+                                   mnemo.DeriveExtKey(password);   
+            
+            KeyPath keyPath = new($"m/{purpose}'/{coin_type}'/{accountIndex}'/{changeType}'/{index}'");
 
+            var derivedKey = masterPrivKey.Derive(keyPath).Neuter();
+            PubKey publicKey = derivedKey.PubKey;
             BitcoinAddress address = publicKey.GetAddress(ScriptPubKeyType.Legacy, network);
-
+            var extPubkey = derivedKey.ToString(network);
 
             DeriveKeyDetails deriveKeyDetails = new()
             {
+                PubKey = extPubkey.ToString(),
                 Address = address.ToString(),
                 Path = "m/" + keyPath.ToString(),
             };

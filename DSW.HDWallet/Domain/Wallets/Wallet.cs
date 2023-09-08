@@ -2,15 +2,14 @@
 {
     public class Wallet
     {
-        public string? MasterKey { get; set; }
-        public string? Address { get; set; }
-        public string? SecretWords { get; set; }
-        public string[]? SecrectWordsArray { get; set; }
-        public string[] GetRandomSecretWords(int count = 1)
+        public string? SeedHex { get; set; }
+        public string? Mnemonic { get; set; }
+        public string[]? MnemonicArray { get; set; }
+        public string[] GetRandomMnemonic(int count = 1)
         {
-            if (SecrectWordsArray != null && SecrectWordsArray.Length >= count)
+            if (MnemonicArray != null && MnemonicArray.Length >= count)
             {
-                string[] shuffledWords = (string[])SecrectWordsArray.Clone();
+                string[] shuffledWords = (string[])MnemonicArray.Clone();
 
                 Random random = new Random();
                 for (int i = shuffledWords.Length - 1; i > 0; i--)

@@ -6,7 +6,7 @@ using NBitcoin;
 namespace DSW.HDWallet.Application
 {
     public class WalletService : IWalletService
-    {
+    {        
         private readonly IWalletRepository _walletRepository;
         private readonly IMnemonicRepository _mnemonicRepository;
 
@@ -16,30 +16,31 @@ namespace DSW.HDWallet.Application
             _mnemonicRepository = mnemonicRepository;
         }
 
-        public Wallet CreateWallet()
+        public Wallet CreateWallet(WordCount wordCount)
         {
-            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();               
+            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic(wordCount);               
 
             return _walletRepository.Create(mnemo);
         }
 
-        public Wallet CreateWalletWithPassword(string? password = null)
+        public Wallet CreateWalletWithPassword(WordCount wordCount, string? password = null)
         {
-            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic();
+            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic(wordCount);
 
             return _walletRepository.CreateWithPassword(mnemo, password);
         }
 
-        public string RecoverWallet(string secretWords, string? password = null)
+        public string RecoverWallet(string mnemonic, string? password = null)
         {
-            Mnemonic mnemo = _mnemonicRepository.GetMnemonic(secretWords);
+            Mnemonic mnemo = _mnemonicRepository.GetMnemonic(mnemonic);
 
-            return _walletRepository.Recover(mnemo, password).ToString();
+            return _walletRepository.Recover(mnemo, password);
         }
 
-        public DeriveKeyDetails CreateDerivedKey(CoinType coinType, string masterKey, int index)
+        public DeriveKeyDetails CreateDerivedKey(CoinType coinType, string mnemonic, int index, string? password = null)
         {
-            return _walletRepository.CreateDeriveKey(coinType, masterKey, index);
+            Mnemonic mnemo = _mnemonicRepository.GetMnemonic(mnemonic);
+            return _walletRepository.CreateDeriveKey(coinType, mnemo, index, password);
         }
     }
 }
