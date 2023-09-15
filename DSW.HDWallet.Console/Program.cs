@@ -26,7 +26,8 @@ namespace Decenomy
                 Console.WriteLine(" Select a option: \n");
                 Console.WriteLine(" [ 1 ] - Create Wallet");
                 Console.WriteLine(" [ 2 ] - Create Wallet With Password");
-                Console.WriteLine(" [ 3 ] - Create Derived Key");                
+                Console.WriteLine(" [ 3 ] - Create Derived Key");
+                Console.WriteLine(" [ 4 ] - New Wallet - App Process");
                 Console.WriteLine(" ");
                 Console.WriteLine(" [ 8 ] - Recover Wallet");
                 Console.WriteLine(" [ 9 ] - Random Secrect Words");
@@ -127,6 +128,80 @@ namespace Decenomy
                         {
                             var createDeriveKey = walletAppService?.CreateDerivedKey(selectedCoin, mnemonic, Convert.ToInt32(i), _password);
                             WriteLine($"\n Index [{i}] Address={createDeriveKey?.Address} KeyPath={createDeriveKey?.Path} \n {createDeriveKey?.PubKey}", ConsoleColor.DarkGreen);
+                        }
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                    
+                    case "4":
+                        Console.WriteLine("\n\n New Wallet - App Process");
+
+                        Console.Write("\n Enter your Password: ");
+                        string pwd = Console.ReadLine();
+                        // With Password
+                        var newWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, pwd);
+
+                        // Exibindo informações da carteira criada                        
+                        WriteLine($"\n Seed Hex : {newWalletWithPassword?.SeedHex}", ConsoleColor.DarkGreen);
+                        WriteLine($" Mnemonic : {newWalletWithPassword?.Mnemonic}", ConsoleColor.DarkGreen);
+
+                        WriteLine($"\n Mnemonic Index :", ConsoleColor.DarkYellow);
+                        for (int i = 0; i < Convert.ToInt32(wordCount); i++)
+                        {
+                            WriteLine($" [{i}] {newWalletWithPassword?.MnemonicArray?[i]}", ConsoleColor.DarkYellow);
+                        }
+
+
+
+                        WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
+
+                        foreach (CoinType coin in Enum.GetValues(typeof(CoinType)))
+                        {
+                            Console.WriteLine($" {(int)coin}: {coin}");
+                        }
+
+                        int choiceAPP;
+                        bool isValidChoice = false;
+
+                        do
+                        {
+                            Console.Write(" Enter the coin code: ");
+                            if (int.TryParse(Console.ReadLine(), out choiceAPP))
+                            {
+                                if (Enum.IsDefined(typeof(CoinType), choiceAPP))
+                                {
+                                    isValidChoice = true;
+                                }
+                                else
+                                {
+                                    WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
+                                }
+                            }
+                            else
+                            {
+                                WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
+                            }
+                        } while (!isValidChoice);
+
+                        CoinType selectedCoinAPP = (CoinType)choiceAPP;
+
+
+
+                        //GeneratePubkey
+                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinAPP, newWalletWithPassword?.SeedHex);
+
+                        WriteLine($"\n Public Key : {generatePubKey?.PubKey}", ConsoleColor.DarkGreen);
+                        WriteLine($" Coin Type : {generatePubKey?.CoinType}", ConsoleColor.DarkGreen);
+                        WriteLine($" Path : {generatePubKey?.Path}", ConsoleColor.DarkGreen);
+
+                        Console.Write("\n Enter derived number of keys: ");
+                        string indexKey = Console.ReadLine();
+
+                        for (int i = 0; i < Convert.ToInt32(indexKey); i++)
+                        {
+                            var createDeriveKey = walletAppService?.GenerateDerivePubKey(generatePubKey?.PubKey, selectedCoinAPP, i);
+                            WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Path}", ConsoleColor.DarkGreen);
                         }
 
                         Console.ReadLine();
