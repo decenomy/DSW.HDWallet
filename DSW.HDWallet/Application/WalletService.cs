@@ -42,5 +42,15 @@ namespace DSW.HDWallet.Application
             Mnemonic mnemo = _mnemonicRepository.GetMnemonic(mnemonic);
             return _walletRepository.CreateDeriveKey(coinType, mnemo, index, password);
         }
+
+        public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex)
+        {
+            return _walletRepository.GeneratePubkey(coinType, seedHex);
+        }
+
+        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index)
+        {
+            return _walletRepository.GenerateDerivePubKey(pubKey, coinType, Index);
+        }
     }
 }

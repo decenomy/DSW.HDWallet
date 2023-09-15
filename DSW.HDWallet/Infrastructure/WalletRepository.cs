@@ -43,26 +43,55 @@ namespace DSW.HDWallet.Infrastructure
 
             return seed.ToHexString();
         }
-
-        private static BitcoinAddress GetAddress(Mnemonic mnemo, string? password = null)
+       
+        public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, string? password = null)
         {
-            ExtKey masterKey = string.IsNullOrEmpty(password) ? mnemo.DeriveExtKey() : mnemo.DeriveExtKey(password);
-            ExtPubKey masterPubKey = masterKey.Neuter();
-            BitcoinAddress address = masterPubKey.PubKey.GetAddress(ScriptPubKeyType.Legacy, Network.Main);
+            var purpose = 44;
+            var accountIndex = 0;
 
-            return address;
-        }
-
-        private static BitcoinAddress GetAddress(CoinType coinType, Mnemonic mnemo, string? password = null)
-        {
             Network network = CoinNetwork.GetMainnet(coinType);
-            ExtKey masterKey = string.IsNullOrEmpty(password) ? mnemo.DeriveExtKey() : mnemo.DeriveExtKey(password);
-            ExtPubKey masterPubKey = masterKey.Neuter();
-            BitcoinAddress address = masterPubKey.PubKey.GetAddress(ScriptPubKeyType.Legacy, network);
+            string coin_type = Bip44.GetCoinCodeBySymbol(coinType.ToString());
 
-            return address;
+            ExtKey masterPrivKey = new ExtKey(seedHex);
+
+            KeyPath keyPath = new($"m/{purpose}'/{coin_type}'/{accountIndex}'");
+            ExtPubKey pubKey = masterPrivKey.Derive(keyPath).Neuter();
+
+            PubKeyDetails pubKeyDetails = new()
+            {
+                PubKey = pubKey.ToString(network),
+                CoinType = coinType,
+                Index = 0,
+                Path = keyPath.ToString()
+            };
+
+            return pubKeyDetails;
         }
 
+        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index)
+        {
+            var changeType = 0;
+
+            Network network = CoinNetwork.GetMainnet(coinType);
+            ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
+
+            var keypath = $"{changeType}/{Index}";
+
+            var address =  extPubKey.Derive(new KeyPath(keypath))
+                                    .GetPublicKey()
+                                    .GetAddress(ScriptPubKeyType.Legacy, network);
+
+
+            DeriveKeyDetailsApp deriveKeyDetails = new()
+            {
+                Address = address.ToString(),
+                Path = keypath.ToString()
+            };
+
+            return deriveKeyDetails;
+        }
+
+        
         public DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null)
         {
             var purpose = 44;
