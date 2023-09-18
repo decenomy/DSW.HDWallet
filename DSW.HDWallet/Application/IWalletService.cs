@@ -10,5 +10,8 @@ namespace DSW.HDWallet.Application
         Wallet CreateWalletWithPassword(Words wordCount, string? password = null);
         string RecoverWallet(string secretWords, string? password = null);
         DeriveKeyDetails CreateDerivedKey(CoinType coinType, string masterKey, int index, string? password = null);
+        PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex);
+        DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index);
+
     }
 }
