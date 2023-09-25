@@ -24,21 +24,17 @@ namespace Decenomy
                 WriteLine($"                                                                                       |__/ ", ConsoleColor.DarkGreen);
                 WriteLine($"                                                                HDWallet Decenomy v.1.0 2023    ", ConsoleColor.DarkGreen);
                 Console.WriteLine(" Select a option: \n");
-                Console.WriteLine(" [ 1 ]  - Create Wallet");
-                Console.WriteLine(" [ 2 ]  - Create Wallet With Password");
-                Console.WriteLine(" [ 3 ]  - Create Derived Key");
-                Console.WriteLine(" [ 4 ]  - New Wallet - App Process");
+                Console.WriteLine(" [ 1 ] - Create Wallet");
+                Console.WriteLine(" [ 2 ] - Create Wallet With Password");
+                Console.WriteLine(" [ 3 ] - Create Derived Key");
+                Console.WriteLine(" [ 4 ] - New Wallet - App Process");
                 Console.WriteLine(" ");
-                Console.WriteLine(" [ 8 ]  - Recover Wallet");
-                Console.WriteLine(" [ 9 ]  - Random Secrect Words");
+                Console.WriteLine(" [ 8 ] - Recover Wallet");
+                Console.WriteLine(" [ 9 ] - Random Secrect Words");
                 Console.WriteLine(" ");
-                Console.WriteLine(" [ 20 ] - API Explorer Get Address");
-                Console.WriteLine(" [ 21 ] - API Explorer Get Transaction");
-                Console.WriteLine(" [ 22 ] - API Explorer Get transaction Specific");
-                Console.WriteLine(" ");
-                Console.WriteLine(" [ 0 ]  - Exit");
+                Console.WriteLine(" [ 0 ] - Exit");
                 Console.Write("\n Opção: ");
-                #endregion                
+                #endregion
 
                 #region Menu Option
                 string option = Console.ReadLine();
@@ -46,7 +42,7 @@ namespace Decenomy
                 switch (option)
                 {
                     case "1":
-                        var createdWallet = walletAppService?.CreateWallet(wordCount);                        
+                        var createdWallet = walletAppService?.CreateWallet(wordCount);
 
                         Console.WriteLine("\n\n Wallet Created");
                         // Exibindo informações da carteira criada
@@ -241,69 +237,6 @@ namespace Decenomy
                             WriteLine($" {word}", ConsoleColor.DarkCyan);
                         }
 
-                        Console.ReadLine();
-                        Console.Clear();
-                        break;
-
-                    case "20":
-                        Console.WriteLine("\n\n API Explorer - Get Address");
-
-                        var wss = walletAppService?.GetWSTransactionAsync("SAPP", "443944e2c62f8eb4d321b64db94bc30c819219a8ee352e1ea3eaa2960eca070a");
-
-                        var resultAPI = walletAppService?.GetAddressAsync("SAPP", "SYKUyKpTKU45c8kEwWaYinWo8AoZqARuMh").Result;
-
-                        WriteLine($"\n Address  \t: {resultAPI?.Address}", ConsoleColor.DarkGreen);
-                        WriteLine($" Balance        : {resultAPI?.Balance}", ConsoleColor.DarkGreen);
-                        WriteLine($" Total Received : {resultAPI?.TotalReceived}", ConsoleColor.DarkGreen);
-                        WriteLine($" Total Sent     : {resultAPI?.TotalSent}", ConsoleColor.DarkGreen);
-                        WriteLine($" Txs            : {resultAPI?.Txs} \n\n", ConsoleColor.DarkGreen);
-
-                        Console.WriteLine("\n TxIds List => ");
-                        for (int i = 0; i < resultAPI.Txids.Count; i++)
-                        {
-                            WriteLine($" TxId [{i}] {resultAPI.Txids[i]}", ConsoleColor.DarkGreen);
-                        }
-    
-                        Console.ReadLine();
-                        Console.Clear();
-                        break;
-
-                    case "21":
-                        Console.WriteLine("\n\n API Explorer - Get Transaction");
-
-                        var resultTransaction = walletAppService?.GetTransactionAsync("SAPP", "443944e2c62f8eb4d321b64db94bc30c819219a8ee352e1ea3eaa2960eca070a").Result;
-
-                        
-                        WriteLine($"\n Block Hash  \t: {resultTransaction?.BlockHash}", ConsoleColor.DarkGreen);
-                        WriteLine($" Block Height  \t: {resultTransaction?.BlockHeight}", ConsoleColor.DarkGreen);
-                        WriteLine($" Block Time    \t: {resultTransaction?.BlockTime}", ConsoleColor.DarkGreen);
-                        WriteLine($" Confirmations \t: {resultTransaction?.Confirmations}", ConsoleColor.DarkGreen);                        
-                        WriteLine($" Size        \t: {resultTransaction?.Size}", ConsoleColor.DarkGreen);
-                        WriteLine($" Txid        \t: {resultTransaction?.Txid}", ConsoleColor.DarkGreen);
-                        WriteLine($" Value       \t: {resultTransaction?.Value}", ConsoleColor.DarkGreen);
-                        WriteLine($" Value In    \t: {resultTransaction?.ValueIn}", ConsoleColor.DarkGreen);
-                        WriteLine($" Version     \t: {resultTransaction?.Version}", ConsoleColor.DarkGreen);
-                        WriteLine($" Hex         \t: {resultTransaction?.Hex}", ConsoleColor.DarkGreen);
-
-                        Console.ReadLine();
-                        Console.Clear();
-                        break;
-
-                    case "22":
-                        Console.WriteLine("\n\n API Explorer - Get Transaction Specific");
-
-                        var resultTransactionSpecific = walletAppService?.GetTransactionSpecificAsync("SAPP", "e58263233185eaea6ca27996a63f82cf58623f048b5c26f01381af54b537f66e").Result;
-                        
-                        WriteLine($"\n Block Hash  \t: {resultTransactionSpecific?.Blockhash}", ConsoleColor.DarkGreen);
-                        WriteLine($" Block Time    \t: {resultTransactionSpecific?.Blocktime}", ConsoleColor.DarkGreen);
-                        WriteLine($" Confirmations \t: {resultTransactionSpecific?.Confirmations}", ConsoleColor.DarkGreen);
-                        WriteLine($" Expity Height \t: {resultTransactionSpecific?.Expiryheight}", ConsoleColor.DarkGreen);
-                        WriteLine($" Time          \t: {resultTransactionSpecific?.Time}", ConsoleColor.DarkGreen);
-                        WriteLine($" Txid          \t: {resultTransactionSpecific?.Txid}", ConsoleColor.DarkGreen);
-                        WriteLine($" Value Balance \t: {resultTransactionSpecific?.ValueBalance}", ConsoleColor.DarkGreen);
-                        WriteLine($" Version     \t: {resultTransactionSpecific?.Version}", ConsoleColor.DarkGreen);
-                        WriteLine($" Hex         \t: {resultTransactionSpecific?.Hex}", ConsoleColor.DarkGreen);
-                                                
                         Console.ReadLine();
                         Console.Clear();
                         break;

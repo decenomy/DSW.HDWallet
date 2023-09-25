@@ -1,9 +1,6 @@
-﻿using DSW.HDWallet.Domain.ApiObjects;
-using DSW.HDWallet.Domain.Coins;
+﻿using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure;
-using DSW.HDWallet.Infrastructure.Api;
-using DSW.HDWallet.Infrastructure.WebSocket;
 using NBitcoin;
 
 namespace DSW.HDWallet.Application
@@ -12,18 +9,11 @@ namespace DSW.HDWallet.Application
     {        
         private readonly IWalletRepository _walletRepository;
         private readonly IMnemonicRepository _mnemonicRepository;
-        private readonly IApiDecenomyExplorerRepository _apiDecenomyExplorer;
-        private readonly IWebSocketDecenomyExplorerRepository _webSocket;
 
-        public WalletService(IWalletRepository walletRepository, 
-            IMnemonicRepository mnemonicRepository, 
-            IApiDecenomyExplorerRepository apiDecenomyExplorer,
-            IWebSocketDecenomyExplorerRepository webSocket)
+        public WalletService(IWalletRepository walletRepository, IMnemonicRepository mnemonicRepository)
         {
             _walletRepository = walletRepository;
             _mnemonicRepository = mnemonicRepository;
-            _apiDecenomyExplorer = apiDecenomyExplorer;
-            _webSocket = webSocket;
         }
 
         public Wallet CreateWallet(WordCount wordCount)
@@ -61,28 +51,6 @@ namespace DSW.HDWallet.Application
         public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index)
         {
             return _walletRepository.GenerateDerivePubKey(pubKey, coinType, Index);
-        }
-
-        public async Task<AddressObject> GetAddressAsync(string coin, string address)
-        {           
-            return await _apiDecenomyExplorer.GetAddressAsync(coin, address);
-        }
-
-        public async Task<TransactionObject> GetTransactionAsync(string coin, string txid)
-        {
-            return await _apiDecenomyExplorer.GetTransactionAsync(coin, txid);
-        }
-
-        public async Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid)
-        {          
-            return await _apiDecenomyExplorer.GetTransactionSpecificAsync(coin, txid);
-        }
-
-        public Task GetWSTransactionAsync(string coin, string txId)
-        {
-            _webSocket.GetWSTransactionAsync(coin, txId).Wait();
-            
-            return Task.CompletedTask;
         }
     }
 }
