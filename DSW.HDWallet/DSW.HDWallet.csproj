@@ -12,4 +12,8 @@
     <PackageReference Include="NBitcoin.Altcoins" Version="3.0.20" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Domain\WebSocketObjects\" />
+  </ItemGroup>
+
 </Project>

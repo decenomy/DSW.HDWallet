@@ -1,6 +1,8 @@
 ﻿using DSW.HDWallet.Application.Extension;
+using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Wallets;
+using DSW.HDWallet.Infrastructure.Api;
 using NBitcoin;
 
 namespace DSW.HDWallet.Infrastructure
@@ -90,7 +92,6 @@ namespace DSW.HDWallet.Infrastructure
 
             return deriveKeyDetails;
         }
-
         
         public DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null)
         {

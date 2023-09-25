@@ -1,4 +1,5 @@
-﻿using DSW.HDWallet.Domain.Coins;
+﻿using DSW.HDWallet.Domain.ApiObjects;
+using DSW.HDWallet.Domain.Coins;
 using NBitcoin;
 
 namespace DSW.HDWallet.Domain.Wallets
@@ -11,6 +12,5 @@ namespace DSW.HDWallet.Domain.Wallets
         DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null);
         DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index);
         PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, string? password = null);
-
     }
 }
