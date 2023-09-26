@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="NBitcoin" Version="7.0.30" />
     <PackageReference Include="NBitcoin.Altcoins" Version="3.0.20" />
   </ItemGroup>

@@ -10,5 +10,6 @@
         public bool IsAddress { get; set; }
         public string? Value { get; set; }
         public string? Hex { get; set; }
+        public ScriptSig? ScriptSig { get; set; }
     }
 }
