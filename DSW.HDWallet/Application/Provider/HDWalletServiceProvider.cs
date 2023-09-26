@@ -11,6 +11,7 @@ namespace DSW.HDWallet.Application.Provider
         {
             var services = new ServiceCollection();
             services.AddHDWalletServices();
+            services.AddHttpClient();
             _serviceProvider = services.BuildServiceProvider();
         }
 

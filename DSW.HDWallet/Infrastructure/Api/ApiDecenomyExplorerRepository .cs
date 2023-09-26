@@ -1,93 +1,60 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace DSW.HDWallet.Infrastructure.Api
 {
     public class ApiDecenomyExplorerRepository : IApiDecenomyExplorerRepository
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ApiDecenomyExplorerRepository(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        }
+
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
         {
             string endpoint = $"/api/v2/address/{address}";
-
-            try
-            {
-                // TO DO Criar Factory / Ingles / DeserializeObject nativo do .NET Core / Exception
-
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync(getApiUrl(endpoint, coin));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    return JsonConvert.DeserializeObject<AddressObject>(responseBody);
-                }
-                else
-                {
-                    throw new Exception($"Erro na solicitação à API: {response.StatusCode}");
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new Exception($"Erro na solicitação à API: {ex.Message}");
-            }
+            return await SendGetRequest<AddressObject>(coin, endpoint);
         }
 
         public async Task<TransactionObject> GetTransactionAsync(string coin, string txid)
         {
             string endpoint = $"/api/v2/tx/{txid}";
-
-            try
-            {
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync(getApiUrl(endpoint, coin));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    return JsonConvert.DeserializeObject<TransactionObject>(responseBody);
-                }
-                else
-                {
-                    throw new Exception($"Erro na solicitação à API: {response.StatusCode}");
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new Exception($"Erro na solicitação à API: {ex.Message}");
-            }
+            return await SendGetRequest<TransactionObject>(coin, endpoint);
         }
 
         public async Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid)
         {
             string endpoint = $"/api/v2/tx-specific/{txid}";
+            return await SendGetRequest<TransactionSpecificObject>(coin, endpoint);
+        }
 
+        private async Task<T> SendGetRequest<T>(string coin, string endpoint)
+        {
             try
             {
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync(getApiUrl(endpoint, coin));
+                var client = _httpClientFactory.CreateClient();
+                var apiUrl = $"https://{coin.ToLower()}.decenomy.net{endpoint}";
+
+                var response = await client.GetAsync(apiUrl);
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-                    return JsonConvert.DeserializeObject<TransactionSpecificObject>(responseBody);
+                    return JsonSerializer.Deserialize<T>(responseBody, options)!;
                 }
                 else
                 {
-                    throw new Exception($"Erro na solicitação à API: {response.StatusCode}");
+                    throw new Exception(message: $"Error in API request: {response.Content} StatusCode: {response.StatusCode} ");
                 }
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                throw new Exception($"Erro na solicitação à API: {ex.Message}");
+                throw new Exception($"Error in API request: {ex.Message}");
             }
-        }
-
-        private string getApiUrl(string endpoint, string coin)
-        {
-            return $"https://{coin.ToLower()}.decenomy.net{endpoint}";
         }
     }
 }
