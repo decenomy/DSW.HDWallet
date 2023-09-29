@@ -1,7 +1,7 @@
 ﻿using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
-using DSW.HDWallet.Infrastructure.WebSocket;
+using DSW.HDWallet.Infrastructure.WS;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DSW.HDWallet.Application.Extension

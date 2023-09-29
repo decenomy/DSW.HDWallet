@@ -44,12 +44,12 @@ namespace DSW.HDWallet.Infrastructure
             return seed.ToHexString();
         }
        
-        public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, string? password = null)
+        public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, string? password = null, bool isNetworkTest = false)
         {
             var purpose = 44;
             var accountIndex = 0;
 
-            Network network = CoinNetwork.GetMainnet(coinType);
+            Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
             string coin_type = Bip44.GetCoinCodeBySymbol(coinType.ToString());
 
             ExtKey masterPrivKey = new ExtKey(seedHex);
@@ -68,11 +68,11 @@ namespace DSW.HDWallet.Infrastructure
             return pubKeyDetails;
         }
 
-        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index)
+        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false)
         {
             var changeType = 0;
 
-            Network network = CoinNetwork.GetMainnet(coinType);
+            Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
             ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
 
             var keypath = $"{changeType}/{Index}";
@@ -92,13 +92,13 @@ namespace DSW.HDWallet.Infrastructure
         }
 
         
-        public DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null)
+        public DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false)
         {
             var purpose = 44;
             var accountIndex = 0;
             var changeType = 0;
 
-            Network network = CoinNetwork.GetMainnet(coinType);
+            Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
             string coin_type = Bip44.GetCoinCodeBySymbol(coinType.ToString());
 
             ExtKey masterPrivKey = string.IsNullOrEmpty(password) ? 

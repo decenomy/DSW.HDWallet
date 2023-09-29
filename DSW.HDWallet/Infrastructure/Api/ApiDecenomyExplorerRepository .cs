@@ -15,27 +15,74 @@ namespace DSW.HDWallet.Infrastructure.Api
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
         {
             string endpoint = $"/api/v2/address/{address}";
-            return await SendGetRequest<AddressObject>(coin, endpoint);
+            var apiUrl = BuildApiUrl(coin, endpoint);
+
+            return await SendGetRequest<AddressObject>(apiUrl);
         }
 
         public async Task<TransactionObject> GetTransactionAsync(string coin, string txid)
         {
             string endpoint = $"/api/v2/tx/{txid}";
-            return await SendGetRequest<TransactionObject>(coin, endpoint);
+            var apiUrl = BuildApiUrl(coin, endpoint);
+
+            return await SendGetRequest<TransactionObject>(apiUrl);
         }
 
         public async Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid)
         {
             string endpoint = $"/api/v2/tx-specific/{txid}";
-            return await SendGetRequest<TransactionSpecificObject>(coin, endpoint);
+            var apiUrl = BuildApiUrl(coin, endpoint);
+
+            return await SendGetRequest<TransactionSpecificObject>(apiUrl);
         }
 
-        private async Task<T> SendGetRequest<T>(string coin, string endpoint)
+        public async Task<BlockHashObject> GetBlockHash(string coin, string blockHeight)
+        {
+            string endpoint = $"/api/v2/block-index/{blockHeight}";
+            var apiUrl = BuildApiUrl(coin, endpoint);
+
+            return await SendGetRequest<BlockHashObject>(apiUrl);
+        }
+
+        public async Task<XpubObject> GetXpub(string coin, string xpub)
+        {
+            string endpoint = $"/api/v2/xpub/{xpub}";
+            var apiUrl = BuildApiUrl(coin, endpoint);
+
+            return await SendGetRequest<XpubObject>(apiUrl);
+        }
+
+        public async Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed)
+        {           
+            var queryParams = new Dictionary<string, string>
+            {
+                {"confirmed", confirmed.ToString()}
+            };            
+
+            string endpoint = $"/api/v2/utxo/{address}";
+            var apiUrl = BuildApiUrl(coin, endpoint, queryParams);
+
+            return await SendGetRequest<UtxoObject[]>(apiUrl);
+        }
+
+        private string BuildApiUrl(string coin, string endpoint, Dictionary<string, string>? queryParams = null)
+        {
+            var uriBuilder = new UriBuilder($"https://{coin.ToLower()}.decenomy.net{endpoint}");
+
+            if (queryParams != null && queryParams.Count > 0)
+            {
+                var query = new FormUrlEncodedContent(queryParams);
+                uriBuilder.Query = query.ReadAsStringAsync().Result;
+            }
+
+            return uriBuilder.ToString();
+        }
+
+        private async Task<T> SendGetRequest<T>(string apiUrl)
         {
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                var apiUrl = $"https://{coin.ToLower()}.decenomy.net{endpoint}";
 
                 var response = await client.GetAsync(apiUrl);
 
@@ -56,5 +103,7 @@ namespace DSW.HDWallet.Infrastructure.Api
                 throw new Exception($"Error in API request: {ex.Message}");
             }
         }
+
+
     }
 }

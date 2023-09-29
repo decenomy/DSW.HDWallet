@@ -10,7 +10,7 @@ namespace Decenomy
     {
         public static void HDWallet()
         {
-            WordCount wordCount = WordCount.TwentyFour;
+            WordCount wordCount = WordCount.Twelve;
             HDWalletServiceProvider.Initialize();            
             var walletAppService = HDWalletServiceProvider.GetWalletService();
             
@@ -34,7 +34,13 @@ namespace Decenomy
                 Console.WriteLine(" ");
                 Console.WriteLine(" [ 20 ] - API Explorer Get Address");
                 Console.WriteLine(" [ 21 ] - API Explorer Get Transaction");
-                Console.WriteLine(" [ 22 ] - API Explorer Get transaction Specific");
+                Console.WriteLine(" [ 22 ] - API Explorer Get Transaction Specific");
+                Console.WriteLine(" [ 23 ] - API Explorer Get Block Hash");
+                Console.WriteLine(" [ 24 ] - API Explorer Get XPub");
+                Console.WriteLine(" [ 25 ] - API Explorer Get UTxo");
+                Console.WriteLine(" ");
+                Console.WriteLine(" [ 30 ] - WebSocket GET Transaction");
+                Console.WriteLine(" [ 31 ] - WebSocket Subscribe New Transaction");
                 Console.WriteLine(" ");
                 Console.WriteLine(" [ 0 ]  - Exit");
                 Console.Write("\n Opção: ");
@@ -45,6 +51,7 @@ namespace Decenomy
 
                 switch (option)
                 {
+                    #region Create Wallet
                     case "1":
                         var createdWallet = walletAppService?.CreateWallet(wordCount);
 
@@ -62,16 +69,17 @@ namespace Decenomy
                         Console.ReadLine();
                         Console.Clear();
                         break;
+                    #endregion
 
+                    #region Create Wallet With Password
                     case "2":
                         Console.WriteLine("\n\n Wallet Created With Password");
 
                         Console.Write("\n Enter your Password: ");
                         string password = Console.ReadLine();
-                        // With Password
-                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, password);
 
-                        // Exibindo informações da carteira criada                        
+                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, password);
+                     
                         WriteLine($"\n Seed Hex : {createWalletWithPassword?.SeedHex}", ConsoleColor.DarkGreen);
                         WriteLine($" Mnemonic : {createWalletWithPassword?.Mnemonic}", ConsoleColor.DarkGreen);
 
@@ -84,7 +92,9 @@ namespace Decenomy
                         Console.ReadLine();
                         Console.Clear();
                         break;
+                    #endregion
 
+                    #region Create Derived Key
                     case "3":
                         WriteLine($"\n\n Create Derived Key", ConsoleColor.DarkGreen);
                         Console.Write(" Mnemonic : ");
@@ -137,16 +147,17 @@ namespace Decenomy
                         Console.ReadLine();
                         Console.Clear();
                         break;
-                    
+                    #endregion
+
+                    #region New Wallet - App Process
                     case "4":
                         Console.WriteLine("\n\n New Wallet - App Process");
 
                         Console.Write("\n Enter your Password: ");
                         string pwd = Console.ReadLine();
-                        // With Password
-                        var newWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, pwd);
 
-                        // Exibindo informações da carteira criada                        
+                        var newWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, pwd);
+                       
                         WriteLine($"\n Seed Hex : {newWalletWithPassword?.SeedHex}", ConsoleColor.DarkGreen);
                         WriteLine($" Mnemonic : {newWalletWithPassword?.Mnemonic}", ConsoleColor.DarkGreen);
 
@@ -155,8 +166,6 @@ namespace Decenomy
                         {
                             WriteLine($" [{i}] {newWalletWithPassword?.MnemonicArray?[i]}", ConsoleColor.DarkYellow);
                         }
-
-
 
                         WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
 
@@ -190,10 +199,7 @@ namespace Decenomy
 
                         CoinType selectedCoinAPP = (CoinType)choiceAPP;
 
-
-
-                        //GeneratePubkey
-                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinAPP, newWalletWithPassword?.SeedHex);
+                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinAPP, newWalletWithPassword?.SeedHex, true);
 
                         WriteLine($"\n Public Key : {generatePubKey?.PubKey}", ConsoleColor.DarkGreen);
                         WriteLine($" Coin Type : {generatePubKey?.CoinType}", ConsoleColor.DarkGreen);
@@ -204,14 +210,16 @@ namespace Decenomy
 
                         for (int i = 0; i < Convert.ToInt32(indexKey); i++)
                         {
-                            var createDeriveKey = walletAppService?.GenerateDerivePubKey(generatePubKey?.PubKey, selectedCoinAPP, i);
+                            var createDeriveKey = walletAppService?.GenerateDerivePubKey(generatePubKey?.PubKey, selectedCoinAPP, i, true);
                             WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Path}", ConsoleColor.DarkGreen);
                         }
 
                         Console.ReadLine();
                         Console.Clear();
                         break;
+                    #endregion
 
+                    #region Recover Wallet
                     case "8":
                         WriteLine($"\n Recover Wallett Address", ConsoleColor.DarkRed);
                         Console.Write(" Enter Mnemonic: ");
@@ -230,7 +238,9 @@ namespace Decenomy
                         Console.ReadLine();
                         Console.Clear();
                         break;
+                    #endregion
 
+                    #region Random Secrect Words
                     case "9":
                         var secretWords = walletAppService?.CreateWallet(WordCount.TwentyFour);
                         string[]? randomWords = secretWords?.GetRandomMnemonic(3);
@@ -244,14 +254,19 @@ namespace Decenomy
                         Console.ReadLine();
                         Console.Clear();
                         break;
+                    #endregion
 
-
+                    #region API Explorer Get Address
                     case "20":
                         Console.WriteLine("\n\n API Explorer - Get Address");
-                        
-                        //var wss = walletAppService?.GetWSTransactionAsync("SAPP", "443944e2c62f8eb4d321b64db94bc30c819219a8ee352e1ea3eaa2960eca070a");
-                        
-                        var resultAPI = walletAppService?.GetAddressAsync("SAPP", "SYKUyKpTKU45c8kEwWaYinWo8AoZqARuMh").Result;
+                        Console.Write("\n Enter Coin Name: ");
+                        string addressCoinName = Console.ReadLine();
+
+                        Console.Write(" Enter Address: ");
+                        string addressCoin = Console.ReadLine();
+
+                        var resultAPI = walletAppService?.GetAddressAsync(addressCoinName, addressCoin).Result;
+
                         WriteLine($"\n Address  \t: {resultAPI?.Address}", ConsoleColor.DarkGreen);
                         WriteLine($" Balance        : {resultAPI?.Balance}", ConsoleColor.DarkGreen);
                         WriteLine($" Total Received : {resultAPI?.TotalReceived}", ConsoleColor.DarkGreen);
@@ -266,9 +281,18 @@ namespace Decenomy
                         Console.ReadLine();
                         Console.Clear();
                         break;
+                    #endregion
+
+                    #region API Explorer Get Transaction
                     case "21":
                         Console.WriteLine("\n\n API Explorer - Get Transaction");
-                        var resultTransaction = walletAppService?.GetTransactionAsync("SAPP", "443944e2c62f8eb4d321b64db94bc30c819219a8ee352e1ea3eaa2960eca070a").Result;
+                        Console.Write("\n Enter Coin Name: ");
+                        string tCoinName = Console.ReadLine();
+
+                        Console.Write(" Enter TxId: ");
+                        string tTxId = Console.ReadLine();
+
+                        var resultTransaction = walletAppService?.GetTransactionAsync(tCoinName, tTxId).Result;
 
                         WriteLine($"\n Block Hash  \t: {resultTransaction?.BlockHash}", ConsoleColor.DarkGreen);
                         WriteLine($" Block Height  \t: {resultTransaction?.BlockHeight}", ConsoleColor.DarkGreen);
@@ -283,9 +307,18 @@ namespace Decenomy
                         Console.ReadLine();
                         Console.Clear();
                         break;
+                    #endregion
+
+                    #region API Explorer Get Transaction Specific
                     case "22":
                         Console.WriteLine("\n\n API Explorer - Get Transaction Specific");
-                        var resultTransactionSpecific = walletAppService?.GetTransactionSpecificAsync("SAPP", "e58263233185eaea6ca27996a63f82cf58623f048b5c26f01381af54b537f66e").Result;
+                        Console.Write("\n Enter Coin Name: ");
+                        string tsCoinName = Console.ReadLine();
+
+                        Console.Write(" Enter TxId: ");
+                        string tsTxId = Console.ReadLine();
+
+                        var resultTransactionSpecific = walletAppService?.GetTransactionSpecificAsync(tsCoinName, tsTxId).Result;
 
                         WriteLine($"\n Block Hash  \t: {resultTransactionSpecific?.Blockhash}", ConsoleColor.DarkGreen);
                         WriteLine($" Block Time    \t: {resultTransactionSpecific?.Blocktime}", ConsoleColor.DarkGreen);
@@ -300,12 +333,127 @@ namespace Decenomy
                         Console.ReadLine();
                         Console.Clear();
                         break;
+                    #endregion
 
+                    #region API Explorer Get Block Hash
+                    case "23":
+                        Console.WriteLine("\n\n API Explorer - Get Block Hash");
 
+                        Console.Write("\n Enter Coin Name: ");
+                        string coinName = Console.ReadLine();
+
+                        Console.Write(" Enter Block Height: ");
+                        string blockHeight = Console.ReadLine();
+
+                        var resulGetBlockHash = walletAppService?.GetBlockHash(coinName, blockHeight).Result;
+                        
+                        WriteLine($"\n Block Hash  \t: {resulGetBlockHash?.BlockHash}", ConsoleColor.DarkGreen);                        
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                    #endregion
+
+                    #region API Explorer Get XPub
+                    case "24":
+                        Console.WriteLine("\n\n API Explorer - Get xPub");
+                        
+                        Console.Write("\n Enter Coin Name: ");
+                        string xpubCoinName = Console.ReadLine();
+
+                        Console.Write(" Enter xPub: ");
+                        string xPub = Console.ReadLine();
+
+                        var xPubResult = walletAppService?.GetXpub(xpubCoinName, xPub).Result;
+
+                        /*
+                        WriteLine($"\n Block Hash  \t: {resultTransactionSpecific?.Blockhash}", ConsoleColor.DarkGreen);
+                        WriteLine($" Block Time    \t: {resultTransactionSpecific?.Blocktime}", ConsoleColor.DarkGreen);
+                        WriteLine($" Confirmations \t: {resultTransactionSpecific?.Confirmations}", ConsoleColor.DarkGreen);
+                        WriteLine($" Expity Height \t: {resultTransactionSpecific?.Expiryheight}", ConsoleColor.DarkGreen);
+                        */
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                    #endregion
+
+                    #region API Explorer Get UTxo
+                    case "25":
+                        Console.WriteLine("\n\n API Explorer - Get UTXO");
+
+                        Console.Write("\n Enter Coin Name: ");
+                        string utxoCoinName = Console.ReadLine();
+
+                        Console.Write(" Enter Address: ");
+                        string utxoAddress = Console.ReadLine();
+
+                        Console.Write(" Confirmed: ");
+                        string utxoConfirmed = Console.ReadLine();
+
+                        if (utxoConfirmed.Equals(""))
+                            utxoConfirmed = "false";
+
+                        var utxoResult = walletAppService?.GetUtxo(utxoCoinName, utxoAddress, Convert.ToBoolean(utxoConfirmed)).Result;
+
+                        foreach (var item in utxoResult)
+                        {                            
+                            WriteLine($"\n Height: \t {item.Height}", ConsoleColor.DarkGreen);
+                            WriteLine($" Txid: \t\t {item.Txid}", ConsoleColor.DarkGreen);
+                            WriteLine($" Value: \t {item.Value}", ConsoleColor.DarkGreen);
+                            WriteLine($" Vout: \t\t {item.Vout}", ConsoleColor.DarkGreen);
+                            WriteLine($" Confirmations:  {item.Confirmations}", ConsoleColor.DarkGreen);
+                        }
+                        
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                    #endregion
+
+                    #region WebSocket GET Transaction
+                    case "30":
+                        Console.WriteLine("\n\n Websocket GET Transaction");
+                        Console.Write("\n Enter Coin Name: ");
+                        string wsCoinName = Console.ReadLine();
+
+                        Console.Write(" Enter TxId: ");
+                        string wsaddressCoin = Console.ReadLine();
+                        
+                        var wss = walletAppService?.GetWSTransactionAsync(wsCoinName, wsaddressCoin).Result;
+
+                        WriteLine($"\n Block Hash: \t {wss?.data.blockHash}", ConsoleColor.DarkGreen);
+                        WriteLine($" Block time: \t {wss?.data.blockTime}", ConsoleColor.DarkGreen);
+                        WriteLine($" Block Height: \t {wss?.data.blockHeight}", ConsoleColor.DarkGreen);
+                        WriteLine($" Txid: \t\t {wss?.data.txid}", ConsoleColor.DarkGreen);
+                        WriteLine($" Value In: \t {wss?.data.valueIn}", ConsoleColor.DarkGreen);
+                        WriteLine($" Value: \t {wss?.data.value}", ConsoleColor.DarkGreen);
+                        WriteLine($" Size: \t\t {wss?.data.size}", ConsoleColor.DarkGreen);
+                        WriteLine($" Confirmations:  {wss?.data.confirmations}", ConsoleColor.DarkGreen);
+                        WriteLine($" Hex: \t\t {wss?.data.hex}", ConsoleColor.DarkGreen);
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                    #endregion
+
+                    #region WebSocket Subscribe New Transaction
+                    case "31":
+                        Console.WriteLine("\n\n Websocket GET Transaction");
+                        Console.Write("\n Enter Coin Name: ");
+                        string subCoinName = Console.ReadLine();
+
+                        var subS = walletAppService?.SubscribeNewTransaction(subCoinName).Result;
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                    #endregion
+
+                    #region Exit
                     case "0":
                         Console.WriteLine(" Exit...");                        
                         Console.Clear();
                         return;
+                    #endregion
 
                     default:
                         Console.WriteLine("\n Invalid option. Please! Choose again.");

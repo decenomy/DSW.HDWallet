@@ -1,9 +1,10 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Wallets;
+using DSW.HDWallet.Domain.WSObject;
 using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
-using DSW.HDWallet.Infrastructure.WebSocket;
+using DSW.HDWallet.Infrastructure.WS;
 using NBitcoin;
 
 namespace DSW.HDWallet.Application
@@ -47,18 +48,18 @@ namespace DSW.HDWallet.Application
             return _walletRepository.Recover(mnemo, password);
         }
 
-        public DeriveKeyDetails CreateDerivedKey(CoinType coinType, string mnemonic, int index, string? password = null)
+        public DeriveKeyDetails CreateDerivedKey(CoinType coinType, string mnemonic, int index, string? password = null, bool isNetworkTest = false)
         {
             Mnemonic mnemo = _mnemonicRepository.GetMnemonic(mnemonic);
             return _walletRepository.CreateDeriveKey(coinType, mnemo, index, password);
         }
 
-        public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex)
+        public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, bool isNetworkTest = false)
         {
             return _walletRepository.GeneratePubkey(coinType, seedHex);
         }
 
-        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index)
+        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false)
         {
             return _walletRepository.GenerateDerivePubKey(pubKey, coinType, Index);
         }
@@ -78,11 +79,29 @@ namespace DSW.HDWallet.Application
             return await _apiDecenomyExplorer.GetTransactionSpecificAsync(coin, txid);
         }
 
-        public Task GetWSTransactionAsync(string coin, string txId)
+        public async Task<BlockHashObject> GetBlockHash(string coin, string blockHeight)
         {
-            _webSocket.GetWSTransactionAsync(coin, txId).Wait();
+            return await _apiDecenomyExplorer.GetBlockHash(coin, blockHeight);
+        }
 
-            return Task.CompletedTask;
+        public async Task<XpubObject> GetXpub(string coin, string xpub)
+        {
+            return await _apiDecenomyExplorer.GetXpub(coin, xpub);
+        }
+
+        public async Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed = false)
+        {
+            return await _apiDecenomyExplorer.GetUtxo(coin, address, confirmed);
+        }
+
+        public async Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId)
+        {
+            return await _webSocket.GetWSTransactionAsync(coin, txId);
+        }
+
+        public async Task<WSSubscribeObject> SubscribeNewTransaction(string coin)
+        {
+            return await _webSocket.SubscribeNewTransaction(coin);
         }
     }
 }
