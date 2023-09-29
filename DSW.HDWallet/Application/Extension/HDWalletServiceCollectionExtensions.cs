@@ -1,7 +1,7 @@
 ﻿using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
-using DSW.HDWallet.Infrastructure.WebSocket;
+using DSW.HDWallet.Infrastructure.WS;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DSW.HDWallet.Application.Extension
@@ -15,7 +15,7 @@ namespace DSW.HDWallet.Application.Extension
             services.AddScoped<IMnemonicRepository, MnemonicRepository>();
             services.AddScoped<IApiDecenomyExplorerRepository, ApiDecenomyExplorerRepository>();
             services.AddScoped<IWebSocketDecenomyExplorerRepository, WebSocketDecenomyExplorerRepository>();
-
+            services.AddTransient<IApiDecenomyExplorerRepository, ApiDecenomyExplorerRepository>();
         }
     }
 }

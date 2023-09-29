@@ -7,5 +7,6 @@
         public List<string>? Addresses { get; set; }
         public bool? IsAddress { get; set; }
         public string? Hex { get; set; }
+        public ScriptPubKey? ScriptPubKey { get; set; }
     }
 }

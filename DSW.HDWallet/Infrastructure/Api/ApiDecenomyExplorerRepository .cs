@@ -1,93 +1,109 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace DSW.HDWallet.Infrastructure.Api
 {
     public class ApiDecenomyExplorerRepository : IApiDecenomyExplorerRepository
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ApiDecenomyExplorerRepository(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        }
+
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
         {
             string endpoint = $"/api/v2/address/{address}";
+            var apiUrl = BuildApiUrl(coin, endpoint);
 
-            try
-            {
-                // TO DO Criar Factory / Ingles / DeserializeObject nativo do .NET Core / Exception
-
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync(getApiUrl(endpoint, coin));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    return JsonConvert.DeserializeObject<AddressObject>(responseBody);
-                }
-                else
-                {
-                    throw new Exception($"Erro na solicitação à API: {response.StatusCode}");
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new Exception($"Erro na solicitação à API: {ex.Message}");
-            }
+            return await SendGetRequest<AddressObject>(apiUrl);
         }
 
         public async Task<TransactionObject> GetTransactionAsync(string coin, string txid)
         {
             string endpoint = $"/api/v2/tx/{txid}";
+            var apiUrl = BuildApiUrl(coin, endpoint);
 
-            try
-            {
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync(getApiUrl(endpoint, coin));
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-
-                    return JsonConvert.DeserializeObject<TransactionObject>(responseBody);
-                }
-                else
-                {
-                    throw new Exception($"Erro na solicitação à API: {response.StatusCode}");
-                }
-            }
-            catch (HttpRequestException ex)
-            {
-                throw new Exception($"Erro na solicitação à API: {ex.Message}");
-            }
+            return await SendGetRequest<TransactionObject>(apiUrl);
         }
 
         public async Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid)
         {
             string endpoint = $"/api/v2/tx-specific/{txid}";
+            var apiUrl = BuildApiUrl(coin, endpoint);
 
+            return await SendGetRequest<TransactionSpecificObject>(apiUrl);
+        }
+
+        public async Task<BlockHashObject> GetBlockHash(string coin, string blockHeight)
+        {
+            string endpoint = $"/api/v2/block-index/{blockHeight}";
+            var apiUrl = BuildApiUrl(coin, endpoint);
+
+            return await SendGetRequest<BlockHashObject>(apiUrl);
+        }
+
+        public async Task<XpubObject> GetXpub(string coin, string xpub)
+        {
+            string endpoint = $"/api/v2/xpub/{xpub}";
+            var apiUrl = BuildApiUrl(coin, endpoint);
+
+            return await SendGetRequest<XpubObject>(apiUrl);
+        }
+
+        public async Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed)
+        {           
+            var queryParams = new Dictionary<string, string>
+            {
+                {"confirmed", confirmed.ToString()}
+            };            
+
+            string endpoint = $"/api/v2/utxo/{address}";
+            var apiUrl = BuildApiUrl(coin, endpoint, queryParams);
+
+            return await SendGetRequest<UtxoObject[]>(apiUrl);
+        }
+
+        private string BuildApiUrl(string coin, string endpoint, Dictionary<string, string>? queryParams = null)
+        {
+            var uriBuilder = new UriBuilder($"https://{coin.ToLower()}.decenomy.net{endpoint}");
+
+            if (queryParams != null && queryParams.Count > 0)
+            {
+                var query = new FormUrlEncodedContent(queryParams);
+                uriBuilder.Query = query.ReadAsStringAsync().Result;
+            }
+
+            return uriBuilder.ToString();
+        }
+
+        private async Task<T> SendGetRequest<T>(string apiUrl)
+        {
             try
             {
-                using var httpClient = new HttpClient();
-                var response = await httpClient.GetAsync(getApiUrl(endpoint, coin));
+                var client = _httpClientFactory.CreateClient();
+
+                var response = await client.GetAsync(apiUrl);
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-                    return JsonConvert.DeserializeObject<TransactionSpecificObject>(responseBody);
+                    return JsonSerializer.Deserialize<T>(responseBody, options)!;
                 }
                 else
                 {
-                    throw new Exception($"Erro na solicitação à API: {response.StatusCode}");
+                    throw new Exception(message: $"Error in API request: {response.Content} StatusCode: {response.StatusCode} ");
                 }
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex)
             {
-                throw new Exception($"Erro na solicitação à API: {ex.Message}");
+                throw new Exception($"Error in API request: {ex.Message}");
             }
         }
 
-        private string getApiUrl(string endpoint, string coin)
-        {
-            return $"https://{coin.ToLower()}.decenomy.net{endpoint}";
-        }
+
     }
 }
