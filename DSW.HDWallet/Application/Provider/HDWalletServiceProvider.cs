@@ -22,7 +22,7 @@ namespace DSW.HDWallet.Application.Provider
                 throw new InvalidOperationException("HDWalletServiceProvider must be initialized first.");
             }
 
-            return _serviceProvider.GetService<IWalletService>();
+            return _serviceProvider.GetService<IWalletService>()!;
         }
     }
 }

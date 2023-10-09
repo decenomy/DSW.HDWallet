@@ -23,5 +23,7 @@ namespace DSW.HDWallet.Application
 
         Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId);
         Task<WSSubscribeObject> SubscribeNewTransaction(string coin);
+
+        Task<List<UtxoObject>> TransactionAsync(string coin, string address, ulong value);
     }
 }

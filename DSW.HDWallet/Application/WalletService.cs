@@ -103,5 +103,12 @@ namespace DSW.HDWallet.Application
         {
             return await _webSocket.SubscribeNewTransaction(coin);
         }
+
+        public async Task<List<UtxoObject>> TransactionAsync(string coin, string address, ulong value)
+        {
+            var _getUtxo = await GetUtxo(coin, address);
+
+            return _walletRepository.Transaction(value, _getUtxo.ToList());
+        }
     }
 }
