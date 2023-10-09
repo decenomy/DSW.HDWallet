@@ -1,4 +1,5 @@
 ﻿using DSW.HDWallet.Application.Extension;
+using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Wallets;
 using NBitcoin;
@@ -121,5 +122,55 @@ namespace DSW.HDWallet.Infrastructure
 
             return deriveKeyDetails;
         }
+
+        public List<UtxoObject> Transaction(ulong value, List<UtxoObject> utxos)
+        {
+            return SelectUtxos(utxos, value);
+        }
+
+        private List<UtxoObject> SelectUtxos(List<UtxoObject> utxos, ulong targetValue)
+        {
+            ulong totalValue = 0;
+            var selectedUtxos = new List<UtxoObject>();
+
+            var exactMatch = utxos.FirstOrDefault(utxo => utxo.Value!.ToULong() == targetValue);
+
+            if (exactMatch != null)
+                return new List<UtxoObject> { exactMatch };
+
+            var sortedUtxos = utxos.OrderByDescending(utxo => utxo.Value!.ToULong()).ToList();
+
+
+            while (totalValue < targetValue)
+            {
+                ulong value = targetValue - totalValue;
+
+                var closestLowerValueUtxo = sortedUtxos.FirstOrDefault(utxo => utxo.Value!.ToULong() < value);
+
+                if (closestLowerValueUtxo != null)
+                {
+                    selectedUtxos.Add(closestLowerValueUtxo);
+                    totalValue += closestLowerValueUtxo.Value!.ToULong();
+                    sortedUtxos.Remove(closestLowerValueUtxo);
+                }
+                else
+                {
+                    var remainingUtxos = sortedUtxos.OrderBy(utxo => utxo.Value!.ToULong()).ToList();
+                    foreach (var utxo in remainingUtxos)
+                    {
+                        selectedUtxos.Add(utxo);
+                        totalValue += utxo.Value!.ToULong();
+                        remainingUtxos.Remove(utxo); 
+
+                        if (totalValue >= targetValue)
+                            break;
+                    }
+                }
+            }
+            return selectedUtxos;
+        }
+
+
+
     }
 }

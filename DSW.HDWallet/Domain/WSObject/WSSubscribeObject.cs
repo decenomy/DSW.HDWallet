@@ -2,7 +2,7 @@
 {
     public class WSSubscribeObject
     {
-        public string id { get; set; }
-        public Object data { get; set; }
+        public string? id { get; set; }
+        public Object? data { get; set; }
     }
 }

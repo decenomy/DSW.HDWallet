@@ -2,7 +2,7 @@
 {
     public class WSTransactionObject
     {
-        public string id { get; set; }
-        public Data data { get; set; }
+        public string? id { get; set; }
+        public Data? data { get; set; }
     }
 }

@@ -30,7 +30,7 @@ namespace DSW.HDWallet.Infrastructure.WS
                 await t.Task;
                 ws.Close();
 
-                return JsonSerializer.Deserialize<WSTransactionObject>(response, serializerOptions)!;
+                return JsonSerializer.Deserialize<WSTransactionObject>(response!, serializerOptions)!;
             }
             catch (Exception ex)
             {
@@ -64,7 +64,7 @@ namespace DSW.HDWallet.Infrastructure.WS
                 await t.Task;
                 ws.Close();
 
-                return JsonSerializer.Deserialize<WSSubscribeObject>(response, serializerOptions)!;
+                return JsonSerializer.Deserialize<WSSubscribeObject>(response!, serializerOptions)!;
             }
             catch (Exception ex)
             {
