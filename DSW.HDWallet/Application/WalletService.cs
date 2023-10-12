@@ -56,12 +56,12 @@ namespace DSW.HDWallet.Application
 
         public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, bool isNetworkTest = false)
         {
-            return _walletRepository.GeneratePubkey(coinType, seedHex);
+            return _walletRepository.GeneratePubkey(coinType, seedHex, null, isNetworkTest);
         }
 
         public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false)
         {
-            return _walletRepository.GenerateDerivePubKey(pubKey, coinType, Index);
+            return _walletRepository.GenerateDerivePubKey(pubKey, coinType, Index, isNetworkTest);
         }
 
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
@@ -108,7 +108,7 @@ namespace DSW.HDWallet.Application
         {
             var _getUtxo = await GetUtxo(coin, address);
 
-            return _walletRepository.Transaction(value, _getUtxo.ToList());
+            return _walletRepository.SendTransaction(value, _getUtxo.ToList());
         }
     }
 }

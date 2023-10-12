@@ -12,7 +12,7 @@ namespace DSW.HDWallet.Domain.Wallets
         DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false);
         DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false);
         PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, string? password = null, bool isNetworkTest = false);
-        List<UtxoObject> Transaction(ulong value, List<UtxoObject> utxos);
+        List<UtxoObject> SendTransaction(ulong value, List<UtxoObject> utxos);
 
     }
 }
