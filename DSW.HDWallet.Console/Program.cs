@@ -241,7 +241,7 @@ namespace Decenomy
                         ulong trTotal = 0;
                         foreach (var tr in _transactionResponse!)
                         {
-                            WriteLine($"Vout index: {tr.Vout} TxId: {tr.Txid} \t Value: {tr.Value!.ToFormattedString()} {transactionCoinName}" , ConsoleColor.Cyan);
+                            WriteLine($" Vout index: {tr.Vout} TxId: {tr.Txid} \t Value: {tr.Value!.ToFormattedString()} {transactionCoinName}" , ConsoleColor.Cyan);
                             trTotal += tr.Value!.ToULong();
                         }
 

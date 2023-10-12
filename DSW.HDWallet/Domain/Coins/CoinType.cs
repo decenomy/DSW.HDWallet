@@ -18,7 +18,6 @@
         PNY,
         SAPP,
         SUV,
-        UCR,
-        TKYAN
+        UCR
     }
 }
