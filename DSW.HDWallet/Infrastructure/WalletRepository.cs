@@ -186,57 +186,35 @@ namespace DSW.HDWallet.Infrastructure
                 if (utxoSelected != null && utxoSelected!.Count > 0)
                 {
                     ExtKey extendedKey = new(seedHex);
-
-                    // Chave privada do remetente para assinar a transação
+                    var transaction = Transaction.Create(network);
+                    var inputs = new List<TxIn>();
                     var key = extendedKey.PrivateKey.GetBitcoinSecret(network);
 
-                    // Endereço de troco
                     BitcoinAddress changeAddress = extendedKey.PrivateKey.GetAddress(ScriptPubKeyType.Legacy, network);
-
-                    // Endereço público do destinatário
                     BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
 
-                    // Valor a ser enviado em KYAN
                     Money amount = Money.Coins(amountToSend.ToDecimalPoint());
-
-                    // Instância da transação
-                    var transaction = Transaction.Create(network);
-
-                    // Entrada de fundos (inputs)
-                    var inputs = new List<TxIn>();
-
+                                        
                     foreach (var utxo in utxoSelected)
                     {
-                        // Entrada de fundos (inputs)
                         OutPoint outPoint = new OutPoint(uint256.Parse(utxo.Txid), utxo.Vout);
                         var txIn = new TxIn(outPoint);
                         transaction.Inputs.Add(txIn);
                     }
 
-                    // Saída de fundos para o destinatário
                     TxOut txOutRecipient = new TxOut(amount, recipientAddress);
                     transaction.Outputs.Add(txOutRecipient);
 
-                    // Calcular o valor de troco
                     Money totalInputAmount = utxoSelected.Select(x => x.Value!.ToLong()).Aggregate((total, current) => total + current);
                     Money changeAmount = totalInputAmount - amount;
 
-                    // Calcular o tamanho da transação em bytes
                     int transactionSizeBytes = transaction.GetSerializedSize();
-
-                    // Converter o tamanho da transação para KB
                     decimal transactionSizeKB = (decimal)transactionSizeBytes / 1000;
 
-                    // Calcular a taxa da transação com base na regra de 10.000 satoshis por KB
                     long transactionFeeSatoshis = (long)(transactionSizeKB * 10000);
 
                     if (transactionFeeSatoshis > Money.Zero.Satoshi)
                     {
-                        // Subtrair a taxa do valor de troco ou da saída para o destinatário
-
-                        //
-                        // IMPORTANTE: O Fee deve ser subtraido do valor do troco?
-                        //
                         changeAmount -= new Money(transactionFeeSatoshis);
 
                         if (changeAmount < Money.Zero.Satoshi)
@@ -245,15 +223,12 @@ namespace DSW.HDWallet.Infrastructure
 
                     if (changeAmount > Money.Zero)
                     {
-                        // Saída de fundos para o endereço de troco
                         TxOut txOutChange = new TxOut(changeAmount, changeAddress);
                         transaction.Outputs.Add(txOutChange);
                     }
 
-                    // Obtenha as moedas de entrada (as saídas das transações de origem)
                     Coin[] inputCoins = utxoSelected.Select(x => new Coin(new OutPoint(new uint256(x.Txid), x.Vout), txOutRecipient)).ToArray();
 
-                    // Assine a transação com a moeda de entrada
                     transaction.Sign(key, inputCoins);
 
                     TransactionDetails transactionDetails = new()
