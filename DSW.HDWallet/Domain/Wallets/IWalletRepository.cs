@@ -1,5 +1,6 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
+using DSW.HDWallet.Domain.Transaction;
 using NBitcoin;
 
 namespace DSW.HDWallet.Domain.Wallets
@@ -12,7 +13,7 @@ namespace DSW.HDWallet.Domain.Wallets
         DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false);
         DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false);
         PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, string? password = null, bool isNetworkTest = false);
-        List<UtxoObject> SendTransaction(ulong value, List<UtxoObject> utxos);
+        TransactionDetails GenerateTransaction(CoinType coinType, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0);
 
     }
 }

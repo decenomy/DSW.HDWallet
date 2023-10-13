@@ -1,5 +1,6 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
+using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Domain.WSObject;
 using Words = NBitcoin.WordCount;
@@ -24,6 +25,6 @@ namespace DSW.HDWallet.Application
         Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId);
         Task<WSSubscribeObject> SubscribeNewTransaction(string coin);
 
-        Task<List<UtxoObject>> TransactionAsync(string coin, string address, ulong value);
+        Task<TransactionDetails> GenerateTransactionAsync(CoinType coinType, long amountToSend, string seedHex, string fromAddress, string toAddress);
     }
 }

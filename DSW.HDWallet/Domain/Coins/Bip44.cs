@@ -30,6 +30,7 @@
             new CoinInfo(850, "0x80000352", "FLS", "Flits"),
             new CoinInfo(833, "0x80000341", "777", "Jackpot"),
             new CoinInfo(834, "0x80000342", "KYAN", "Kyanite"),
+            new CoinInfo(834, "0x80000342", "TKYAN", "Kyanite"),
             new CoinInfo(849, "0x80000351", "MOBIC", "MobilityCoin"),
             new CoinInfo(842, "0x8000034a", "MONK", "Monk"),
             new CoinInfo(846, "0x8000034e", "OWO", "OneWorld Coin"),
@@ -37,8 +38,6 @@
             new CoinInfo(832, "0x80000340", "SAPP", "Sapphire"),
             new CoinInfo(844, "0x8000034c", "SUV", "Suvereno"),
             new CoinInfo(839, "0x80000347", "UCR", "Ultra Clear")
-
-            // TO DO BTC
         };
 
         public static string GetCoinCodeBySymbol(string symbol)
