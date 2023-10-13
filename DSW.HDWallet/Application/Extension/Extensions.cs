@@ -19,7 +19,78 @@
             }
         }
 
+        public static decimal ToDecimal(this ulong value)
+        {
+            try
+            {
+                return Convert.ToDecimal(value);
+            }
+            catch (OverflowException)
+            {
+                throw new OverflowException("The ulong value is too large to be converted to decimal.");
+            }
+        }
+
+        public static long ToLong(this string value)
+        {
+            if (long.TryParse(value, out long result))
+            {
+                return result;
+            }
+            throw new FormatException("The input string cannot be converted to a long.");
+        }
+
+        public static decimal ToDecimalPoint(this long value)
+        {
+            try
+            {
+                string stringValue = value.ToString();
+                int length = stringValue.Length;
+                string formattedValue;
+
+                if (length == 8)
+                {
+                    formattedValue = "0." + value.ToString("D8");
+                }
+                else if (length < 8)
+                {
+                    formattedValue = value.ToString("D7") + ".0" + value.ToString("D1");
+                }
+                else
+                {
+                    string integerPart = stringValue.Substring(0, length - 8);
+                    string decimalPart = stringValue.Substring(length - 8);
+
+                    formattedValue = integerPart + "." + decimalPart;
+                }
+
+                return Convert.ToDecimal(formattedValue);
+            }
+            catch (OverflowException)
+            {
+                throw new OverflowException("The long value is too large to be converted to decimal.");
+            }
+            catch (FormatException)
+            {
+                throw new FormatException("The input value is not a valid long.");
+            }
+        }
+
         public static string ToFormattedString(this ulong value)
+        {
+            string stringValue = value.ToString();
+            if (stringValue.Length > 8)
+            {
+                int decimalPosition = stringValue.Length - 8;
+                return stringValue.Substring(0, decimalPosition) + "." + stringValue.Substring(decimalPosition);
+            }
+            else
+            {
+                return "0." + stringValue.PadLeft(8, '0');
+            }
+        }
+
+        public static string ToFormattedString(this long value)
         {
             string stringValue = value.ToString();
             if (stringValue.Length > 8)

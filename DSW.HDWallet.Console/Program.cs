@@ -225,29 +225,79 @@ namespace Decenomy
                     #region Create a Transaction
                     case "5":
                         WriteLine($"\n Create a Transaction", ConsoleColor.DarkRed);
-                        Console.Write("\n Enter Coin Name: ");
-                        string transactionCoinName = Console.ReadLine()!;
 
-                        Console.Write(" Enter Address: ");
-                        string transactionAddressCoin = Console.ReadLine()!;
+                        Console.Write("\n Enter SeedHex: ");
+                        string walletSeed = Console.ReadLine()!;
+
+                        WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
+
+                        foreach (CoinType coin in Enum.GetValues(typeof(CoinType)))
+                        {
+                            Console.WriteLine($" {(int)coin}: {coin}");
+                        }
+
+                        int choiceTransaction;
+                        bool validChoiceTransaction = false;
+
+                        do
+                        {
+                            Console.Write(" Enter the coin code: ");
+                            if (int.TryParse(Console.ReadLine(), out choiceTransaction))
+                            {
+                                if (Enum.IsDefined(typeof(CoinType), choiceTransaction))
+                                {
+                                    validChoiceTransaction = true;
+                                }
+                                else
+                                {
+                                    WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
+                                }
+                            }
+                            else
+                            {
+                                WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
+                            }
+                        } while (!validChoiceTransaction);
+
+                        CoinType transactionCoin = (CoinType)choiceTransaction;
+
+
+                        Console.Write(" From Address: ");
+                        string fromAddress = Console.ReadLine()!;
+
+                        Console.Write(" To Address: ");
+                        string toAddress = Console.ReadLine()!;
 
                         Console.Write("\n Transaction Value: ");
-                        ulong transactionValue = Console.ReadLine()!.ToULong();
+                        long transactionValue = Console.ReadLine()!.ToLong();
 
 
-                        var _transactionResponse = walletAppService?.TransactionAsync(transactionCoinName, transactionAddressCoin, transactionValue).Result;
+                        var _tr = walletAppService?.GenerateTransactionAsync(transactionCoin, transactionValue, walletSeed, fromAddress, toAddress).Result;
 
                         WriteLine($"\n Transaction Details", ConsoleColor.DarkRed);
                         ulong trTotal = 0;
-                        foreach (var tr in _transactionResponse!)
-                        {
-                            WriteLine($" Vout index: {tr.Vout} TxId: {tr.Txid} \t Value: {tr.Value!.ToFormattedString()} {transactionCoinName}" , ConsoleColor.Cyan);
-                            trTotal += tr.Value!.ToULong();
-                        }
 
-                        WriteLine($"\n Requested Value:\t {transactionValue.ToFormattedString()} ", ConsoleColor.Green);
-                        WriteLine($" Transaction Value:\t {trTotal.ToFormattedString()} ", ConsoleColor.Green);
-                        WriteLine($" Change Value:\t\t {(trTotal - transactionValue).ToFormattedString()} ", ConsoleColor.Green);
+                        if(_tr!.Status!.Equals("Error"))
+                        {
+                            WriteLine($"\n Status:\t {_tr.Status} ", ConsoleColor.DarkRed);
+                            WriteLine($" Message:\t {_tr.Message} ", ConsoleColor.DarkRed);
+                        }
+                        else
+                        {
+                            foreach (var tr in _tr!.Utxos!)
+                            {
+                                WriteLine($" Vout index: {tr.Vout} TxId: {tr.Txid} \t Value: {tr.Value!.ToFormattedString()} {transactionCoin}", ConsoleColor.Cyan);
+                                trTotal += tr.Value!.ToULong();
+                            }
+
+                            WriteLine($"\n To Address:\t {_tr.ToAddress} ", ConsoleColor.Green);
+                            WriteLine($"\n Balance:\t {_tr.Balance} ", ConsoleColor.Green);
+                            WriteLine($" Amount to Send: {_tr.Amount} ", ConsoleColor.Green);
+                            WriteLine($" Change Amount:\t {_tr.Change} ", ConsoleColor.Green);
+                            WriteLine($" Fee:\t\t {_tr.Fee} ", ConsoleColor.Green);
+                            WriteLine($" Size KB:\t {_tr.SizeKb} ", ConsoleColor.Green);
+                            WriteLine($" Message:\t {_tr.Message} ", ConsoleColor.Green);
+                        }
 
                         Console.ReadLine();
                         Console.Clear();

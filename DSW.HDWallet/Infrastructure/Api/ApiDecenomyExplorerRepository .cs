@@ -1,4 +1,5 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
+using DSW.HDWallet.Domain.Coins;
 using System.Text.Json;
 
 namespace DSW.HDWallet.Infrastructure.Api
@@ -53,7 +54,7 @@ namespace DSW.HDWallet.Infrastructure.Api
         }
 
         public async Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed)
-        {           
+        {            
             var queryParams = new Dictionary<string, string>
             {
                 {"confirmed", confirmed.ToString()}
