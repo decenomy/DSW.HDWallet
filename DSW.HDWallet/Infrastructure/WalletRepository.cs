@@ -1,6 +1,7 @@
 ﻿using DSW.HDWallet.Application.Extension;
 using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
+using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
 using NBitcoin;
 
@@ -123,54 +124,152 @@ namespace DSW.HDWallet.Infrastructure
             return deriveKeyDetails;
         }
 
-        public List<UtxoObject> Transaction(ulong value, List<UtxoObject> utxos)
+        private List<UtxoObject> SelectUtxos(List<UtxoObject> utxos, long targetValue, long fee = 0)
         {
-            return SelectUtxos(utxos, value);
-        }
-
-        private List<UtxoObject> SelectUtxos(List<UtxoObject> utxos, ulong targetValue)
-        {
-            ulong totalValue = 0;
+            long totalValue = 0;
             var selectedUtxos = new List<UtxoObject>();
 
-            var exactMatch = utxos.FirstOrDefault(utxo => utxo.Value!.ToULong() == targetValue);
-
-            if (exactMatch != null)
-                return new List<UtxoObject> { exactMatch };
-
-            var sortedUtxos = utxos.OrderByDescending(utxo => utxo.Value!.ToULong()).ToList();
-
-
-            while (totalValue < targetValue)
+            if(utxos != null && utxos!.Count > 0)
             {
-                ulong value = targetValue - totalValue;
+                if (fee > 0)
+                    targetValue += fee;
 
-                var closestLowerValueUtxo = sortedUtxos.FirstOrDefault(utxo => utxo.Value!.ToULong() < value);
+                var exactMatch = utxos.FirstOrDefault(utxo => utxo.Value?.ToLong() == targetValue);
 
-                if (closestLowerValueUtxo != null)
+                if (exactMatch != null)
+                    return new List<UtxoObject> { exactMatch };
+
+                var sortedUtxos = utxos.OrderByDescending(utxo => utxo.Value!.ToULong()).ToList();
+
+
+                while (totalValue < targetValue && sortedUtxos.Count > 0)
                 {
-                    selectedUtxos.Add(closestLowerValueUtxo);
-                    totalValue += closestLowerValueUtxo.Value!.ToULong();
-                    sortedUtxos.Remove(closestLowerValueUtxo);
-                }
-                else
-                {
-                    var remainingUtxos = sortedUtxos.OrderBy(utxo => utxo.Value!.ToULong()).ToList();
-                    foreach (var utxo in remainingUtxos)
+                    long value = targetValue - totalValue;
+
+                    var closestLowerValueUtxo = sortedUtxos.FirstOrDefault(utxo => utxo.Value!.ToLong() < value);
+
+                    if (closestLowerValueUtxo != null)
                     {
-                        selectedUtxos.Add(utxo);
-                        totalValue += utxo.Value!.ToULong();
-                        remainingUtxos.Remove(utxo); 
+                        selectedUtxos.Add(closestLowerValueUtxo);
+                        totalValue += closestLowerValueUtxo.Value!.ToLong();
+                        sortedUtxos.Remove(closestLowerValueUtxo);
+                    }
+                    else
+                    {
+                        var remainingUtxos = sortedUtxos.OrderBy(utxo => utxo.Value!.ToLong()).ToList();
+                        foreach (var utxo in remainingUtxos)
+                        {
+                            selectedUtxos.Add(utxo);
+                            totalValue += utxo.Value!.ToLong();
+                            remainingUtxos.Remove(utxo);
 
-                        if (totalValue >= targetValue)
-                            break;
+                            if (totalValue >= targetValue)
+                                break;
+                        }
                     }
                 }
+
+                if (totalValue < targetValue && sortedUtxos.Count == 0)
+                    return new List<UtxoObject>();
             }
+
             return selectedUtxos;
         }
 
+        public TransactionDetails GenerateTransaction(CoinType coinType, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0)
+        {
+            Network network = CoinNetwork.GetMainnet(coinType);
+            var utxoSelected = SelectUtxos(utxos, amountToSend, fee);
+            
+            try
+            {
+                if (utxoSelected != null && utxoSelected!.Count > 0)
+                {
+                    ExtKey extendedKey = new(seedHex);
+                    var transaction = Transaction.Create(network);
+                    var inputs = new List<TxIn>();
+                    var key = extendedKey.PrivateKey.GetBitcoinSecret(network);
 
+                    BitcoinAddress changeAddress = extendedKey.PrivateKey.GetAddress(ScriptPubKeyType.Legacy, network);
+                    BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
+
+                    Money amount = Money.Coins(amountToSend.ToDecimalPoint());
+                                        
+                    foreach (var utxo in utxoSelected)
+                    {
+                        OutPoint outPoint = new OutPoint(uint256.Parse(utxo.Txid), utxo.Vout);
+                        var txIn = new TxIn(outPoint);
+                        transaction.Inputs.Add(txIn);
+                    }
+
+                    TxOut txOutRecipient = new TxOut(amount, recipientAddress);
+                    transaction.Outputs.Add(txOutRecipient);
+
+                    Money totalInputAmount = utxoSelected.Select(x => x.Value!.ToLong()).Aggregate((total, current) => total + current);
+                    Money changeAmount = totalInputAmount - amount;
+
+                    int transactionSizeBytes = transaction.GetSerializedSize();
+                    decimal transactionSizeKB = (decimal)transactionSizeBytes / 1000;
+
+                    long transactionFeeSatoshis = (long)(transactionSizeKB * 10000);
+
+                    if (transactionFeeSatoshis > Money.Zero.Satoshi)
+                    {
+                        changeAmount -= new Money(transactionFeeSatoshis);
+
+                        if (changeAmount < Money.Zero.Satoshi)
+                            return GenerateTransaction(coinType, utxos, amountToSend, seedHex, toAddress, changeAmount.Abs());
+                    }
+
+                    if (changeAmount > Money.Zero)
+                    {
+                        TxOut txOutChange = new TxOut(changeAmount, changeAddress);
+                        transaction.Outputs.Add(txOutChange);
+                    }
+
+                    Coin[] inputCoins = utxoSelected.Select(x => new Coin(new OutPoint(new uint256(x.Txid), x.Vout), txOutRecipient)).ToArray();
+
+                    transaction.Sign(key, inputCoins);
+
+                    TransactionDetails transactionDetails = new()
+                    {
+                        Transaction = transaction,
+                        ToAddress = toAddress,
+                        Balance = totalInputAmount,
+                        Amount = amount,
+                        Change = changeAmount,
+                        Fee = new Money(transactionFeeSatoshis),
+                        SizeKb = transactionSizeKB,
+                        Utxos = utxoSelected,
+                        Message = "The transaction was created successfully.",
+                        Status = "OK"
+
+                    };
+
+                    return transactionDetails;
+                }
+                else
+                {
+                    TransactionDetails transactionDetails = new()
+                    {
+                        Status = "Error",
+                        Message = "The UTXOs or balance are insufficient for this transaction."
+                    };
+                    
+                    return transactionDetails;
+                }                
+            }
+            catch (Exception ex)
+            {
+                TransactionDetails transactionDetails = new()
+                {
+                    Status = "Error",
+                    Message = ex.Message
+                };
+
+                return transactionDetails;
+            }
+        }
 
     }
 }

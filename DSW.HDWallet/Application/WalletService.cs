@@ -1,11 +1,13 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
+using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Domain.WSObject;
 using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.WS;
 using NBitcoin;
+using NBitcoin.Altcoins;
 
 namespace DSW.HDWallet.Application
 {
@@ -56,12 +58,12 @@ namespace DSW.HDWallet.Application
 
         public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, bool isNetworkTest = false)
         {
-            return _walletRepository.GeneratePubkey(coinType, seedHex);
+            return _walletRepository.GeneratePubkey(coinType, seedHex, null, isNetworkTest);
         }
 
         public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false)
         {
-            return _walletRepository.GenerateDerivePubKey(pubKey, coinType, Index);
+            return _walletRepository.GenerateDerivePubKey(pubKey, coinType, Index, isNetworkTest);
         }
 
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
@@ -104,11 +106,12 @@ namespace DSW.HDWallet.Application
             return await _webSocket.SubscribeNewTransaction(coin);
         }
 
-        public async Task<List<UtxoObject>> TransactionAsync(string coin, string address, ulong value)
+        public async Task<TransactionDetails> GenerateTransactionAsync(CoinType coinType, long amountToSend, string seedHex, string fromAddress, string toAddress)
         {
-            var _getUtxo = await GetUtxo(coin, address);
+            var utxos = await GetUtxo(coinType.ToString(), fromAddress);
 
-            return _walletRepository.Transaction(value, _getUtxo.ToList());
+            return _walletRepository.GenerateTransaction(coinType, utxos.ToList(), amountToSend, seedHex, toAddress);
         }
+
     }
 }

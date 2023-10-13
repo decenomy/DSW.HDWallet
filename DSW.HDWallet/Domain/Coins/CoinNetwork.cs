@@ -26,6 +26,8 @@ namespace DSW.HDWallet.Domain.Coins
                 CoinType.SAPP => isNetworkTest ? Sapphire.Instance.Testnet : Sapphire.Instance.Mainnet,
                 CoinType.SUV => isNetworkTest ? Suvereno.Instance.Testnet : Suvereno.Instance.Mainnet,
                 CoinType.UCR => isNetworkTest ? UltraClear.Instance.Testnet : UltraClear.Instance.Mainnet,
+                // Test
+                CoinType.TKYAN => Kyanite.Instance.Testnet,
                 _ => throw new ArgumentOutOfRangeException(nameof(coinType), coinType, "Unknown coin type"),
             };
         }
