@@ -42,7 +42,7 @@
 
         public static string GetCoinCodeBySymbol(string symbol)
         {
-            CoinInfo coin = coinList.Find(c => c.Symbol == symbol);
+            CoinInfo coin = coinList.Find(c => c.Symbol == symbol.Replace("_", ""));
             if (coin.Code != 0)
                 return coin.Code.ToString();
             else
