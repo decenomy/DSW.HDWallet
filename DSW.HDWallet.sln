@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSW.HDWallet.Console", "DSW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSW.HDWallet", "DSW.HDWallet\DSW.HDWallet.csproj", "{75912203-C706-47B9-8B86-15F6ACECF4B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSW.Test", "DSW.Test\DSW.Test.csproj", "{4425E662-C383-40E2-89DC-7B703AF05BC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSW.Test", "DSW.Test\DSW.Test.csproj", "{4425E662-C383-40E2-89DC-7B703AF05BC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

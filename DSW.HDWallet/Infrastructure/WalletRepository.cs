@@ -271,5 +271,23 @@ namespace DSW.HDWallet.Infrastructure
             }
         }
 
+        public bool ValidateAddress(string ticker, string address)
+        {
+            Network network = CoinNetwork.GetNetwork(ticker);
+
+            try
+            {
+                BitcoinAddress bitcoinAddress = BitcoinAddress.Create(address, network);
+
+                if (bitcoinAddress != null)
+                    return true;
+            }
+            catch (FormatException)
+            {
+                return false;              
+            }
+
+            return false;
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace Decenomy
                 Console.WriteLine(" [ 3 ]  - Create Derived Key");
                 Console.WriteLine(" [ 4 ]  - New Wallet - App Process");
                 Console.WriteLine(" [ 5 ]  - Create a Transaction");
+                Console.WriteLine(" [ 6 ]  - Validate a Address");
                 Console.WriteLine(" ");
                 Console.WriteLine(" [ 8 ]  - Recover Wallet");
                 Console.WriteLine(" [ 9 ]  - Random Secrect Words");
@@ -304,6 +305,23 @@ namespace Decenomy
                         break;
                     #endregion
 
+                    #region Validate a Address
+                    case "6":
+                        Console.WriteLine("\n\n Validate a Address");
+
+                        bool isValid = walletAppService!.ValidateAddress("SAPP", "SeZQ1jpMHms63CejL4nTTbVYoLNQXLsbJ6");
+
+                        if (isValid)
+                            WriteLine($" Address Validade: \t True", ConsoleColor.Green);
+                        else
+                            WriteLine($" Address Validade: \t False", ConsoleColor.DarkRed);
+
+                        Console.ReadLine();
+                        Console.Clear();
+                        break;
+                    #endregion
+
+                        
                     #region Recover Wallet
                     case "8":
                         WriteLine($"\n Recover Wallett Address", ConsoleColor.DarkRed);
