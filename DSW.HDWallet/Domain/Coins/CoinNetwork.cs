@@ -31,5 +31,34 @@ namespace DSW.HDWallet.Domain.Coins
                 _ => throw new ArgumentOutOfRangeException(nameof(coinType), coinType, "Unknown coin type"),
             };
         }
+
+        public static Network GetNetwork(string coinType)
+        {
+            return coinType switch
+            {
+                "AZR" => Azzure.Instance.Mainnet,
+                "BECN" => Beacon.Instance.Mainnet,
+                "BIR" => Birake.Instance.Mainnet,
+                "CFL" => CryptoFlow.Instance.Mainnet,
+                "SAGA" => CryptoSaga.Instance.Mainnet,
+                "DASHD" => DashDiamond.Instance.Mainnet,
+                "ESK" => EskaCoin.Instance.Mainnet,
+                "FLS" => Flits.Instance.Mainnet,
+                "777" => Jackpot.Instance.Mainnet,
+                "KYAN" => Kyanite.Instance.Mainnet,
+                "MOBIC" => MobilityCoin.Instance.Mainnet,
+                "MONK" => Monk.Instance.Mainnet,
+                "OWO" => OneWorldCoin.Instance.Mainnet,
+                "PNY" => Peony.Instance.Mainnet,
+                "SAPP" => Sapphire.Instance.Mainnet,
+                "SUV" => Suvereno.Instance.Mainnet,
+                "UCR" => UltraClear.Instance.Mainnet,
+                // Test
+                "TKYAN" => Kyanite.Instance.Testnet,
+                _ => throw new ArgumentOutOfRangeException(nameof(coinType), coinType, "Unknown coin type"),
+            };
+        }
+
+
     }
 }

@@ -113,5 +113,9 @@ namespace DSW.HDWallet.Application
             return _walletRepository.GenerateTransaction(coinType, utxos.ToList(), amountToSend, seedHex, toAddress);
         }
 
+        public bool ValidateAddress(string ticker, string address)
+        {
+            return _walletRepository.ValidateAddress(ticker, address);
+        }
     }
 }

@@ -26,5 +26,7 @@ namespace DSW.HDWallet.Application
         Task<WSSubscribeObject> SubscribeNewTransaction(string coin);
 
         Task<TransactionDetails> GenerateTransactionAsync(CoinType coinType, long amountToSend, string seedHex, string fromAddress, string toAddress);
+
+        bool ValidateAddress(string ticker, string address);
     }
 }
