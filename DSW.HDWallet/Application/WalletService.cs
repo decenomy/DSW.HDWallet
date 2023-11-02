@@ -7,7 +7,6 @@ using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.WS;
 using NBitcoin;
-using NBitcoin.Altcoins;
 
 namespace DSW.HDWallet.Application
 {
@@ -116,6 +115,11 @@ namespace DSW.HDWallet.Application
         public bool ValidateAddress(string ticker, string address)
         {
             return _walletRepository.ValidateAddress(ticker, address);
+        }
+
+        public string GetCoinName(string ticker)
+        {
+            return _walletRepository.GetCoinName(ticker);
         }
     }
 }

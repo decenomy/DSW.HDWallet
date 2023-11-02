@@ -1,6 +1,7 @@
 ﻿using DSW.HDWallet.Application.Extension;
 using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
+using DSW.HDWallet.Domain.Helper;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
 using NBitcoin;
@@ -288,6 +289,11 @@ namespace DSW.HDWallet.Infrastructure
             }
 
             return false;
+        }
+
+        public string GetCoinName(string ticker)
+        {
+            return TickerHelper.GetNameByTicker(ticker);
         }
     }
 }
