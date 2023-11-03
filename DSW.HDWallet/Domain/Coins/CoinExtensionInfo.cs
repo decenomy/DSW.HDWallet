@@ -1,6 +1,6 @@
-﻿namespace DSW.HDWallet.Domain.Helper;
+﻿namespace DSW.HDWallet.Domain.Coins;
 
-public class TickerHelper
+public class CoinExtensionInfo
 {
     public static string GetNameByTicker(string ticker)
     {
