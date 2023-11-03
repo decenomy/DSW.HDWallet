@@ -174,6 +174,36 @@ namespace DSW.Test
             Assert.Equal("Invalid Hex String", transactionDetails?.Message);
         }
 
+        [Theory]
+        [InlineData("SAPP", "SeZQ1jpMHms63CejL4nTTbVYoLNQXLsbJ6")]
+        [InlineData("TKYAN", "Kisn6NZVjHt6qAd7b1VakPw2DyZkU9GQQy")]
+        public void ValidateAddress_ValidAddresses_ReturnsTrue(string ticker, string address)
+        {
+            // Arrange
+            var walletRepository = new WalletRepository();
+
+            // Act
+            bool isValid = walletRepository.ValidateAddress(ticker, address);
+
+            // Assert
+            Assert.True(isValid);
+        }
+
+        [Theory]
+        [InlineData("SAPP", "SuKUyKpTKU45c8kEwWaYinWo8AoZqARuMi")]
+        [InlineData("TKYAN", "kisn6NZVjHt6qAd7b1VakPw2DyZkU9GHQy")]
+        public void ValidateAddress_InvalidAddresses_ReturnsFalse(string ticker, string address)
+        {
+            // Arrange
+            var walletRepository = new WalletRepository();
+
+            // Act
+            bool isValid = walletRepository.ValidateAddress(ticker, address);
+
+            // Assert
+            Assert.False(isValid);
+        }
+
         private List<UtxoObject> GetMockUtxos()
         {
             return new List<UtxoObject>
