@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,9 +13,29 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Monk Instance { get; } = new Monk();
 
         public override string CryptoCode => "MONK";
+        public static int Code => 842;
+        public static string HexCode => "0x8000034a";
+        public static string Name => "Monk";
+        public static string Image => "monk";
+        public static string CoinGeckoId => "one-world-coin";
 
         private Monk()
         {
+        }
+
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
         }
 
         public class MonkConsensusFactory : ConsensusFactory

@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,9 +13,29 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Azzure Instance { get; } = new Azzure();
 
         public override string CryptoCode => "AZR";
+        public static int Code => 835;
+        public static string HexCode => "0x80000343";
+        public static string Name => "Azzure";
+        public static string Image => "azr";
+        public static string CoinGeckoId => "aezora";
 
         private Azzure()
         {
+        }
+
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol= Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId                
+            };
+
+            return info;
         }
 
         public class AzzureConsensusFactory : ConsensusFactory

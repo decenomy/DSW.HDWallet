@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,11 +13,30 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Suvereno Instance { get; } = new Suvereno();
 
         public override string CryptoCode => "SUV";
+        public static int Code => 844;
+        public static string HexCode => "0x8000034c";
+        public static string Name => "Suvereno";
+        public static string Image => "suv";
+        public static string CoinGeckoId => "suvereno";
 
         private Suvereno()
         {
         }
 
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
+        }
         public class SuverenoConsensusFactory : ConsensusFactory
         {
             private SuverenoConsensusFactory()

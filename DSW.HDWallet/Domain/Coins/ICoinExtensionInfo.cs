@@ -1,25 +1,11 @@
-﻿using NBitcoin;
+﻿namespace DSW.HDWallet.Domain.Coins;
 
-namespace DSW.HDWallet.Domain.Coins;
-
-public class ICoinExtensionInfo : NetworkSetBase
+public interface ICoinExtensionInfo
 {
-    public override string? CryptoCode { get; }
-    public string? Description { get; set; }
-    public string? ImagePath { get; set; }
+    public int Code { get; set; }
+    public string? HexCode { get; set; }
+    public string? Symbol { get; set; }
+    public string? Name { get; set; }
+    public string? Image { get; set; }
     public string? CoinGeckoId { get; set; }
-    protected override NetworkBuilder CreateMainnet()
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override NetworkBuilder CreateRegtest()
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override NetworkBuilder CreateTestnet()
-    {
-        throw new NotImplementedException();
-    }
 }

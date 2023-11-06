@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,11 +13,30 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Kyanite Instance { get; } = new Kyanite();
 
         public override string CryptoCode => "KYAN";
+        public static int Code => 834;
+        public static string HexCode => "0x80000342";
+        public static string Name => "Kyanite";
+        public static string Image => "kyan";
+        public static string CoinGeckoId => "kyanite";
 
         private Kyanite()
         {
         }
 
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
+        }
         public class KyaniteConsensusFactory : ConsensusFactory
         {
             private KyaniteConsensusFactory()

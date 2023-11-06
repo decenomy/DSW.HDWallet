@@ -3,6 +3,7 @@ using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
 using NBitcoin.Protocol;
 using NBitcoin.Altcoins.HashX11;
+using DSW.HDWallet.Domain.Coins;
 
 namespace DSW.HDWallet.Infrastructure.Coins
 {
@@ -12,9 +13,29 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Peony Instance { get; } = new Peony();
 
         public override string CryptoCode => "PNY";
+        public static int Code => 840;
+        public static string HexCode => "0x80000348";
+        public static string Name => "Peony";
+        public static string Image => "pny";
+        public static string CoinGeckoId => "peony-coin";
 
         private Peony()
         {
+        }
+
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
         }
 
         public class PeonyConsensusFactory : ConsensusFactory

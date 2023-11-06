@@ -1,128 +1,46 @@
-﻿namespace DSW.HDWallet.Domain.Coins;
+﻿using DSW.HDWallet.Infrastructure.Coins;
 
-public class CoinExtensionInfo
+namespace DSW.HDWallet.Domain.Coins;
+
+public class CoinExtensionInfo: ICoinExtensionInfo
 {
+    public int Code { get; set; }
+    public string? HexCode { get; set; }
+    public string? Symbol { get; set; }
+    public string? Name { get; set; }
+    public string? Image { get; set; }
+    public string? CoinGeckoId { get; set; }
+
     public static string GetNameByTicker(string ticker)
     {
-        var enumType = typeof(CoinTicker);
-        var enumValues = Enum.GetValues(enumType);
-
-        foreach (var enumValue in enumValues)
-        {
-            var coin = (CoinTicker)enumValue;
-            if (GetId(coin) == ticker)
-            {
-                return GetName(coin);
-            }
-        }
-
-        return string.Empty;
+        return GetCoinInfo(ticker).Name!;
     }
 
-    public static string GetId(CoinTicker coin)
+    public static string GetSymbolByTicker(string ticker)
     {
-        var fieldInfo = coin.GetType().GetField(coin.ToString());
-        var attribute = (IdAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(IdAttribute));
-        return attribute != null ? attribute.Id : coin.ToString();
+        return GetCoinInfo(ticker).Symbol!;
     }
 
-    public static string GetName(CoinTicker coin)
+    public static CoinExtensionInfo GetCoinInfo(string symbol) => symbol switch
     {
-        var fieldInfo = coin.GetType().GetField(coin.ToString());
-        var attribute = (NameAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(NameAttribute));
-        return attribute != null ? attribute.Name : coin.ToString();
-    }
+        "AZR" => Azzure.GetCoinInfo(),
+        "BECN" => Beacon.GetCoinInfo(),
+        "BIR" => Birake.GetCoinInfo(),
+        "CFL" => CryptoFlow.GetCoinInfo(),
+        "SAGA" => CryptoSaga.GetCoinInfo(),
+        "DASHD" => DashDiamond.GetCoinInfo(),
+        "ESK" => EskaCoin.GetCoinInfo(),
+        "FLS" => Flits.GetCoinInfo(),
+        "777" => Jackpot.GetCoinInfo(),
+        "KYAN" => Kyanite.GetCoinInfo(),
+        "MOBIC" => MobilityCoin.GetCoinInfo(),
+        "MONK" => Monk.GetCoinInfo(),
+        "OWO" => OneWorldCoin.GetCoinInfo(),
+        "PNY" => Peony.GetCoinInfo(),
+        "SAPP" => Sapphire.GetCoinInfo(),
+        "SUV" => Suvereno.GetCoinInfo(),
+        "UCR" => UltraClear.GetCoinInfo(),
+        _ => throw new ArgumentOutOfRangeException(nameof(symbol), symbol, "Unknown coin symbol"),
+    };
 }
 
-[AttributeUsage(AttributeTargets.Field)]
-public class IdAttribute : Attribute
-{
-    public string Id { get; }
-
-    public IdAttribute(string id)
-    {
-        Id = id;
-    }
-}
-
-[AttributeUsage(AttributeTargets.Field)]
-public class NameAttribute : Attribute
-{
-    public string Name { get; }
-
-    public NameAttribute(string name)
-    {
-        Name = name;
-    }
-}
-
-public enum CoinTicker
-{
-    [Name("Azzure")]
-    [Id("AZR")]
-    AZR,
-
-    [Name("Beacon")]
-    [Id("BECN")]
-    BECN,
-
-    [Name("Birake")]
-    [Id("BIR")]
-    BIR,
-
-    [Name("CryptoFlow")]
-    [Id("CFL")]
-    CFL,
-
-    [Name("CryptoSaga")]
-    [Id("SAGA")]
-    SAGA,
-
-    [Name("Dash Diamond")]
-    [Id("DASHD")]
-    DASHD,
-
-    [Name("EskaCoin")]
-    [Id("ESK")]
-    ESK,
-
-    [Name("Flits")]
-    [Id("FLS")]
-    FLS,
-
-    [Name("Jackpot")]
-    [Id("777")]
-    _777,
-
-    [Name("Kyanite")]
-    [Id("KYAN")]
-    KYAN,
-
-    [Name("MobilityCoin")]
-    [Id("MOBIC")]
-    MOBIC,
-
-    [Name("Monk")]
-    [Id("MONK")]
-    MONK,
-
-    [Name("OneWorld Coin")]
-    [Id("OWO")]
-    OWO,
-
-    [Name("Peony")]
-    [Id("PNY")]
-    PNY,
-
-    [Name("Sapphire")]
-    [Id("SAPP")]
-    SAPP,
-
-    [Name("Suvereno")]
-    [Id("SUV")]
-    SUV,
-
-    [Name("Ultra Clear")]
-    [Id("UCR")]
-    UCR
-}

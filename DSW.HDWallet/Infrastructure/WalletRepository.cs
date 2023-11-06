@@ -52,7 +52,7 @@ namespace DSW.HDWallet.Infrastructure
             var accountIndex = 0;
 
             Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
-            string coin_type = Bip44.GetCoinCodeBySymbol(coinType.ToString());
+            string coin_type = CoinExtensionInfo.GetSymbolByTicker(coinType.ToString());
 
             ExtKey masterPrivKey = new ExtKey(seedHex);
 
@@ -101,7 +101,7 @@ namespace DSW.HDWallet.Infrastructure
             var changeType = 0;
 
             Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
-            string coin_type = Bip44.GetCoinCodeBySymbol(coinType.ToString());
+            string coin_type = CoinExtensionInfo.GetSymbolByTicker(coinType.ToString()); 
 
             ExtKey masterPrivKey = string.IsNullOrEmpty(password) ? 
                                    mnemo.DeriveExtKey() : 

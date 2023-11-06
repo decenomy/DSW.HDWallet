@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,11 +13,30 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static CryptoSaga Instance { get; } = new CryptoSaga();
 
         public override string CryptoCode => "SAGA";
+        public static int Code => 843;
+        public static string HexCode => "0x8000034b";
+        public static string Name => "CryptoSaga";
+        public static string Image => "saga";
+        public static string CoinGeckoId => "cryptosaga";
 
         private CryptoSaga()
         {
         }
 
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
+        }
         public class CryptoSagaConsensusFactory : ConsensusFactory
         {
             private CryptoSagaConsensusFactory()
