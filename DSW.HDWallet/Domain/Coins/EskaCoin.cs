@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,11 +13,30 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static EskaCoin Instance { get; } = new EskaCoin();
 
         public override string CryptoCode => "ESK";
+        public static int Code => 845;
+        public static string HexCode => "0x8000034d";
+        public static string Name => "EskaCoin";
+        public static string Image => "esk";
+        public static string CoinGeckoId => "eska";
 
         private EskaCoin()
         {
         }
 
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
+        }
         public class EskaCoinConsensusFactory : ConsensusFactory
         {
             private EskaCoinConsensusFactory()

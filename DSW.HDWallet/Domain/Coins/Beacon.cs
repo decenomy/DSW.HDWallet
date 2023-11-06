@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,11 +13,29 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Beacon Instance { get; } = new Beacon();
 
         public override string CryptoCode => "BECN";
-
+        public static int Code => 841;
+        public static string HexCode => "0x80000349";
+        public static string Name => "Beacon";
+        public static string Image => "becn";
+        public static string CoinGeckoId => "beacon";
         private Beacon()
         {
         }
 
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
+        }
         public class BeaconConsensusFactory : ConsensusFactory
         {
             private BeaconConsensusFactory()

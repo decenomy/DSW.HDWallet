@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,9 +13,29 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static UltraClear Instance { get; } = new UltraClear();
 
         public override string CryptoCode => "UCR";
+        public static int Code => 839;
+        public static string HexCode => "0x80000347";
+        public static string Name => "Ultra Clear";
+        public static string Image => "ucr";
+        public static string CoinGeckoId => "ultra-clear";
 
         private UltraClear()
         {
+        }
+
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
         }
 
         public class UltraClearConsensusFactory : ConsensusFactory

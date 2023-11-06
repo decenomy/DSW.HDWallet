@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,11 +13,30 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static DashDiamond Instance { get; } = new DashDiamond();
 
         public override string CryptoCode => "DASHD";
+        public static int Code => 837;
+        public static string HexCode => "0x80000345";
+        public static string Name => "Dash Diamond";
+        public static string Image => "dashd";
+        public static string CoinGeckoId => "dash-diamond";
 
         private DashDiamond()
         {
         }
 
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
+        }
         public class DashDiamondConsensusFactory : ConsensusFactory
         {
             private DashDiamondConsensusFactory()

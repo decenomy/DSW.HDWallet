@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,11 +13,30 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Flits Instance { get; } = new Flits();
 
         public override string CryptoCode => "FLS";
+        public static int Code => 850;
+        public static string HexCode => "0x80000352";
+        public static string Name => "Flits";
+        public static string Image => "fls";
+        public static string CoinGeckoId => "flits";
 
         private Flits()
         {
         }
 
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
+        }
         public class FlitsConsensusFactory : ConsensusFactory
         {
             private FlitsConsensusFactory()

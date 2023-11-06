@@ -1,4 +1,5 @@
-﻿using NBitcoin;
+﻿using DSW.HDWallet.Domain.Coins;
+using NBitcoin;
 using NBitcoin.Altcoins.HashX11;
 using NBitcoin.Crypto;
 using NBitcoin.DataEncoders;
@@ -12,9 +13,29 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static CryptoFlow Instance { get; } = new CryptoFlow();
 
         public override string CryptoCode => "CFL";
+        public static int Code => 836;
+        public static string HexCode => "0x80000344";
+        public static string Name => "CryptoFlow";
+        public static string Image => "cfl";
+        public static string CoinGeckoId => "cryptoflow";
 
         private CryptoFlow()
         {
+        }
+
+        public static CoinExtensionInfo GetCoinInfo()
+        {
+            CoinExtensionInfo info = new()
+            {
+                Symbol = Instance.CryptoCode,
+                Code = Code,
+                HexCode = HexCode,
+                Name = Name,
+                Image = Image,
+                CoinGeckoId = CoinGeckoId
+            };
+
+            return info;
         }
 
         public class CryptoFlowConsensusFactory : ConsensusFactory
