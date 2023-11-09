@@ -45,9 +45,9 @@ namespace DSW.HDWallet.Infrastructure.Api
             return await SendGetRequest<BlockHashObject>(apiUrl);
         }
 
-        public async Task<XpubObject> GetXpub(string coin, string xpub)
+        public async Task<XpubObject> GetXpub(string coin, string xpub, int page = 1, int pageSize = 1000)
         {
-            string endpoint = $"/api/v2/xpub/{xpub}";
+            string endpoint = $"/api/v2/xpub/{xpub}?page={page}&pageSize={pageSize}";
             var apiUrl = BuildApiUrl(coin, endpoint);
 
             return await SendGetRequest<XpubObject>(apiUrl);

@@ -8,7 +8,7 @@ namespace DSW.HDWallet.Infrastructure.Api
         Task<TransactionObject> GetTransactionAsync(string coin, string txid);
         Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid);
         Task<BlockHashObject> GetBlockHash(string coin, string blockHeight);
-        Task<XpubObject> GetXpub(string coin, string xpub);
+        Task<XpubObject> GetXpub(string coin, string xpub, int page = 1, int pageSize = 1000);
         Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed = false);
     }
 }

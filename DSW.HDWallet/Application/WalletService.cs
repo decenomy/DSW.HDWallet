@@ -85,9 +85,9 @@ namespace DSW.HDWallet.Application
             return await _apiDecenomyExplorer.GetBlockHash(coin, blockHeight);
         }
 
-        public async Task<XpubObject> GetXpub(string coin, string xpub)
+        public async Task<XpubObject> GetXpub(string coin, string xpub, int page = 1, int pageSize = 1000)
         {
-            return await _apiDecenomyExplorer.GetXpub(coin, xpub);
+            return await _apiDecenomyExplorer.GetXpub(coin, xpub, page, pageSize);
         }
 
         public async Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed = false)
