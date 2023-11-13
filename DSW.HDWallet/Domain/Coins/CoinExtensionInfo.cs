@@ -45,6 +45,8 @@ public class CoinExtensionInfo: ICoinExtensionInfo
         "SAPP" => Sapphire.GetCoinInfo(),
         "SUV" => Suvereno.GetCoinInfo(),
         "UCR" => UltraClear.GetCoinInfo(),
+        // Test Coin
+        "TKYAN" => Kyanite.GetCoinInfo(),
         _ => throw new ArgumentOutOfRangeException(nameof(symbol), symbol, "Unknown coin symbol"),
     };
 }
