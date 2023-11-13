@@ -52,11 +52,11 @@ namespace DSW.HDWallet.Infrastructure
             var accountIndex = 0;
 
             Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
-            string coin_type = CoinExtensionInfo.GetSymbolByTicker(coinType.ToString());
+            int coinCode = CoinExtensionInfo.GetCodeByTicker(coinType.ToString());
 
             ExtKey masterPrivKey = new ExtKey(seedHex);
 
-            KeyPath keyPath = new($"m/{purpose}'/{coin_type}'/{accountIndex}'");
+            KeyPath keyPath = new($"m/{purpose}'/{coinCode}'/{accountIndex}'");
             ExtPubKey pubKey = masterPrivKey.Derive(keyPath).Neuter();
 
             PubKeyDetails pubKeyDetails = new()
@@ -101,13 +101,13 @@ namespace DSW.HDWallet.Infrastructure
             var changeType = 0;
 
             Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
-            string coin_type = CoinExtensionInfo.GetSymbolByTicker(coinType.ToString()); 
+            int coinCode = CoinExtensionInfo.GetCodeByTicker(coinType.ToString());
 
             ExtKey masterPrivKey = string.IsNullOrEmpty(password) ? 
                                    mnemo.DeriveExtKey() : 
                                    mnemo.DeriveExtKey(password);   
             
-            KeyPath keyPath = new($"m/{purpose}'/{coin_type}'/{accountIndex}'/{changeType}'/{index}'");
+            KeyPath keyPath = new($"m/{purpose}'/{coinCode}'/{accountIndex}'/{changeType}'/{index}'");
 
             var derivedKey = masterPrivKey.Derive(keyPath).Neuter();
             PubKey publicKey = derivedKey.PubKey;

@@ -21,6 +21,11 @@ public class CoinExtensionInfo: ICoinExtensionInfo
         return GetCoinInfo(ticker).Symbol!;
     }
 
+    public static int GetCodeByTicker(string ticker)
+    {
+        return GetCoinInfo(ticker).Code;
+    }
+
     public static CoinExtensionInfo GetCoinInfo(string symbol) => symbol switch
     {
         "AZR" => Azzure.GetCoinInfo(),
