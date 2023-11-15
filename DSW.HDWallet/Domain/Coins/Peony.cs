@@ -17,7 +17,7 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static string HexCode => "0x80000348";
         public static string Name => "Peony";
         public static string Image => "pny";
-        public static string CoinGeckoId => "peony-coin";
+        public static string CoinGeckoId => "peony";
 
         private Peony()
         {

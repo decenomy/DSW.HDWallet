@@ -17,7 +17,7 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static string HexCode => "0x8000034a";
         public static string Name => "Monk";
         public static string Image => "monk";
-        public static string CoinGeckoId => "one-world-coin";
+        public static string CoinGeckoId => "monk";
 
         private Monk()
         {
