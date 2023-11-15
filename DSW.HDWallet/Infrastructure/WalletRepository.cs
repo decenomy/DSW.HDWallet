@@ -294,5 +294,10 @@ namespace DSW.HDWallet.Infrastructure
         {
             return CoinExtensionInfo.GetNameByTicker(ticker);
         }
+
+        public List<CoinExtensionInfo> GetAllCoin()
+        {
+            return CoinExtensionInfo.GetAllCoin();
+        }
     }
 }

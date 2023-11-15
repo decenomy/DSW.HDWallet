@@ -121,5 +121,10 @@ namespace DSW.HDWallet.Application
         {
             return _walletRepository.GetCoinName(ticker);
         }
+
+        public List<CoinExtensionInfo> GetAllCoin()
+        {
+            return _walletRepository.GetAllCoin();
+        }
     }
 }

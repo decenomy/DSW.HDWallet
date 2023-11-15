@@ -26,6 +26,32 @@ public class CoinExtensionInfo: ICoinExtensionInfo
         return GetCoinInfo(ticker).Code;
     }
 
+    public static List<CoinExtensionInfo> GetAllCoin()
+    {
+        var coinInfoList = new List<CoinExtensionInfo>
+            {
+                Azzure.GetCoinInfo(),
+                Beacon.GetCoinInfo(),
+                Birake.GetCoinInfo(),
+                CryptoFlow.GetCoinInfo(),
+                CryptoSaga.GetCoinInfo(),
+                DashDiamond.GetCoinInfo(),
+                EskaCoin.GetCoinInfo(),
+                Flits.GetCoinInfo(),
+                Jackpot.GetCoinInfo(),
+                Kyanite.GetCoinInfo(),
+                MobilityCoin.GetCoinInfo(),
+                Monk.GetCoinInfo(),
+                OneWorldCoin.GetCoinInfo(),
+                Peony.GetCoinInfo(),
+                Sapphire.GetCoinInfo(),
+                Suvereno.GetCoinInfo(),
+                UltraClear.GetCoinInfo(),
+            };
+
+        return coinInfoList;
+    }
+
     public static CoinExtensionInfo GetCoinInfo(string symbol) => symbol switch
     {
         "AZR" => Azzure.GetCoinInfo(),

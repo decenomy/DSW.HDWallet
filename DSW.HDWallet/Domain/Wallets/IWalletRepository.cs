@@ -16,5 +16,6 @@ namespace DSW.HDWallet.Domain.Wallets
         TransactionDetails GenerateTransaction(CoinType coinType, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0);
         bool ValidateAddress(string ticker, string address);
         string GetCoinName(string ticker);
+        List<CoinExtensionInfo> GetAllCoin();
     }
 }
