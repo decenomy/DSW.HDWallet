@@ -29,5 +29,6 @@ namespace DSW.HDWallet.Application
 
         bool ValidateAddress(string ticker, string address);
         string GetCoinName(string ticker);
+        List<CoinExtensionInfo> GetAllCoin();
     }
 }
