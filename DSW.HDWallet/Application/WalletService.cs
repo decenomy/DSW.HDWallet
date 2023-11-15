@@ -14,12 +14,12 @@ namespace DSW.HDWallet.Application
     {
         private readonly IWalletRepository _walletRepository;
         private readonly IMnemonicRepository _mnemonicRepository;
-        private readonly IApiDecenomyExplorerRepository _apiDecenomyExplorer;
+        private readonly IBlockbookHttpClient _apiDecenomyExplorer;
         private readonly IWebSocketDecenomyExplorerRepository _webSocket;
 
         public WalletService(IWalletRepository walletRepository,
             IMnemonicRepository mnemonicRepository,
-            IApiDecenomyExplorerRepository apiDecenomyExplorer,
+            IBlockbookHttpClient apiDecenomyExplorer,
             IWebSocketDecenomyExplorerRepository webSocket)
         {
             _walletRepository = walletRepository;

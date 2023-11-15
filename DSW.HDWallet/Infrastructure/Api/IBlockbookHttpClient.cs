@@ -2,7 +2,7 @@
 
 namespace DSW.HDWallet.Infrastructure.Api
 {
-    public interface IApiDecenomyExplorerRepository
+    public interface IBlockbookHttpClient
     {
         Task<AddressObject> GetAddressAsync(string coin, string address);
         Task<TransactionObject> GetTransactionAsync(string coin, string txid);

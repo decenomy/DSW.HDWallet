@@ -4,11 +4,11 @@ using System.Text.Json;
 
 namespace DSW.HDWallet.Infrastructure.Api
 {
-    public class ApiDecenomyExplorerRepository : IApiDecenomyExplorerRepository
+    public class BlockbookHttpClient : IBlockbookHttpClient
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public ApiDecenomyExplorerRepository(IHttpClientFactory httpClientFactory)
+        public BlockbookHttpClient(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
