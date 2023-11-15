@@ -27,7 +27,7 @@ namespace DSW.HDWallet.Domain.Coins
                 CoinType.SUV => isNetworkTest ? Suvereno.Instance.Testnet : Suvereno.Instance.Mainnet,
                 CoinType.UCR => isNetworkTest ? UltraClear.Instance.Testnet : UltraClear.Instance.Mainnet,
                 // Test
-                CoinType.TKYAN => Kyanite.Instance.Testnet,
+                CoinType.TKYAN => TKyanite.Instance.Testnet,
                 _ => throw new ArgumentOutOfRangeException(nameof(coinType), coinType, "Unknown coin type"),
             };
         }
@@ -54,7 +54,7 @@ namespace DSW.HDWallet.Domain.Coins
                 "SUV" => Suvereno.Instance.Mainnet,
                 "UCR" => UltraClear.Instance.Mainnet,
                 // Test
-                "TKYAN" => Kyanite.Instance.Testnet,
+                "TKYAN" => TKyanite.Instance.Testnet,
                 _ => throw new ArgumentOutOfRangeException(nameof(coinType), coinType, "Unknown coin type"),
             };
         }
