@@ -46,35 +46,13 @@ namespace DSW.HDWallet.Infrastructure
             return seed.ToHexString();
         }
        
-        public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, string? password = null, bool isNetworkTest = false)
-        {
-            var purpose = 44;
-            var accountIndex = 0;
-
-            Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
-            int coinCode = CoinExtensionInfo.GetCodeByTicker(coinType.ToString());
-
-            ExtKey masterPrivKey = new ExtKey(seedHex);
-
-            KeyPath keyPath = new($"m/{purpose}'/{coinCode}'/{accountIndex}'");
-            ExtPubKey pubKey = masterPrivKey.Derive(keyPath).Neuter();
-
-            PubKeyDetails pubKeyDetails = new()
-            {
-                PubKey = pubKey.ToString(network),
-                CoinType = coinType,
-                Index = 0,
-                Path = keyPath.ToString()
-            };
-
-            return pubKeyDetails;
-        }
+        
 
         public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false)
         {
             var changeType = 0;
 
-            Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
+            Network network = CoinNetwork.GetMainnet(coinType.ToString(), isNetworkTest);
             ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
 
             var keypath = $"{changeType}/{Index}";
@@ -94,14 +72,14 @@ namespace DSW.HDWallet.Infrastructure
         }
 
         
-        public DeriveKeyDetails CreateDeriveKey(CoinType coinType, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false)
+        public DeriveKeyDetails CreateDeriveKey(ICoinExtension coinType, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false)
         {
             var purpose = 44;
             var accountIndex = 0;
             var changeType = 0;
 
-            Network network = CoinNetwork.GetMainnet(coinType, isNetworkTest);
-            int coinCode = CoinExtensionInfo.GetCodeByTicker(coinType.ToString());
+            Network network = CoinNetwork.GetMainnet(coinType.Ticker, isNetworkTest);
+            int coinCode = coinType.Code;
 
             ExtKey masterPrivKey = string.IsNullOrEmpty(password) ? 
                                    mnemo.DeriveExtKey() : 
@@ -176,9 +154,9 @@ namespace DSW.HDWallet.Infrastructure
             return selectedUtxos;
         }
 
-        public TransactionDetails GenerateTransaction(CoinType coinType, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0)
+        public TransactionDetails GenerateTransaction(ICoinExtension coinType, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0)
         {
-            Network network = CoinNetwork.GetMainnet(coinType);
+            Network network = CoinNetwork.GetMainnet(coinType.Ticker);
             var utxoSelected = SelectUtxos(utxos, amountToSend, fee);
             
             try

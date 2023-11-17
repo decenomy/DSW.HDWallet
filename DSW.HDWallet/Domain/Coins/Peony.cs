@@ -8,34 +8,22 @@ using DSW.HDWallet.Domain.Coins;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Peony : NetworkSetBase
+    public class Peony : NetworkSetBase, ICoinExtension
     {
         public static Peony Instance { get; } = new Peony();
 
         public override string CryptoCode => "PNY";
-        public static int Code => 840;
-        public static string HexCode => "0x80000348";
-        public static string Name => "Peony";
-        public static string Image => "pny";
-        public static string CoinGeckoId => "peony";
+        public string Ticker { get; set; } = "PNY";
+        public int Code { get; set; } = 840;
+        public string HexCode { get; set; } = "0x80000348";
+        public string Name { get; set; } = "Peony";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "peony";
+        public bool IsTestNet { get; set; }
 
         private Peony()
         {
-        }
-
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class PeonyConsensusFactory : ConsensusFactory

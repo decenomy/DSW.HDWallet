@@ -8,34 +8,22 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Jackpot : NetworkSetBase
+    public class Jackpot : NetworkSetBase, ICoinExtension
     {
         public static Jackpot Instance { get; } = new Jackpot();
 
         public override string CryptoCode => "777";
-        public static int Code => 833;
-        public static string HexCode => "0x80000341";
-        public static string Name => "Jackpot";
-        public static string Image => "jackpot";
-        public static string CoinGeckoId => "jackpot";
+        public string Ticker { get; set; } = "777";
+        public int Code { get; set; } = 833;
+        public string HexCode { get; set; } = "0x80000341";
+        public string Name { get; set; } = "Jackpot";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "jackpot";
+        public bool IsTestNet { get; set; }
 
         private Jackpot()
         {
-        }
-
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
         public class JackpotConsensusFactory : ConsensusFactory
         {

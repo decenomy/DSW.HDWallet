@@ -8,34 +8,21 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class CryptoFlow : NetworkSetBase
+    public class CryptoFlow : NetworkSetBase, ICoinExtension
     {
         public static CryptoFlow Instance { get; } = new CryptoFlow();
-
         public override string CryptoCode => "CFL";
-        public static int Code => 836;
-        public static string HexCode => "0x80000344";
-        public static string Name => "CryptoFlow";
-        public static string Image => "cfl";
-        public static string CoinGeckoId => "cryptoflow";
+        public string Ticker { get; set; } = "CFL";
+        public int Code { get; set; } = 836;
+        public string HexCode { get; set; } = "0x80000344";
+        public string Name { get; set; } = "CryptoFlow";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "cryptoflow";
+        public bool IsTestNet { get; set; }
 
         private CryptoFlow()
         {
-        }
-
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class CryptoFlowConsensusFactory : ConsensusFactory

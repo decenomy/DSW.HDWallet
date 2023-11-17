@@ -8,34 +8,22 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class UltraClear : NetworkSetBase
+    public class UltraClear : NetworkSetBase, ICoinExtension
     {
         public static UltraClear Instance { get; } = new UltraClear();
 
         public override string CryptoCode => "UCR";
-        public static int Code => 839;
-        public static string HexCode => "0x80000347";
-        public static string Name => "Ultra Clear";
-        public static string Image => "ucr";
-        public static string CoinGeckoId => "ultra-clear";
+        public string Ticker { get; set; } = "UCR";
+        public int Code { get; set; } = 839;
+        public string HexCode { get; set; } = "0x80000347";
+        public string Name { get; set; } = "Ultra Clear";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "ultra-clear";
+        public bool IsTestNet { get; set; }
 
         private UltraClear()
         {
-        }
-
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class UltraClearConsensusFactory : ConsensusFactory

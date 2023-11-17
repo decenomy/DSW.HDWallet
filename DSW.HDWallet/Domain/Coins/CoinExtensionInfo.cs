@@ -26,7 +26,7 @@ public class CoinExtensionInfo: ICoinExtensionInfo
         return GetCoinInfo(ticker).Code;
     }
 
-    public static List<CoinExtensionInfo> GetAllCoin()
+    public List<CoinExtensionInfo> GetAllCoin()
     {
         var coinInfoList = new List<CoinExtensionInfo>
             {

@@ -8,35 +8,24 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Suvereno : NetworkSetBase
+    public class Suvereno : NetworkSetBase, ICoinExtension
     {
         public static Suvereno Instance { get; } = new Suvereno();
 
         public override string CryptoCode => "SUV";
-        public static int Code => 844;
-        public static string HexCode => "0x8000034c";
-        public static string Name => "Suvereno";
-        public static string Image => "suv";
-        public static string CoinGeckoId => "suvereno";
+        public string Ticker { get; set; } = "SUV";
+        public int Code { get; set; } = 844;
+        public string HexCode { get; set; } = "0x8000034c";
+        public string Name { get; set; } = "Suvereno";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "suvereno";
+        public bool IsTestNet { get; set; }
 
         private Suvereno()
         {
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
-        }
         public class SuverenoConsensusFactory : ConsensusFactory
         {
             private SuverenoConsensusFactory()

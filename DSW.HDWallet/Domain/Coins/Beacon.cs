@@ -8,34 +8,23 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Beacon : NetworkSetBase
+    public class Beacon : NetworkSetBase, ICoinExtension
     {
         public static Beacon Instance { get; } = new Beacon();
 
         public override string CryptoCode => "BECN";
-        public static int Code => 841;
-        public static string HexCode => "0x80000349";
-        public static string Name => "Beacon";
-        public static string Image => "becn";
-        public static string CoinGeckoId => "beacon";
+        public string Ticker { get; set; } = "BECN";
+        public int Code { get; set; } = 841;
+        public string HexCode { get; set; } = "0x80000349";
+        public string Name { get; set; } = "Beacon";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "beacon";
+        public bool IsTestNet { get; set; }
         private Beacon()
         {
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
-        }
         public class BeaconConsensusFactory : ConsensusFactory
         {
             private BeaconConsensusFactory()

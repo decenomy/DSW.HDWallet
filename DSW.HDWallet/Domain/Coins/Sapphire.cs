@@ -8,34 +8,22 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Sapphire : NetworkSetBase
+    public class Sapphire : NetworkSetBase, ICoinExtension
     {
         public static Sapphire Instance { get; } = new Sapphire();
 
         public override string CryptoCode => "SAPP";
-        public static int Code => 832;
-        public static string HexCode => "0x80000340";
-        public static string Name => "Sapphire";
-        public static string Image => "sapp";
-        public static string CoinGeckoId => "sapphire";
+        public string Ticker { get; set; } = "SAPP";
+        public int Code { get; set; } = 832;
+        public string HexCode { get; set; } = "0x80000340";
+        public string Name { get; set; } = "Sapphire";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "sapphire";
+        public bool IsTestNet { get; set; }
 
         private Sapphire()
         {
-        }
-
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class SapphireConsensusFactory : ConsensusFactory

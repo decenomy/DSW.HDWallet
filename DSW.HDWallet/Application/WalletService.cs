@@ -105,9 +105,9 @@ namespace DSW.HDWallet.Application
             return await _webSocket.SubscribeNewTransaction(coin);
         }
 
-        public async Task<TransactionDetails> GenerateTransactionAsync(CoinType coinType, long amountToSend, string seedHex, string fromAddress, string toAddress)
+        public async Task<TransactionDetails> GenerateTransactionAsync(ICoinExtension coinType, long amountToSend, string seedHex, string fromAddress, string toAddress)
         {
-            var utxos = await GetUtxo(coinType.ToString(), fromAddress);
+            var utxos = await GetUtxo(coinType.Ticker, fromAddress);
 
             return _walletRepository.GenerateTransaction(coinType, utxos.ToList(), amountToSend, seedHex, toAddress);
         }

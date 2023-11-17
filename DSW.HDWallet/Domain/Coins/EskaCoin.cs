@@ -8,34 +8,22 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class EskaCoin : NetworkSetBase
+    public class EskaCoin : NetworkSetBase, ICoinExtension
     {
         public static EskaCoin Instance { get; } = new EskaCoin();
 
         public override string CryptoCode => "ESK";
-        public static int Code => 845;
-        public static string HexCode => "0x8000034d";
-        public static string Name => "EskaCoin";
-        public static string Image => "esk";
-        public static string CoinGeckoId => "eska";
+        public string Ticker { get; set; } = "ESK";
+        public int Code { get; set; } = 845;
+        public string HexCode { get; set; } = "0x8000034d";
+        public string Name { get; set; } = "EskaCoin";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "eska";
+        public bool IsTestNet { get; set; }
 
         private EskaCoin()
         {
-        }
-
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
         public class EskaCoinConsensusFactory : ConsensusFactory
         {

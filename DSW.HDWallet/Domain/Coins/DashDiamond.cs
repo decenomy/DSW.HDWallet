@@ -8,35 +8,24 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class DashDiamond : NetworkSetBase
+    public class DashDiamond : NetworkSetBase, ICoinExtension
     {
         public static DashDiamond Instance { get; } = new DashDiamond();
 
         public override string CryptoCode => "DASHD";
-        public static int Code => 837;
-        public static string HexCode => "0x80000345";
-        public static string Name => "Dash Diamond";
-        public static string Image => "dashd";
-        public static string CoinGeckoId => "dash-diamond";
+        public string Ticker { get; set; } = "DASHD";
+        public int Code { get; set; } = 837;
+        public string HexCode { get; set; } = "0x80000345";
+        public string Name { get; set; } = "Dash Diamond";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "dash-diamond";
+        public bool IsTestNet { get; set; }
 
         private DashDiamond()
         {
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
-        }
         public class DashDiamondConsensusFactory : ConsensusFactory
         {
             private DashDiamondConsensusFactory()

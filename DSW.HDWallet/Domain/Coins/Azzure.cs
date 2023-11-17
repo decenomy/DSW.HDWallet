@@ -8,34 +8,21 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Azzure : NetworkSetBase
+    public class Azzure : NetworkSetBase, ICoinExtension
     {
         public static Azzure Instance { get; } = new Azzure();
 
         public override string CryptoCode => "AZR";
-        public static int Code => 835;
-        public static string HexCode => "0x80000343";
-        public static string Name => "Azzure";
-        public static string Image => "azr";
-        public static string CoinGeckoId => "aezora";
-
+        public string Ticker { get; set; } = "AZR";
+        public int Code { get; set; } = 835;
+        public string HexCode { get; set; } = "0x80000343";
+        public string Name { get; set; } = "Azzure";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "azzure";
+        public bool IsTestNet { get; set; }
         private Azzure()
         {
-        }
-
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol= Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId                
-            };
-
-            return info;
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class AzzureConsensusFactory : ConsensusFactory

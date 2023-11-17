@@ -8,35 +8,24 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class MobilityCoin : NetworkSetBase
+    public class MobilityCoin : NetworkSetBase, ICoinExtension
     {
         public static MobilityCoin Instance { get; } = new MobilityCoin();
 
         public override string CryptoCode => "MOBIC";
-        public static int Code => 849;
-        public static string HexCode => "0x80000351";
-        public static string Name => "MobilityCoin";
-        public static string Image => "mobic";
-        public static string CoinGeckoId => "mobility-coin";
+        public string Ticker { get; set; } = "MOBIC";
+        public int Code { get; set; } = 849;
+        public string HexCode { get; set; } = "0x80000351";
+        public string Name { get; set; } = "MobilityCoin";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "mobility-coin";
+        public bool IsTestNet { get; set; }
 
         private MobilityCoin()
         {
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
-        }
         public class MobilityCoinConsensusFactory : ConsensusFactory
         {
             private MobilityCoinConsensusFactory()

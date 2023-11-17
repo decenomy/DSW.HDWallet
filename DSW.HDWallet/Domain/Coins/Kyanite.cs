@@ -8,19 +8,22 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Kyanite : NetworkSetBase
+    public class Kyanite : NetworkSetBase, ICoinExtension
     {
         public static Kyanite Instance { get; } = new Kyanite();
 
         public override string CryptoCode => "KYAN";
-        public static int Code => 834;
-        public static string HexCode => "0x80000342";
-        public static string Name => "Kyanite";
-        public static string Image => "kyan";
-        public static string CoinGeckoId => "kyanite";
+        public string Ticker { get; set; } = "KYAN";
+        public int Code { get; set; } = 834;
+        public string HexCode { get; set; } = "0x80000342";
+        public string Name { get; set; } = "Kyanite";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "kyanite";
+        public bool IsTestNet { get; set; }
 
         private Kyanite()
         {
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public static CoinExtensionInfo GetCoinInfo()

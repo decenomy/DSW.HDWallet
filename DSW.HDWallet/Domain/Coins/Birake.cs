@@ -8,35 +8,24 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Birake : NetworkSetBase
+    public class Birake : NetworkSetBase, ICoinExtension
     {
         public static Birake Instance { get; } = new Birake();
 
         public override string CryptoCode => "BIR";
-        public static int Code => 848;
-        public static string HexCode => "0x80000350";
-        public static string Name => "Birake";
-        public static string Image => "bir";
-        public static string CoinGeckoId => "birake";
+        public string Ticker { get; set; } = "BIR";
+        public int Code { get; set; } = 848;
+        public string HexCode { get; set; } = "0x80000350";
+        public string Name { get; set; } = "Birake";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "birake";
+        public bool IsTestNet { get; set; }
 
         private Birake()
         {
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
-        }
         public class BirakeConsensusFactory : ConsensusFactory
         {
             private BirakeConsensusFactory()

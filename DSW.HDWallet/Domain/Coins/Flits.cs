@@ -8,35 +8,24 @@ using NBitcoin.Protocol;
 namespace DSW.HDWallet.Infrastructure.Coins
 {
 
-    public class Flits : NetworkSetBase
+    public class Flits : NetworkSetBase, ICoinExtension
     {
         public static Flits Instance { get; } = new Flits();
 
         public override string CryptoCode => "FLS";
-        public static int Code => 850;
-        public static string HexCode => "0x80000352";
-        public static string Name => "Flits";
-        public static string Image => "fls";
-        public static string CoinGeckoId => "flits";
+        public string Ticker { get; set; } = "FLS";
+        public int Code { get; set; } = 850;
+        public string HexCode { get; set; } = "0x80000352";
+        public string Name { get; set; } = "Flits";
+        public string Image { get; set; }
+        public string CoinGeckoId { get; set; } = "flits";
+        public bool IsTestNet { get; set; }
 
         private Flits()
         {
+            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
-        }
         public class FlitsConsensusFactory : ConsensusFactory
         {
             private FlitsConsensusFactory()
