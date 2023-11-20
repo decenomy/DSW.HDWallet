@@ -26,20 +26,6 @@ namespace DSW.HDWallet.Infrastructure.Coins
             this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
-        public static CoinExtensionInfo GetCoinInfo()
-        {
-            CoinExtensionInfo info = new()
-            {
-                Symbol = Instance.CryptoCode,
-                Code = Code,
-                HexCode = HexCode,
-                Name = Name,
-                Image = Image,
-                CoinGeckoId = CoinGeckoId
-            };
-
-            return info;
-        }
         public class KyaniteConsensusFactory : ConsensusFactory
         {
             private KyaniteConsensusFactory()

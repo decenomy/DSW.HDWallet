@@ -14,5 +14,9 @@ namespace DSW.HDWallet.Infrastructure
         {
             throw new NotImplementedException();
         }
+
+        public ICoinExtension GetCoinInfo(string ticker) {
+            throw new NotImplementedException();
+        }
     }
 }

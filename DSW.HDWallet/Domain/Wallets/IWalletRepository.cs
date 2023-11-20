@@ -10,12 +10,12 @@ namespace DSW.HDWallet.Domain.Wallets
         Wallet Create(Mnemonic mnemonic);
         Wallet CreateWithPassword(Mnemonic mnemonic, string? password = null);
         string Recover(Mnemonic mnemo, string? password = null);
-        DeriveKeyDetails CreateDeriveKey(ICoinExtension coinType, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false);
-        DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false);
-        PubKeyDetails GeneratePubkey(ICoinExtension coinType, string seedHex, string? password = null, bool isNetworkTest = false);
-        TransactionDetails GenerateTransaction(ICoinExtension coinType, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0);
+        DeriveKeyDetails CreateDeriveKey(string ticker, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false);
+        DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, string ticker, int Index, bool isNetworkTest = false);
+        PubKeyDetails GeneratePubkey(string ticker, string seedHex, string? password = null, bool isNetworkTest = false);
+        TransactionDetails GenerateTransaction(string ticker, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0);
         bool ValidateAddress(string ticker, string address);
         string GetCoinName(string ticker);
-        List<CoinExtensionInfo> GetAllCoin();
+        List<ICoinExtension> GetAllCoin();
     }
 }

@@ -49,20 +49,20 @@ namespace DSW.HDWallet.Application
             return _walletRepository.Recover(mnemo, password);
         }
 
-        public DeriveKeyDetails CreateDerivedKey(CoinType coinType, string mnemonic, int index, string? password = null, bool isNetworkTest = false)
+        public DeriveKeyDetails CreateDerivedKey(string ticker, string mnemonic, int index, string? password = null, bool isNetworkTest = false)
         {
             Mnemonic mnemo = _mnemonicRepository.GetMnemonic(mnemonic);
-            return _walletRepository.CreateDeriveKey(coinType, mnemo, index, password);
+            return _walletRepository.CreateDeriveKey(ticker, mnemo, index, password);
         }
 
-        public PubKeyDetails GeneratePubkey(CoinType coinType, string seedHex, bool isNetworkTest = false)
+        public PubKeyDetails GeneratePubkey(string ticker, string seedHex, bool isNetworkTest = false)
         {
-            return _walletRepository.GeneratePubkey(coinType, seedHex, null, isNetworkTest);
+            return _walletRepository.GeneratePubkey(ticker, seedHex, null, isNetworkTest);
         }
 
-        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false)
+        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, string ticker, int Index, bool isNetworkTest = false)
         {
-            return _walletRepository.GenerateDerivePubKey(pubKey, coinType, Index, isNetworkTest);
+            return _walletRepository.GenerateDerivePubKey(pubKey, ticker, Index, isNetworkTest);
         }
 
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
@@ -105,11 +105,11 @@ namespace DSW.HDWallet.Application
             return await _webSocket.SubscribeNewTransaction(coin);
         }
 
-        public async Task<TransactionDetails> GenerateTransactionAsync(ICoinExtension coinType, long amountToSend, string seedHex, string fromAddress, string toAddress)
+        public async Task<TransactionDetails> GenerateTransactionAsync(string ticker, long amountToSend, string seedHex, string fromAddress, string toAddress)
         {
-            var utxos = await GetUtxo(coinType.Ticker, fromAddress);
+            var utxos = await GetUtxo(ticker, fromAddress);
 
-            return _walletRepository.GenerateTransaction(coinType, utxos.ToList(), amountToSend, seedHex, toAddress);
+            return _walletRepository.GenerateTransaction(ticker, utxos.ToList(), amountToSend, seedHex, toAddress);
         }
 
         public bool ValidateAddress(string ticker, string address)
@@ -122,7 +122,7 @@ namespace DSW.HDWallet.Application
             return _walletRepository.GetCoinName(ticker);
         }
 
-        public List<CoinExtensionInfo> GetAllCoin()
+        public List<ICoinExtension> GetAllCoin()
         {
             return _walletRepository.GetAllCoin();
         }

@@ -143,7 +143,7 @@ namespace Decenomy
 
                         for (int i = 0; i < Convert.ToInt32(index); i++)
                         {
-                            var createDeriveKey = walletAppService?.CreateDerivedKey(selectedCoin, mnemonic!, Convert.ToInt32(i), _password);
+                            var createDeriveKey = walletAppService?.CreateDerivedKey(selectedCoin.ToString(), mnemonic!, Convert.ToInt32(i), _password);
                             WriteLine($"\n Index [{i}] Address={createDeriveKey?.Address} KeyPath={createDeriveKey?.Path} \n {createDeriveKey?.PubKey}", ConsoleColor.DarkGreen);
                         }
 
@@ -202,10 +202,10 @@ namespace Decenomy
 
                         CoinType selectedCoinAPP = (CoinType)choiceAPP;
 
-                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinAPP, newWalletWithPassword?.SeedHex!, true);
+                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinAPP.ToString(), newWalletWithPassword?.SeedHex!, true);
 
                         WriteLine($"\n Public Key : {generatePubKey?.PubKey}", ConsoleColor.DarkGreen);
-                        WriteLine($" Coin Type : {generatePubKey?.CoinType}", ConsoleColor.DarkGreen);
+                        WriteLine($" Coin Type : {generatePubKey?.Ticker}", ConsoleColor.DarkGreen);
                         WriteLine($" Path : {generatePubKey?.Path}", ConsoleColor.DarkGreen);
 
                         Console.Write("\n Enter derived number of keys: ");
@@ -213,7 +213,7 @@ namespace Decenomy
 
                         for (int i = 0; i < Convert.ToInt32(indexKey); i++)
                         {
-                            var createDeriveKey = walletAppService?.GenerateDerivePubKey(generatePubKey?.PubKey!, selectedCoinAPP, i, true);
+                            var createDeriveKey = walletAppService?.GenerateDerivePubKey(generatePubKey?.PubKey!, generatePubKey?.Ticker, i, true);
                             WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Path}", ConsoleColor.DarkGreen);
                         }
 
@@ -273,7 +273,7 @@ namespace Decenomy
                         long transactionValue = Console.ReadLine()!.ToLong();
 
 
-                        var _tr = walletAppService?.GenerateTransactionAsync(transactionCoin, transactionValue, walletSeed, fromAddress, toAddress).Result;
+                        var _tr = walletAppService?.GenerateTransactionAsync(transactionCoin.ToString(), transactionValue, walletSeed, fromAddress, toAddress).Result;
 
                         WriteLine($"\n Transaction Details", ConsoleColor.DarkRed);
                         ulong trTotal = 0;

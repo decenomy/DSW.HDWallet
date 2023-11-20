@@ -9,6 +9,13 @@ namespace DSW.HDWallet.Infrastructure
 {
     public class WalletRepository : IWalletRepository
     {
+        private readonly ICoinRepository coinRepository;
+
+        public WalletRepository(ICoinRepository coinRepository)
+        {
+            this.coinRepository = coinRepository;
+        }
+
         public Wallet Create(Mnemonic mnemo)
         {
             byte[] seed = mnemo.DeriveSeed();
@@ -48,11 +55,11 @@ namespace DSW.HDWallet.Infrastructure
        
         
 
-        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, CoinType coinType, int Index, bool isNetworkTest = false)
+        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, string ticker, int Index, bool isNetworkTest = false)
         {
             var changeType = 0;
 
-            Network network = CoinNetwork.GetMainnet(coinType.ToString(), isNetworkTest);
+            Network network = coinRepository.GetNetwork(ticker);
             ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
 
             var keypath = $"{changeType}/{Index}";
@@ -71,15 +78,38 @@ namespace DSW.HDWallet.Infrastructure
             return deriveKeyDetails;
         }
 
-        
-        public DeriveKeyDetails CreateDeriveKey(ICoinExtension coinType, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false)
+        public PubKeyDetails GeneratePubkey(string ticker, string seedHex, string? password = null, bool isNetworkTest = false)
+        {
+            var purpose = 44;
+            var accountIndex = 0;
+
+            Network network = coinRepository.GetNetwork(ticker);
+            int coinCode = coinRepository.GetCoinInfo(ticker).Code;
+
+            ExtKey masterPrivKey = new ExtKey(seedHex);
+
+            KeyPath keyPath = new($"m/{purpose}'/{coinCode}'/{accountIndex}'");
+            ExtPubKey pubKey = masterPrivKey.Derive(keyPath).Neuter();
+
+            PubKeyDetails pubKeyDetails = new()
+            {
+                PubKey = pubKey.ToString(network),
+                Ticker = ticker,
+                Index = 0,
+                Path = keyPath.ToString()
+            };
+
+            return pubKeyDetails;
+        }
+
+        public DeriveKeyDetails CreateDeriveKey(string ticker, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false)
         {
             var purpose = 44;
             var accountIndex = 0;
             var changeType = 0;
 
-            Network network = CoinNetwork.GetMainnet(coinType.Ticker, isNetworkTest);
-            int coinCode = coinType.Code;
+            Network network = coinRepository.GetNetwork(ticker);
+            int coinCode = coinRepository.GetCoinInfo(ticker).Code;
 
             ExtKey masterPrivKey = string.IsNullOrEmpty(password) ? 
                                    mnemo.DeriveExtKey() : 
@@ -154,9 +184,9 @@ namespace DSW.HDWallet.Infrastructure
             return selectedUtxos;
         }
 
-        public TransactionDetails GenerateTransaction(ICoinExtension coinType, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0)
+        public TransactionDetails GenerateTransaction(string ticker, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0)
         {
-            Network network = CoinNetwork.GetMainnet(coinType.Ticker);
+            Network network = coinRepository.GetNetwork(ticker);
             var utxoSelected = SelectUtxos(utxos, amountToSend, fee);
             
             try
@@ -196,7 +226,7 @@ namespace DSW.HDWallet.Infrastructure
                         changeAmount -= new Money(transactionFeeSatoshis);
 
                         if (changeAmount < Money.Zero.Satoshi)
-                            return GenerateTransaction(coinType, utxos, amountToSend, seedHex, toAddress, changeAmount.Abs());
+                            return GenerateTransaction(ticker, utxos, amountToSend, seedHex, toAddress, changeAmount.Abs());
                     }
 
                     if (changeAmount > Money.Zero)
@@ -251,7 +281,7 @@ namespace DSW.HDWallet.Infrastructure
 
         public bool ValidateAddress(string ticker, string address)
         {
-            Network network = CoinNetwork.GetNetwork(ticker);
+            Network network = coinRepository.GetNetwork(ticker);
 
             try
             {
@@ -270,12 +300,12 @@ namespace DSW.HDWallet.Infrastructure
 
         public string GetCoinName(string ticker)
         {
-            return CoinExtensionInfo.GetNameByTicker(ticker);
+            return coinRepository.GetCoinInfo(ticker).Name;
         }
 
-        public List<CoinExtensionInfo> GetAllCoin()
+        public List<ICoinExtension> GetAllCoin()
         {
-            return CoinExtensionInfo.GetAllCoin();
+            return coinRepository.GetListCoin();
         }
     }
 }
