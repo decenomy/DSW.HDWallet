@@ -116,15 +116,5 @@ namespace DSW.HDWallet.Application
         {
             return _walletRepository.ValidateAddress(ticker, address);
         }
-
-        public string GetCoinName(string ticker)
-        {
-            return _walletRepository.GetCoinName(ticker);
-        }
-
-        public List<ICoinExtension> GetAllCoin()
-        {
-            return _walletRepository.GetAllCoin();
-        }
     }
 }

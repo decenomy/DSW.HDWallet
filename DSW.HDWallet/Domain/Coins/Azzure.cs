@@ -20,6 +20,7 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public string Image { get; set; }
         public string CoinGeckoId { get; set; } = "azzure";
         public bool IsTestNet { get; set; }
+
         private Azzure()
         {
             this.Image = this.Name.Replace(" ", "").ToLower();

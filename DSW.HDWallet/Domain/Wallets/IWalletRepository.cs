@@ -15,7 +15,5 @@ namespace DSW.HDWallet.Domain.Wallets
         PubKeyDetails GeneratePubkey(string ticker, string seedHex, string? password = null, bool isNetworkTest = false);
         TransactionDetails GenerateTransaction(string ticker, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0);
         bool ValidateAddress(string ticker, string address);
-        string GetCoinName(string ticker);
-        List<ICoinExtension> GetAllCoin();
     }
 }

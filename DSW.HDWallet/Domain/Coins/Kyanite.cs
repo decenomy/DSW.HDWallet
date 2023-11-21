@@ -12,18 +12,19 @@ namespace DSW.HDWallet.Infrastructure.Coins
     {
         public static Kyanite Instance { get; } = new Kyanite();
 
-        public override string CryptoCode => "KYAN";
-        public string Ticker { get; set; } = "KYAN";
-        public int Code { get; set; } = 834;
-        public string HexCode { get; set; } = "0x80000342";
-        public string Name { get; set; } = "Kyanite";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "kyanite";
-        public bool IsTestNet { get; set; }
+        public static Kyanite InstanceTestnet { get; } = new Kyanite() { IsTestNet = true };
+
+        public override string CryptoCode => (IsTestNet ? "T" : "") + "KYAN";
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 834;
+        public string HexCode { get; private set; } = "0x80000342";
+        public string Name => "Kyanite" + (IsTestNet ? " (Test)" : "");
+        public string Image => (IsTestNet ? "t" : "") + Name.Replace("(Test)", "").Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "kyanite";
+        public bool IsTestNet { get; private set; } = false;
 
         private Kyanite()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class KyaniteConsensusFactory : ConsensusFactory

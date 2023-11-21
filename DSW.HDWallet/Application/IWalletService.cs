@@ -28,7 +28,5 @@ namespace DSW.HDWallet.Application
         Task<TransactionDetails> GenerateTransactionAsync(string ticker, long amountToSend, string seedHex, string fromAddress, string toAddress);
 
         bool ValidateAddress(string ticker, string address);
-        string GetCoinName(string ticker);
-        List<ICoinExtension> GetAllCoin();
     }
 }

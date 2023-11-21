@@ -6,7 +6,7 @@ namespace DSW.HDWallet.Infrastructure
     public interface ICoinRepository
     {
         Network GetNetwork(string ticker);
-        List<ICoinExtension> GetListCoin();
-        ICoinExtension GetCoinInfo(string ticker);
+        IEnumerable<ICoinExtension> Coins { get; }
+        ICoinExtension GetCoin(string ticker);
     }
 }

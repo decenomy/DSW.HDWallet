@@ -84,7 +84,7 @@ namespace DSW.HDWallet.Infrastructure
             var accountIndex = 0;
 
             Network network = coinRepository.GetNetwork(ticker);
-            int coinCode = coinRepository.GetCoinInfo(ticker).Code;
+            int coinCode = coinRepository.GetCoin(ticker).Code;
 
             ExtKey masterPrivKey = new ExtKey(seedHex);
 
@@ -109,7 +109,7 @@ namespace DSW.HDWallet.Infrastructure
             var changeType = 0;
 
             Network network = coinRepository.GetNetwork(ticker);
-            int coinCode = coinRepository.GetCoinInfo(ticker).Code;
+            int coinCode = coinRepository.GetCoin(ticker).Code;
 
             ExtKey masterPrivKey = string.IsNullOrEmpty(password) ? 
                                    mnemo.DeriveExtKey() : 
@@ -296,16 +296,6 @@ namespace DSW.HDWallet.Infrastructure
             }
 
             return false;
-        }
-
-        public string GetCoinName(string ticker)
-        {
-            return coinRepository.GetCoinInfo(ticker).Name;
-        }
-
-        public List<ICoinExtension> GetAllCoin()
-        {
-            return coinRepository.GetListCoin();
         }
     }
 }
