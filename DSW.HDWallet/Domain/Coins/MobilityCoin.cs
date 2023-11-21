@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static MobilityCoin Instance { get; } = new MobilityCoin();
 
         public override string CryptoCode => "MOBIC";
-        public string Ticker { get; set; } = "MOBIC";
-        public int Code { get; set; } = 849;
-        public string HexCode { get; set; } = "0x80000351";
-        public string Name { get; set; } = "MobilityCoin";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "mobility-coin";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 849;
+        public string Name => "MobilityCoin";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "mobility-coin";
+        public bool IsTestNet { get; private set; } = false;
 
         private MobilityCoin()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class MobilityCoinConsensusFactory : ConsensusFactory

@@ -4,12 +4,11 @@ namespace DSW.HDWallet.Domain.Coins;
 
 public interface ICoinExtension
 {
-    public string Ticker { get; }
-    public int Code { get; }
-    public string HexCode { get; }
-    public string Name { get; }
-    public string Image { get; }
-    public string CoinGeckoId { get; }
-    public bool IsTestNet { get; }
+    string Ticker { get; }
+    int Code { get; }
+    string Name { get; }
+    string Image { get; }
+    string CoinGeckoId { get; }
+    bool IsTestNet { get; }
 }
 

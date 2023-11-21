@@ -12,17 +12,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
     {
         public static CryptoFlow Instance { get; } = new CryptoFlow();
         public override string CryptoCode => "CFL";
-        public string Ticker { get; set; } = "CFL";
-        public int Code { get; set; } = 836;
-        public string HexCode { get; set; } = "0x80000344";
-        public string Name { get; set; } = "CryptoFlow";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "cryptoflow";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 836;
+        public string Name => "CryptoFlow";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "cryptoflow";
+        public bool IsTestNet { get; private set; } = false;
 
         private CryptoFlow()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class CryptoFlowConsensusFactory : ConsensusFactory

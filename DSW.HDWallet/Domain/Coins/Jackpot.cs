@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Jackpot Instance { get; } = new Jackpot();
 
         public override string CryptoCode => "777";
-        public string Ticker { get; set; } = "777";
-        public int Code { get; set; } = 833;
-        public string HexCode { get; set; } = "0x80000341";
-        public string Name { get; set; } = "Jackpot";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "jackpot";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 833;
+        public string Name => "Jackpot";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "jackpot";
+        public bool IsTestNet { get; private set; } = false;
 
         private Jackpot()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
         public class JackpotConsensusFactory : ConsensusFactory
         {

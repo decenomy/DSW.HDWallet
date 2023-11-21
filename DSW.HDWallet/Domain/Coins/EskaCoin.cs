@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static EskaCoin Instance { get; } = new EskaCoin();
 
         public override string CryptoCode => "ESK";
-        public string Ticker { get; set; } = "ESK";
-        public int Code { get; set; } = 845;
-        public string HexCode { get; set; } = "0x8000034d";
-        public string Name { get; set; } = "EskaCoin";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "eska";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 845;
+        public string Name => "EskaCoin";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "eska";
+        public bool IsTestNet { get; private set; } = false;
 
         private EskaCoin()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
         public class EskaCoinConsensusFactory : ConsensusFactory
         {

@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Monk Instance { get; } = new Monk();
 
         public override string CryptoCode => "MONK";
-        public string Ticker { get; set; } = "MONK";
-        public int Code { get; set; } = 842;
-        public string HexCode { get; set; } = "0x8000034a";
-        public string Name { get; set; } = "Monk";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "monk";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 842;
+        public string Name => "Monk";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "monk";
+        public bool IsTestNet { get; private set; } = false;
 
         private Monk()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class MonkConsensusFactory : ConsensusFactory

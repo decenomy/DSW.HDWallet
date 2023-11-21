@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Birake Instance { get; } = new Birake();
 
         public override string CryptoCode => "BIR";
-        public string Ticker { get; set; } = "BIR";
-        public int Code { get; set; } = 848;
-        public string HexCode { get; set; } = "0x80000350";
-        public string Name { get; set; } = "Birake";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "birake";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 848;
+        public string Name => "Birake";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "birake";
+        public bool IsTestNet { get; private set; } = false;
 
         private Birake()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class BirakeConsensusFactory : ConsensusFactory

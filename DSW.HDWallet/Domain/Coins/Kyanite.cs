@@ -17,7 +17,6 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public override string CryptoCode => (IsTestNet ? "T" : "") + "KYAN";
         public string Ticker => CryptoCode;
         public int Code { get; private set; } = 834;
-        public string HexCode { get; private set; } = "0x80000342";
         public string Name => "Kyanite" + (IsTestNet ? " (Test)" : "");
         public string Image => (IsTestNet ? "t" : "") + Name.Replace("(Test)", "").Replace(" ", "").ToLower();
         public string CoinGeckoId { get; private set; } = "kyanite";

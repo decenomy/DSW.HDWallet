@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Azzure Instance { get; } = new Azzure();
 
         public override string CryptoCode => "AZR";
-        public string Ticker { get; set; } = "AZR";
-        public int Code { get; set; } = 835;
-        public string HexCode { get; set; } = "0x80000343";
-        public string Name { get; set; } = "Azzure";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "azzure";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 835;
+        public string Name => "Azzure";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "azzure";
+        public bool IsTestNet { get; private set; } = false;
 
         private Azzure()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class AzzureConsensusFactory : ConsensusFactory

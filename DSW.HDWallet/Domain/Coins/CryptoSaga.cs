@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static CryptoSaga Instance { get; } = new CryptoSaga();
 
         public override string CryptoCode => "SAGA";
-        public string Ticker { get; set; } = "SAGA";
-        public int Code { get; set; } = 843;
-        public string HexCode { get; set; } = "0x8000034b";
-        public string Name { get; set; } = "CryptoSaga";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "cryptosaga";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 843;
+        public string Name => "CryptoSaga";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "cryptosaga";
+        public bool IsTestNet { get; private set; } = false;
 
         private CryptoSaga()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class CryptoSagaConsensusFactory : ConsensusFactory

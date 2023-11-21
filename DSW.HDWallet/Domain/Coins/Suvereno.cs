@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Suvereno Instance { get; } = new Suvereno();
 
         public override string CryptoCode => "SUV";
-        public string Ticker { get; set; } = "SUV";
-        public int Code { get; set; } = 844;
-        public string HexCode { get; set; } = "0x8000034c";
-        public string Name { get; set; } = "Suvereno";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "suvereno";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 844;
+        public string Name => "Suvereno";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "suvereno";
+        public bool IsTestNet { get; private set; } = false;
 
         private Suvereno()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class SuverenoConsensusFactory : ConsensusFactory

@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static OneWorldCoin Instance { get; } = new OneWorldCoin();
 
         public override string CryptoCode => "OWO";
-        public string Ticker { get; set; } = "OWO";
-        public int Code { get; set; } = 846;
-        public string HexCode { get; set; } = "0x8000034e";
-        public string Name { get; set; } = "OneWorld Coin";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "one-world-coin";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 846;
+        public string Name => "OneWorld Coin";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "one-world-coin";
+        public bool IsTestNet { get; private set; } = false;
 
         private OneWorldCoin()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class OneWorldCoinConsensusFactory : ConsensusFactory

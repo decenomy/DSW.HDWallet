@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Flits Instance { get; } = new Flits();
 
         public override string CryptoCode => "FLS";
-        public string Ticker { get; set; } = "FLS";
-        public int Code { get; set; } = 850;
-        public string HexCode { get; set; } = "0x80000352";
-        public string Name { get; set; } = "Flits";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "flits";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 850;
+        public string Name => "Flits";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "flits";
+        public bool IsTestNet { get; private set; } = false;
 
         private Flits()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class FlitsConsensusFactory : ConsensusFactory

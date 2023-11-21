@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Peony Instance { get; } = new Peony();
 
         public override string CryptoCode => "PNY";
-        public string Ticker { get; set; } = "PNY";
-        public int Code { get; set; } = 840;
-        public string HexCode { get; set; } = "0x80000348";
-        public string Name { get; set; } = "Peony";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "peony";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 840;
+        public string Name => "Peony";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "peony";
+        public bool IsTestNet { get; private set; } = false;
 
         private Peony()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class PeonyConsensusFactory : ConsensusFactory

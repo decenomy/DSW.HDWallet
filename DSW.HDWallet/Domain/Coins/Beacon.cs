@@ -13,16 +13,14 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static Beacon Instance { get; } = new Beacon();
 
         public override string CryptoCode => "BECN";
-        public string Ticker { get; set; } = "BECN";
-        public int Code { get; set; } = 841;
-        public string HexCode { get; set; } = "0x80000349";
-        public string Name { get; set; } = "Beacon";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "beacon";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 841;
+        public string Name => "Beacon";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "beacon";
+        public bool IsTestNet { get; private set; } = false;
         private Beacon()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class BeaconConsensusFactory : ConsensusFactory

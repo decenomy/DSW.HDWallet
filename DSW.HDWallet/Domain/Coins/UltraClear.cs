@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static UltraClear Instance { get; } = new UltraClear();
 
         public override string CryptoCode => "UCR";
-        public string Ticker { get; set; } = "UCR";
-        public int Code { get; set; } = 839;
-        public string HexCode { get; set; } = "0x80000347";
-        public string Name { get; set; } = "Ultra Clear";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "ultra-clear";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 839;
+        public string Name => "Ultra Clear";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "ultra-clear";
+        public bool IsTestNet { get; private set; } = false;
 
         private UltraClear()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class UltraClearConsensusFactory : ConsensusFactory

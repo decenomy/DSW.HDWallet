@@ -13,17 +13,15 @@ namespace DSW.HDWallet.Infrastructure.Coins
         public static DashDiamond Instance { get; } = new DashDiamond();
 
         public override string CryptoCode => "DASHD";
-        public string Ticker { get; set; } = "DASHD";
-        public int Code { get; set; } = 837;
-        public string HexCode { get; set; } = "0x80000345";
-        public string Name { get; set; } = "Dash Diamond";
-        public string Image { get; set; }
-        public string CoinGeckoId { get; set; } = "dash-diamond";
-        public bool IsTestNet { get; set; }
+        public string Ticker => CryptoCode;
+        public int Code { get; private set; } = 837;
+        public string Name => "Dash Diamond";
+        public string Image => Name.Replace(" ", "").ToLower();
+        public string CoinGeckoId { get; private set; } = "dash-diamond";
+        public bool IsTestNet { get; private set; } = false;
 
         private DashDiamond()
         {
-            this.Image = this.Name.Replace(" ", "").ToLower();
         }
 
         public class DashDiamondConsensusFactory : ConsensusFactory
