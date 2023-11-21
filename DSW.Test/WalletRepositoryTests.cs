@@ -11,7 +11,7 @@ namespace DSW.Test
         [Fact]
         public void Create_WalletWithoutPassword_ReturnsWallet()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             var repository = new WalletRepository(mockCoinRepository.Object);
@@ -27,7 +27,7 @@ namespace DSW.Test
         [Fact]
         public void CreateWithPassword_WalletWithPassword_ReturnsWallet()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
 
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
@@ -45,7 +45,7 @@ namespace DSW.Test
         [Fact]
         public void Recover_WalletWithoutPassword_ReturnsSeedHex()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             var repository = new WalletRepository(mockCoinRepository.Object);
@@ -60,7 +60,7 @@ namespace DSW.Test
         [Fact]
         public void Recover_WalletWithPassword_ReturnsSeedHex()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             var password = "test_password_123456";
@@ -76,7 +76,7 @@ namespace DSW.Test
         [Fact]
         public void GeneratePubkey_ValidParameters_ReturnsPubKeyDetails()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var coinType = CoinType.SAPP.ToString();
             var seedHex = "e921e0e1ce42a426cd403e98502c723e4f731f33e7e182db36428cd96952f3e75d6f8cc91856662f9f5425313aa321edee629d613abb18f7cf86f22726e9d95c";
@@ -93,7 +93,7 @@ namespace DSW.Test
         [Fact]
         public void GenerateDerivePubKey_ValidParameters_ReturnsDerivedPublicKey()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var coinType = CoinType.SAPP.ToString();
             var pubKey = "ToEGySqfw8Gkddh6h4TzjvfQyZLLFnbEVgQ7adzz3wKtzucZr734aL1f5E7rcarfLubc8vbLb4ZfQncrDXpAeWGuzuqzyPaQP4TKVcT1FbXaVnK";
@@ -110,7 +110,7 @@ namespace DSW.Test
         [Fact]
         public void CreateDeriveKey_ValidParameters_ReturnsDeriveKeyDetails()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var coinType = CoinType.SAPP.ToString();
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
@@ -127,7 +127,7 @@ namespace DSW.Test
         [Fact]
         public void GenerateTransaction_WithValidUtxos_ShouldCreateTransactionDetails()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var walletRepository = new WalletRepository(mockCoinRepository.Object);
             string ticker = CoinType.TKYAN.ToString(); 
@@ -147,7 +147,7 @@ namespace DSW.Test
         [Fact]
         public void GenerateTransaction_WithInsufficientFunds_ShouldReturnNull()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var walletRepository = new WalletRepository(mockCoinRepository.Object);
             string ticker= CoinType.TKYAN.ToString(); 
@@ -168,7 +168,7 @@ namespace DSW.Test
         [Fact]
         public void GenerateTransaction_WithInvalidSeed_ShouldReturnErrorMessage()
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var walletRepository = new WalletRepository(mockCoinRepository.Object);
             string ticker = CoinType.TKYAN.ToString();
@@ -191,7 +191,7 @@ namespace DSW.Test
         [InlineData("TKYAN", "Kisn6NZVjHt6qAd7b1VakPw2DyZkU9GQQy")]
         public void ValidateAddress_ValidAddresses_ReturnsTrue(string ticker, string address)
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var walletRepository = new WalletRepository(mockCoinRepository.Object);
 
@@ -207,7 +207,7 @@ namespace DSW.Test
         [InlineData("TKYAN", "kisn6NZVjHt6qAd7b1VakPw2DyZkU9GHQy")]
         public void ValidateAddress_InvalidAddresses_ReturnsFalse(string ticker, string address)
         {
-            var mockCoinRepository = new Mock<ICoinRepository>();
+            var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var walletRepository = new WalletRepository(mockCoinRepository.Object);
 
