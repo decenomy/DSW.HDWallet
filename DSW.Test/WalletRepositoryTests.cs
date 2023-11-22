@@ -78,7 +78,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
-            var coinType = CoinType.SAPP.ToString();
+            var coinType = "SAPP";
             var seedHex = "e921e0e1ce42a426cd403e98502c723e4f731f33e7e182db36428cd96952f3e75d6f8cc91856662f9f5425313aa321edee629d613abb18f7cf86f22726e9d95c";
             var repository = new WalletRepository(mockCoinRepository.Object);
 
@@ -95,7 +95,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
-            var coinType = CoinType.SAPP.ToString();
+            var coinType = "SAPP";
             var pubKey = "ToEGySqfw8Gkddh6h4TzjvfQyZLLFnbEVgQ7adzz3wKtzucZr734aL1f5E7rcarfLubc8vbLb4ZfQncrDXpAeWGuzuqzyPaQP4TKVcT1FbXaVnK";
             var index = 0;
             var repository = new WalletRepository(mockCoinRepository.Object);
@@ -112,7 +112,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
-            var coinType = CoinType.SAPP.ToString();
+            var coinType = "SAPP";
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             var index = 0;
             var repository = new WalletRepository(mockCoinRepository.Object);
@@ -130,7 +130,7 @@ namespace DSW.Test
             var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var walletRepository = new WalletRepository(mockCoinRepository.Object);
-            string ticker = CoinType.TKYAN.ToString(); 
+            string ticker = "TKYAN"; 
             List<UtxoObject> utxos = GetMockUtxos(); 
             long amountToSend = 100000000; 
             string seedHex = "03da1ed344a3094a4869339844849b98499fc8d56309d6951fabefec35d7f5f3302a8870cb8e64e8e6015295300690feea202ec93af818dc92546ba36143a7fd";
@@ -150,7 +150,7 @@ namespace DSW.Test
             var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var walletRepository = new WalletRepository(mockCoinRepository.Object);
-            string ticker= CoinType.TKYAN.ToString(); 
+            string ticker= "TKYAN";
             List<UtxoObject> utxos = GetMockUtxosLowValues(); 
             long amountToSend = 995200000000; 
             string seedHex = "03da1ed344a3094a4869339844849b98499fc8d56309d6951fabefec35d7f5f3302a8870cb8e64e8e6015295300690feea202ec93af818dc92546ba36143a7fd";
@@ -171,7 +171,7 @@ namespace DSW.Test
             var mockCoinRepository = new Mock<CoinRepository>();
             // Arrange
             var walletRepository = new WalletRepository(mockCoinRepository.Object);
-            string ticker = CoinType.TKYAN.ToString();
+            string ticker = "TKYAN";
             List<UtxoObject> utxos = GetMockUtxos();
             long amountToSend = 900000000;
             string seedHex = "7aL9D9skvSD1ykfKBoWcDSqSPm76abuFGbQ5tcZwfd6CG1EzyPHdnyTxwr1LMnFB5KSB8qV8fwaykFib1YmKXZACDYE4tGBrPu7HgBmmgfCC3Cc";
