@@ -1,6 +1,7 @@
 ﻿using DSW.HDWallet.Application.Extension;
 using DSW.HDWallet.Application.Provider;
 using DSW.HDWallet.Domain.Coins;
+using DSW.HDWallet.Infrastructure;
 using NBitcoin;
 
 Decenomy.Project.HDWallet();
@@ -14,7 +15,8 @@ namespace Decenomy
             WordCount wordCount = WordCount.Twelve;
             HDWalletServiceProvider.Initialize();            
             var walletAppService = HDWalletServiceProvider.GetWalletService();
-            
+            ICoinRepository coinRepository = new CoinRepository();
+
             while (true)
             {
                 #region Menu
@@ -108,10 +110,14 @@ namespace Decenomy
 
                         WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
 
-                        foreach (CoinType coin in Enum.GetValues(typeof(CoinType)))
+
+                        var coinList = coinRepository.Coins.ToList();
+                        int counter = 0;
+                        foreach (ICoinExtension coin in coinList)
                         {
-                            Console.WriteLine($" {(int)coin}: {coin}");
+                            Console.WriteLine($"{counter}: {coin.Ticker}");
                         }
+
 
                         int choice;
                         bool validChoice = false;
@@ -121,7 +127,7 @@ namespace Decenomy
                             Console.Write(" Enter the coin code: ");
                             if (int.TryParse(Console.ReadLine(), out choice))
                             {
-                                if (Enum.IsDefined(typeof(CoinType), choice))
+                                if (choice >= 0 && choice < coinList.Count)
                                 {
                                     validChoice = true;
                                 }
@@ -136,7 +142,7 @@ namespace Decenomy
                             }
                         } while (!validChoice);
 
-                        CoinType selectedCoin = (CoinType)choice;
+                        ICoinExtension selectedCoin = coinList[choice];
 
                         Console.Write("\n Enter derived number of keys: ");
                         string? index = Console.ReadLine();
@@ -172,9 +178,11 @@ namespace Decenomy
 
                         WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
 
-                        foreach (CoinType coin in Enum.GetValues(typeof(CoinType)))
+                        coinList = coinRepository.Coins.ToList();
+                        counter = 0;
+                        foreach (ICoinExtension coin in coinList)
                         {
-                            Console.WriteLine($" {(int)coin}: {coin}");
+                            Console.WriteLine($"{counter}: {coin.Ticker}");
                         }
 
                         int choiceAPP;
@@ -185,9 +193,9 @@ namespace Decenomy
                             Console.Write(" Enter the coin code: ");
                             if (int.TryParse(Console.ReadLine(), out choiceAPP))
                             {
-                                if (Enum.IsDefined(typeof(CoinType), choiceAPP))
+                                if (choiceAPP >= 0 && choiceAPP < coinList.Count)
                                 {
-                                    isValidChoice = true;
+                                    validChoice = true;
                                 }
                                 else
                                 {
@@ -200,9 +208,9 @@ namespace Decenomy
                             }
                         } while (!isValidChoice);
 
-                        CoinType selectedCoinAPP = (CoinType)choiceAPP;
+                        ICoinExtension selectedCoinApp = coinList[choiceAPP];
 
-                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinAPP.ToString(), newWalletWithPassword?.SeedHex!, true);
+                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinApp.Ticker, newWalletWithPassword?.SeedHex!, true);
 
                         WriteLine($"\n Public Key : {generatePubKey?.PubKey}", ConsoleColor.DarkGreen);
                         WriteLine($" Coin Type : {generatePubKey?.Ticker}", ConsoleColor.DarkGreen);
@@ -232,9 +240,11 @@ namespace Decenomy
 
                         WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
 
-                        foreach (CoinType coin in Enum.GetValues(typeof(CoinType)))
+                        coinList = coinRepository.Coins.ToList();
+                        counter = 0;
+                        foreach (ICoinExtension coin in coinList)
                         {
-                            Console.WriteLine($" {(int)coin}: {coin}");
+                            Console.WriteLine($"{counter}: {coin.Ticker}");
                         }
 
                         int choiceTransaction;
@@ -245,9 +255,9 @@ namespace Decenomy
                             Console.Write(" Enter the coin code: ");
                             if (int.TryParse(Console.ReadLine(), out choiceTransaction))
                             {
-                                if (Enum.IsDefined(typeof(CoinType), choiceTransaction))
+                                if (choiceTransaction >= 0 && choiceTransaction < coinList.Count)
                                 {
-                                    validChoiceTransaction = true;
+                                    validChoice = true;
                                 }
                                 else
                                 {
@@ -260,7 +270,7 @@ namespace Decenomy
                             }
                         } while (!validChoiceTransaction);
 
-                        CoinType transactionCoin = (CoinType)choiceTransaction;
+                        ICoinExtension transactionCoin = coinList[choiceTransaction];
 
 
                         Console.Write(" From Address: ");
@@ -273,7 +283,7 @@ namespace Decenomy
                         long transactionValue = Console.ReadLine()!.ToLong();
 
 
-                        var _tr = walletAppService?.GenerateTransactionAsync(transactionCoin.ToString(), transactionValue, walletSeed, fromAddress, toAddress).Result;
+                        var _tr = walletAppService?.GenerateTransactionAsync(transactionCoin.Ticker, transactionValue, walletSeed, fromAddress, toAddress).Result;
 
                         WriteLine($"\n Transaction Details", ConsoleColor.DarkRed);
                         ulong trTotal = 0;
