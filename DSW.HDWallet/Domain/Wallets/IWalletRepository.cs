@@ -9,10 +9,9 @@ namespace DSW.HDWallet.Domain.Wallets
     {
         Wallet Create(Mnemonic mnemonic);
         Wallet CreateWithPassword(Mnemonic mnemonic, string? password = null);
-        string Recover(Mnemonic mnemo, string? password = null);
-        DeriveKeyDetails CreateDeriveKey(string ticker, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false);
-        DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, string ticker, int Index, bool isNetworkTest = false);
-        PubKeyDetails GeneratePubkey(string ticker, string seedHex, string? password = null, bool isNetworkTest = false);
+        string GetSeedHex(Mnemonic mnemo, string? password = null);
+        AddressInfo GetAddress(string pubKey, string ticker, int Index, bool IsChange = false);
+        PubKeyDetails GeneratePubkey(string ticker, string seedHex);
         TransactionDetails GenerateTransaction(string ticker, List<UtxoObject> utxos, long amountToSend, string seedHex, string toAddress, long fee = 0);
         bool ValidateAddress(string ticker, string address);
     }

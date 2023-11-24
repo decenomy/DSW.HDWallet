@@ -9,12 +9,10 @@ namespace DSW.HDWallet.Application
 {
     public interface IWalletService
     {
-        Wallet CreateWallet(Words wordCount);
-        Wallet CreateWalletWithPassword(Words wordCount, string? password = null);
+        Wallet CreateWallet(Words wordCount, string? password = null);
         string RecoverWallet(string secretWords, string? password = null);
-        DeriveKeyDetails CreateDerivedKey(string ticker, string masterKey, int index, string? password = null, bool isNetworkTest = false);
-        PubKeyDetails GeneratePubkey(string ticker, string seedHex, bool isNetworkTest = false);
-        DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, string ticker, int Index, bool isNetworkTest = false);
+        PubKeyDetails GeneratePubkey(string ticker, string seedHex);
+        AddressInfo GetAddress(string pubKey, string ticker, int Index, bool IsChange = false);
         Task<AddressObject> GetAddressAsync(string coin, string address);
         Task<TransactionObject> GetTransactionAsync(string coin, string txid);
         Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid);

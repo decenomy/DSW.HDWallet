@@ -46,18 +46,11 @@ namespace DSW.HDWallet.Infrastructure
             return wallet;
         }
 
-        public string Recover(Mnemonic mnemo, string? password = null)
-        {
-            byte[] seed = string.IsNullOrEmpty(password) ? mnemo.DeriveSeed() : mnemo.DeriveSeed(password);
-
-            return seed.ToHexString();
-        }
+        public string GetSeedHex(Mnemonic mnemo, string? password = null) => mnemo.DeriveSeed(password).ToHexString();
        
-        
-
-        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, string ticker, int Index, bool isNetworkTest = false)
+        public AddressInfo GetAddress(string pubKey, string ticker, int Index, bool IsChange = false)
         {
-            var changeType = 0;
+            var changeType = IsChange ? 1 : 0;
 
             Network network = coinRepository.GetNetwork(ticker);
             ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
@@ -69,7 +62,7 @@ namespace DSW.HDWallet.Infrastructure
                                     .GetAddress(ScriptPubKeyType.Legacy, network);
 
 
-            DeriveKeyDetailsApp deriveKeyDetails = new()
+            AddressInfo deriveKeyDetails = new()
             {
                 Address = address.ToString(),
                 Path = keypath.ToString()
@@ -78,7 +71,7 @@ namespace DSW.HDWallet.Infrastructure
             return deriveKeyDetails;
         }
 
-        public PubKeyDetails GeneratePubkey(string ticker, string seedHex, string? password = null, bool isNetworkTest = false)
+        public PubKeyDetails GeneratePubkey(string ticker, string seedHex)
         {
             var purpose = 44;
             var accountIndex = 0;
@@ -100,36 +93,6 @@ namespace DSW.HDWallet.Infrastructure
             };
 
             return pubKeyDetails;
-        }
-
-        public DeriveKeyDetails CreateDeriveKey(string ticker, Mnemonic mnemo, int index, string? password = null, bool isNetworkTest = false)
-        {
-            var purpose = 44;
-            var accountIndex = 0;
-            var changeType = 0;
-
-            Network network = coinRepository.GetNetwork(ticker);
-            int coinCode = coinRepository.GetCoin(ticker).Code;
-
-            ExtKey masterPrivKey = string.IsNullOrEmpty(password) ? 
-                                   mnemo.DeriveExtKey() : 
-                                   mnemo.DeriveExtKey(password);   
-            
-            KeyPath keyPath = new($"m/{purpose}'/{coinCode}'/{accountIndex}'/{changeType}'/{index}'");
-
-            var derivedKey = masterPrivKey.Derive(keyPath).Neuter();
-            PubKey publicKey = derivedKey.PubKey;
-            BitcoinAddress address = publicKey.GetAddress(ScriptPubKeyType.Legacy, network);
-            var extPubkey = derivedKey.ToString(network);
-
-            DeriveKeyDetails deriveKeyDetails = new()
-            {
-                PubKey = extPubkey.ToString(),
-                Address = address.ToString(),
-                Path = "m/" + keyPath.ToString(),
-            };
-
-            return deriveKeyDetails;
         }
 
         private List<UtxoObject> SelectUtxos(List<UtxoObject> utxos, long targetValue, long fee = 0)

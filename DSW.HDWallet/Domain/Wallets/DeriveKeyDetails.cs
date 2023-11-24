@@ -7,7 +7,7 @@
         public required string Path { get; set; }
     }
 
-    public class DeriveKeyDetailsApp
+    public class AddressInfo
     {
         public required string Address { get; set; }
         public required string Path { get; set; }

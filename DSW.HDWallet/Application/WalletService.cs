@@ -28,14 +28,7 @@ namespace DSW.HDWallet.Application
             _webSocket = webSocket;
         }
 
-        public Wallet CreateWallet(WordCount wordCount)
-        {
-            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic(wordCount);
-
-            return _walletRepository.Create(mnemo);
-        }
-
-        public Wallet CreateWalletWithPassword(WordCount wordCount, string? password = null)
+        public Wallet CreateWallet(WordCount wordCount, string? password = null)
         {
             Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic(wordCount);
 
@@ -46,23 +39,17 @@ namespace DSW.HDWallet.Application
         {
             Mnemonic mnemo = _mnemonicRepository.GetMnemonic(mnemonic);
 
-            return _walletRepository.Recover(mnemo, password);
+            return _walletRepository.GetSeedHex(mnemo, password);
         }
 
-        public DeriveKeyDetails CreateDerivedKey(string ticker, string mnemonic, int index, string? password = null, bool isNetworkTest = false)
+        public PubKeyDetails GeneratePubkey(string ticker, string seedHex)
         {
-            Mnemonic mnemo = _mnemonicRepository.GetMnemonic(mnemonic);
-            return _walletRepository.CreateDeriveKey(ticker, mnemo, index, password);
+            return _walletRepository.GeneratePubkey(ticker, seedHex);
         }
 
-        public PubKeyDetails GeneratePubkey(string ticker, string seedHex, bool isNetworkTest = false)
+        public AddressInfo GetAddress(string pubKey, string ticker, int Index, bool isChange = false)
         {
-            return _walletRepository.GeneratePubkey(ticker, seedHex, null, isNetworkTest);
-        }
-
-        public DeriveKeyDetailsApp GenerateDerivePubKey(string pubKey, string ticker, int Index, bool isNetworkTest = false)
-        {
-            return _walletRepository.GenerateDerivePubKey(pubKey, ticker, Index, isNetworkTest);
+            return _walletRepository.GetAddress(pubKey, ticker, Index, isChange);
         }
 
         public async Task<AddressObject> GetAddressAsync(string coin, string address)

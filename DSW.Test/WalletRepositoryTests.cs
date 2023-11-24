@@ -51,7 +51,7 @@ namespace DSW.Test
             var repository = new WalletRepository(mockCoinRepository.Object);
 
             // Act
-            var seedHex = repository.Recover(mnemonic);
+            var seedHex = repository.GetSeedHex(mnemonic);
 
             // Assert
             Assert.NotNull(seedHex);
@@ -67,7 +67,7 @@ namespace DSW.Test
             var repository = new WalletRepository(mockCoinRepository.Object);
 
             // Act
-            var seedHex = repository.Recover(mnemonic, password);
+            var seedHex = repository.GetSeedHex(mnemonic, password);
 
             // Assert
             Assert.NotNull(seedHex);
@@ -101,28 +101,28 @@ namespace DSW.Test
             var repository = new WalletRepository(mockCoinRepository.Object);
 
             // Act
-            var derivedPubKey = repository.GenerateDerivePubKey(pubKey, coinType, index);
+            var derivedPubKey = repository.GetAddress(pubKey, coinType, index);
 
             // Assert
             Assert.NotNull(derivedPubKey);
         }
 
-        [Fact]
-        public void CreateDeriveKey_ValidParameters_ReturnsDeriveKeyDetails()
-        {
-            var mockCoinRepository = new Mock<CoinRepository>();
-            // Arrange
-            var coinType = "SAPP";
-            var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
-            var index = 0;
-            var repository = new WalletRepository(mockCoinRepository.Object);
+        //[Fact]
+        //public void CreateDeriveKey_ValidParameters_ReturnsDeriveKeyDetails()
+        //{
+        //    var mockCoinRepository = new Mock<CoinRepository>();
+        //    // Arrange
+        //    var coinType = "SAPP";
+        //    var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
+        //    var index = 0;
+        //    var repository = new WalletRepository(mockCoinRepository.Object);
 
-            // Act
-            var deriveKeyDetails = repository.CreateDeriveKey(coinType, mnemonic, index);
+        //    // Act
+        //    var deriveKeyDetails = repository.CreateDeriveKey(coinType, mnemonic, index);
 
-            // Assert
-            Assert.NotNull(deriveKeyDetails);
-        }
+        //    // Assert
+        //    Assert.NotNull(deriveKeyDetails);
+        //}
 
         [Fact]
         public void GenerateTransaction_WithValidUtxos_ShouldCreateTransactionDetails()

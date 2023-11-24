@@ -83,7 +83,7 @@ namespace Decenomy
                         Console.Write("\n Enter your Password: ");
                         string? password = Console.ReadLine();
 
-                        var createWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, password);
+                        var createWalletWithPassword = walletAppService?.CreateWallet(wordCount, password);
                      
                         WriteLine($"\n Seed Hex : {createWalletWithPassword?.SeedHex}", ConsoleColor.DarkGreen);
                         WriteLine($" Mnemonic : {createWalletWithPassword?.Mnemonic}", ConsoleColor.DarkGreen);
@@ -99,73 +99,14 @@ namespace Decenomy
                         break;
                     #endregion
 
-                    #region Create Derived Key
-                    case "3":
-                        WriteLine($"\n\n Create Derived Key", ConsoleColor.DarkGreen);
-                        Console.Write(" Mnemonic : ");
-                        string? mnemonic = Console.ReadLine();
-
-                        Console.Write("\n Password : ");
-                        string? _password = Console.ReadLine();
-
-                        WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
-
-
-                        var coinList = coinRepository.Coins.ToList();
-                        int counter = 0;
-                        foreach (ICoinExtension coin in coinList)
-                        {
-                            Console.WriteLine($"{counter}: {coin.Ticker}");
-                        }
-
-
-                        int choice;
-                        bool validChoice = false;
-
-                        do
-                        {
-                            Console.Write(" Enter the coin code: ");
-                            if (int.TryParse(Console.ReadLine(), out choice))
-                            {
-                                if (choice >= 0 && choice < coinList.Count)
-                                {
-                                    validChoice = true;
-                                }
-                                else
-                                {
-                                    WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
-                                }
-                            }
-                            else
-                            {
-                                WriteLine($" Invalid coin. Try again.", ConsoleColor.DarkRed);
-                            }
-                        } while (!validChoice);
-
-                        ICoinExtension selectedCoin = coinList[choice];
-
-                        Console.Write("\n Enter derived number of keys: ");
-                        string? index = Console.ReadLine();
-
-                        for (int i = 0; i < Convert.ToInt32(index); i++)
-                        {
-                            var createDeriveKey = walletAppService?.CreateDerivedKey(selectedCoin.ToString(), mnemonic!, Convert.ToInt32(i), _password);
-                            WriteLine($"\n Index [{i}] Address={createDeriveKey?.Address} KeyPath={createDeriveKey?.Path} \n {createDeriveKey?.PubKey}", ConsoleColor.DarkGreen);
-                        }
-
-                        Console.ReadLine();
-                        Console.Clear();
-                        break;
-                    #endregion
-
                     #region New Wallet - App Process
-                    case "4":
+                    case "3":
                         Console.WriteLine("\n\n New Wallet - App Process");
 
                         Console.Write("\n Enter your Password: ");
                         string? pwd = Console.ReadLine();
 
-                        var newWalletWithPassword = walletAppService?.CreateWalletWithPassword(wordCount, pwd);
+                        var newWalletWithPassword = walletAppService?.CreateWallet(wordCount, pwd);
                        
                         WriteLine($"\n Seed Hex : {newWalletWithPassword?.SeedHex}", ConsoleColor.DarkGreen);
                         WriteLine($" Mnemonic : {newWalletWithPassword?.Mnemonic}", ConsoleColor.DarkGreen);
@@ -178,8 +119,8 @@ namespace Decenomy
 
                         WriteLine($"\n Select a coin:", ConsoleColor.DarkGreen);
 
-                        coinList = coinRepository.Coins.ToList();
-                        counter = 0;
+                        var coinList = coinRepository.Coins.ToList();
+                        var counter = 0;
                         foreach (ICoinExtension coin in coinList)
                         {
                             Console.WriteLine($"{counter}: {coin.Ticker}");
@@ -195,7 +136,7 @@ namespace Decenomy
                             {
                                 if (choiceAPP >= 0 && choiceAPP < coinList.Count)
                                 {
-                                    validChoice = true;
+                                    isValidChoice = true;
                                 }
                                 else
                                 {
@@ -210,7 +151,7 @@ namespace Decenomy
 
                         ICoinExtension selectedCoinApp = coinList[choiceAPP];
 
-                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinApp.Ticker, newWalletWithPassword?.SeedHex!, true);
+                        var generatePubKey = walletAppService?.GeneratePubkey(selectedCoinApp.Ticker, newWalletWithPassword?.SeedHex!);
 
                         WriteLine($"\n Public Key : {generatePubKey?.PubKey}", ConsoleColor.DarkGreen);
                         WriteLine($" Coin Type : {generatePubKey?.Ticker}", ConsoleColor.DarkGreen);
@@ -221,7 +162,7 @@ namespace Decenomy
 
                         for (int i = 0; i < Convert.ToInt32(indexKey); i++)
                         {
-                            var createDeriveKey = walletAppService?.GenerateDerivePubKey(generatePubKey?.PubKey!, generatePubKey?.Ticker, i, true);
+                            var createDeriveKey = walletAppService?.GetAddress(generatePubKey?.PubKey!, generatePubKey?.Ticker, i, true);
                             WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Path}", ConsoleColor.DarkGreen);
                         }
 
@@ -232,7 +173,7 @@ namespace Decenomy
 
 
                     #region Create a Transaction
-                    case "5":
+                    case "4":
                         WriteLine($"\n Create a Transaction", ConsoleColor.DarkRed);
 
                         Console.Write("\n Enter SeedHex: ");
@@ -257,7 +198,7 @@ namespace Decenomy
                             {
                                 if (choiceTransaction >= 0 && choiceTransaction < coinList.Count)
                                 {
-                                    validChoice = true;
+                                    validChoiceTransaction = true;
                                 }
                                 else
                                 {
@@ -316,7 +257,7 @@ namespace Decenomy
                     #endregion
 
                     #region Validate a Address
-                    case "6":
+                    case "5":
                         Console.WriteLine("\n\n Validate a Address");
 
                         bool isValid = walletAppService!.ValidateAddress("SAPP", "SeZQ1jpMHms63CejL4nTTbVYoLNQXLsbJ6");
@@ -333,7 +274,7 @@ namespace Decenomy
 
                         
                     #region Recover Wallet
-                    case "8":
+                    case "6":
                         WriteLine($"\n Recover Wallett Address", ConsoleColor.DarkRed);
                         Console.Write(" Enter Mnemonic: ");
                         string? mnemonicWords = Console.ReadLine();
@@ -354,7 +295,7 @@ namespace Decenomy
                     #endregion
 
                     #region Random Secrect Words
-                    case "9":
+                    case "7":
                         var secretWords = walletAppService?.CreateWallet(WordCount.TwentyFour);
                         string[]? randomWords = secretWords?.GetRandomMnemonic(3);
 
