@@ -7,8 +7,6 @@ namespace DSW.HDWallet.Domain.Wallets
 {
     public interface IWalletRepository
     {
-        Wallet Create(Mnemonic mnemonic);
-        Wallet CreateWithPassword(Mnemonic mnemonic, string? password = null);
         string GetSeedHex(Mnemonic mnemo, string? password = null);
         AddressInfo GetAddress(string pubKey, string ticker, int Index, bool IsChange = false);
         PubKeyDetails GeneratePubkey(string ticker, string seedHex);

@@ -16,36 +16,6 @@ namespace DSW.HDWallet.Infrastructure
             this.coinRepository = coinRepository;
         }
 
-        public Wallet Create(Mnemonic mnemo)
-        {
-            byte[] seed = mnemo.DeriveSeed();
-            string seedHex = seed.ToHexString();
-
-            var wallet = new Wallet
-            {
-                SeedHex = seedHex,
-                Mnemonic = mnemo.ToString(),
-                MnemonicArray = mnemo.Words
-            };
-
-            return wallet;
-        }
-
-        public Wallet CreateWithPassword(Mnemonic mnemo, string? password = null)
-        {
-            byte[] seed = mnemo.DeriveSeed(password);
-            string seedHex = seed.ToHexString();
-
-            var wallet = new Wallet
-            {
-                SeedHex = seedHex,
-                Mnemonic = mnemo.ToString(),
-                MnemonicArray = mnemo.Words
-            };
-
-            return wallet;
-        }
-
         public string GetSeedHex(Mnemonic mnemo, string? password = null) => mnemo.DeriveSeed(password).ToHexString();
        
         public AddressInfo GetAddress(string pubKey, string ticker, int Index, bool IsChange = false)

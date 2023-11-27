@@ -1,4 +1,5 @@
-﻿using DSW.HDWallet.Domain.ApiObjects;
+﻿using DSW.HDWallet.Application.Extension;
+using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
@@ -13,31 +14,33 @@ namespace DSW.HDWallet.Application
     public class WalletService : IWalletService
     {
         private readonly IWalletRepository _walletRepository;
-        private readonly IMnemonicRepository _mnemonicRepository;
         private readonly IBlockbookHttpClient _apiDecenomyExplorer;
         private readonly IWebSocketDecenomyExplorerRepository _webSocket;
 
         public WalletService(IWalletRepository walletRepository,
-            IMnemonicRepository mnemonicRepository,
             IBlockbookHttpClient apiDecenomyExplorer,
             IWebSocketDecenomyExplorerRepository webSocket)
         {
             _walletRepository = walletRepository;
-            _mnemonicRepository = mnemonicRepository;
             _apiDecenomyExplorer = apiDecenomyExplorer;
             _webSocket = webSocket;
         }
 
         public Wallet CreateWallet(WordCount wordCount, string? password = null)
         {
-            Mnemonic mnemo = _mnemonicRepository.GenerateMnemonic(wordCount);
+            Mnemonic mnemo = new Mnemonic(Wordlist.English, wordCount);
 
-            return _walletRepository.CreateWithPassword(mnemo, password);
+            return new Wallet
+            {
+                SeedHex = mnemo.DeriveSeed(password).ToHexString(),
+                Mnemonic = mnemo.ToString(),
+                MnemonicArray = mnemo.Words
+            };
         }
 
         public string RecoverWallet(string mnemonic, string? password = null)
         {
-            Mnemonic mnemo = _mnemonicRepository.GetMnemonic(mnemonic);
+            Mnemonic mnemo = new Mnemonic(mnemonic, Wordlist.English);
 
             return _walletRepository.GetSeedHex(mnemo, password);
         }
