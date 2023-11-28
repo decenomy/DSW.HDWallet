@@ -7,71 +7,71 @@ namespace DSW.HDWallet.Infrastructure.WS
     public class WebSocketDecenomyExplorerRepository : IWebSocketDecenomyExplorerRepository
     {
         private readonly JsonSerializerOptions serializerOptions = new() { PropertyNameCaseInsensitive = true };
-        public async Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId)
-        {
-            try
-            {
-                string? response = null;
+        //public async Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId)
+        //{
+        //    try
+        //    {
+        //        string? response = null;
 
-                using WebSocket ws = new(getWebSocketUri(coin));
-                TaskCompletionSource<string> t = new();
+        //        using WebSocket ws = new(getWebSocketUri(coin));
+        //        TaskCompletionSource<string> t = new();
 
-                ws.OnMessage += (sender, e) =>
-                {
-                    if (e.IsText)
-                    {
-                        response = e.Data;
-                        t.SetResult(response);
-                    }
-                };
+        //        ws.OnMessage += (sender, e) =>
+        //        {
+        //            if (e.IsText)
+        //            {
+        //                response = e.Data;
+        //                t.SetResult(response);
+        //            }
+        //        };
 
-                ws.Connect();                
-                ws.Send(GetTransactionRequest(txId));
-                await t.Task;
-                ws.Close();
+        //        ws.Connect();                
+        //        ws.Send(GetTransactionRequest(txId));
+        //        await t.Task;
+        //        ws.Close();
 
-                return JsonSerializer.Deserialize<WSTransactionObject>(response!, serializerOptions)!;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error in WebSocket Request: {ex.Message}");
-            }            
-        }
+        //        return JsonSerializer.Deserialize<WSTransactionObject>(response!, serializerOptions)!;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"Error in WebSocket Request: {ex.Message}");
+        //    }            
+        //}
 
-        public async Task<WSSubscribeObject> SubscribeNewTransaction(string coin)
-        {
-            try
-            {
-                string? response = null;
-                using WebSocket ws = new(getWebSocketUri(coin));
-                TaskCompletionSource<string> t = new();
+        //public async Task<WSSubscribeObject> SubscribeNewTransaction(string coin)
+        //{
+        //    try
+        //    {
+        //        string? response = null;
+        //        using WebSocket ws = new(getWebSocketUri(coin));
+        //        TaskCompletionSource<string> t = new();
 
-                ws.OnOpen += (sender, e) =>
-                {
-                    ws.Send(GetSubscribeNewTransactionRequest());                    
-                };
+        //        ws.OnOpen += (sender, e) =>
+        //        {
+        //            ws.Send(GetSubscribeNewTransactionRequest());                    
+        //        };
 
-                ws.OnMessage += (sender, e) =>
-                {
-                    if (e.IsText)
-                    {
-                        response = e.Data;
-                        t.SetResult(response);
-                    }
-                };
+        //        ws.OnMessage += (sender, e) =>
+        //        {
+        //            if (e.IsText)
+        //            {
+        //                response = e.Data;
+        //                t.SetResult(response);
+        //            }
+        //        };
 
-                ws.Connect();
-                await t.Task;
-                ws.Close();
+        //        ws.Connect();
+        //        await t.Task;
+        //        ws.Close();
 
-                return JsonSerializer.Deserialize<WSSubscribeObject>(response!, serializerOptions)!;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error in WebSocket Request: {ex.Message}");
-            }
+        //        return JsonSerializer.Deserialize<WSSubscribeObject>(response!, serializerOptions)!;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"Error in WebSocket Request: {ex.Message}");
+        //    }
 
-        }
+        //}
 
         private string GetSubscribeNewTransactionRequest()
         {

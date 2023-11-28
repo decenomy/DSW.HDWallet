@@ -8,22 +8,20 @@ using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.WS;
 using NBitcoin;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DSW.HDWallet.Application
 {
     public class WalletService : IWalletService
     {
-        private readonly IWalletRepository _walletRepository;
-        private readonly IBlockbookHttpClient _apiDecenomyExplorer;
-        private readonly IWebSocketDecenomyExplorerRepository _webSocket;
+        private readonly IBlockbookHttpClient _blockbookHttpClient;
+        private readonly ICoinRepository _coinRepository;
 
-        public WalletService(IWalletRepository walletRepository,
-            IBlockbookHttpClient apiDecenomyExplorer,
-            IWebSocketDecenomyExplorerRepository webSocket)
+        public WalletService(IBlockbookHttpClient blockbookHttpClient,
+            ICoinRepository coinRepository)
         {
-            _walletRepository = walletRepository;
-            _apiDecenomyExplorer = apiDecenomyExplorer;
-            _webSocket = webSocket;
+            _blockbookHttpClient = blockbookHttpClient;
+            _coinRepository = coinRepository;
         }
 
         public Wallet CreateWallet(WordCount wordCount, string? password = null)
@@ -38,73 +36,275 @@ namespace DSW.HDWallet.Application
             };
         }
 
+        public string GetSeedHex(Mnemonic mnemo, string? password = null) => mnemo.DeriveSeed(password).ToHexString();
+
         public string RecoverWallet(string mnemonic, string? password = null)
         {
             Mnemonic mnemo = new Mnemonic(mnemonic, Wordlist.English);
 
-            return _walletRepository.GetSeedHex(mnemo, password);
+            return GetSeedHex(mnemo, password);
         }
 
         public PubKeyDetails GeneratePubkey(string ticker, string seedHex)
         {
-            return _walletRepository.GeneratePubkey(ticker, seedHex);
+            var purpose = 44;
+            var accountIndex = 0;
+
+            Network network = _coinRepository.GetNetwork(ticker);
+            int coinCode = _coinRepository.GetCoin(ticker).Code;
+
+            ExtKey masterPrivKey = new ExtKey(seedHex);
+
+            KeyPath keyPath = new($"m/{purpose}'/{coinCode}'/{accountIndex}'");
+            ExtPubKey pubKey = masterPrivKey.Derive(keyPath).Neuter();
+
+            PubKeyDetails pubKeyDetails = new()
+            {
+                PubKey = pubKey.ToString(network),
+                Ticker = ticker,
+                Index = 0,
+                Path = keyPath.ToString()
+            };
+
+            return pubKeyDetails;
         }
 
         public AddressInfo GetAddress(string pubKey, string ticker, int Index, bool isChange = false)
         {
-            return _walletRepository.GetAddress(pubKey, ticker, Index, isChange);
+            var changeType = isChange ? 1 : 0;
+
+            Network network = _coinRepository.GetNetwork(ticker);
+            ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
+
+            var keypath = $"{changeType}/{Index}";
+
+            var address = extPubKey.Derive(new KeyPath(keypath))
+                                    .GetPublicKey()
+                                    .GetAddress(ScriptPubKeyType.Legacy, network);
+
+
+            AddressInfo deriveKeyDetails = new()
+            {
+                Address = address.ToString(),
+                Path = keypath.ToString()
+            };
+
+            return deriveKeyDetails;
         }
 
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
         {
-            return await _apiDecenomyExplorer.GetAddressAsync(coin, address);
+            return await _blockbookHttpClient.GetAddressAsync(coin, address);
         }
 
         public async Task<TransactionObject> GetTransactionAsync(string coin, string txid)
         {
-            return await _apiDecenomyExplorer.GetTransactionAsync(coin, txid);
+            return await _blockbookHttpClient.GetTransactionAsync(coin, txid);
         }
 
         public async Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid)
         {
-            return await _apiDecenomyExplorer.GetTransactionSpecificAsync(coin, txid);
+            return await _blockbookHttpClient.GetTransactionSpecificAsync(coin, txid);
         }
 
         public async Task<BlockHashObject> GetBlockHash(string coin, string blockHeight)
         {
-            return await _apiDecenomyExplorer.GetBlockHash(coin, blockHeight);
+            return await _blockbookHttpClient.GetBlockHash(coin, blockHeight);
         }
 
         public async Task<XpubObject> GetXpub(string coin, string xpub, int page = 1, int pageSize = 1000)
         {
-            return await _apiDecenomyExplorer.GetXpub(coin, xpub, page, pageSize);
+            return await _blockbookHttpClient.GetXpub(coin, xpub, page, pageSize);
         }
 
         public async Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed = false)
         {
-            return await _apiDecenomyExplorer.GetUtxo(coin, address, confirmed);
+            return await _blockbookHttpClient.GetUtxo(coin, address, confirmed);
         }
 
-        public async Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId)
-        {
-            return await _webSocket.GetWSTransactionAsync(coin, txId);
-        }
+        //public async Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId)
+        //{
+        //    return await _webSocket.GetWSTransactionAsync(coin, txId);
+        //}
 
-        public async Task<WSSubscribeObject> SubscribeNewTransaction(string coin)
-        {
-            return await _webSocket.SubscribeNewTransaction(coin);
-        }
+        //public async Task<WSSubscribeObject> SubscribeNewTransaction(string coin)
+        //{
+        //    return await _webSocket.SubscribeNewTransaction(coin);
+        //}
 
-        public async Task<TransactionDetails> GenerateTransactionAsync(string ticker, long amountToSend, string seedHex, string fromAddress, string toAddress)
+        public async Task<TransactionDetails> GenerateTransactionAsync(string ticker, string seedHex, long amountToSend, string toAddress)
         {
-            var utxos = await GetUtxo(ticker, fromAddress);
+            string pubKey = GeneratePubkey(ticker, seedHex).PubKey;
+            var utxos = await GetUtxo(ticker, pubKey);
 
-            return _walletRepository.GenerateTransaction(ticker, utxos.ToList(), amountToSend, seedHex, toAddress);
+            return GenerateTransaction(ticker, utxos.ToList(), seedHex, amountToSend, toAddress);
         }
 
         public bool ValidateAddress(string ticker, string address)
         {
-            return _walletRepository.ValidateAddress(ticker, address);
+            Network network = _coinRepository.GetNetwork(ticker);
+
+            try
+            {
+                BitcoinAddress bitcoinAddress = BitcoinAddress.Create(address, network);
+
+                if (bitcoinAddress != null)
+                    return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+
+            return false;
         }
+
+        private TransactionDetails GenerateTransaction(string ticker, List<UtxoObject> utxos, string seedHex, long amountToSend, string toAddress, long fee = 0)
+        {
+            Network network = _coinRepository.GetNetwork(ticker);
+            var utxoSelected = SelectUtxos(utxos, amountToSend, fee);
+
+            try
+            {
+                if (utxoSelected != null && utxoSelected!.Count > 0)
+                {
+                    ExtKey extendedKey = new(seedHex);
+                    var transaction = Transaction.Create(network);
+                    var inputs = new List<TxIn>();
+                    var key = extendedKey.PrivateKey.GetBitcoinSecret(network);
+
+                    BitcoinAddress changeAddress = extendedKey.PrivateKey.GetAddress(ScriptPubKeyType.Legacy, network);
+                    BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
+
+                    Money amount = Money.Coins(amountToSend.ToDecimalPoint());
+
+                    foreach (var utxo in utxoSelected)
+                    {
+                        OutPoint outPoint = new OutPoint(uint256.Parse(utxo.Txid), utxo.Vout);
+                        var txIn = new TxIn(outPoint);
+                        transaction.Inputs.Add(txIn);
+                    }
+
+                    TxOut txOutRecipient = new TxOut(amount, recipientAddress);
+                    transaction.Outputs.Add(txOutRecipient);
+
+                    Money totalInputAmount = utxoSelected.Select(x => x.Value!.ToLong()).Aggregate((total, current) => total + current);
+                    Money changeAmount = totalInputAmount - amount;
+
+                    int transactionSizeBytes = transaction.GetSerializedSize();
+                    decimal transactionSizeKB = (decimal)transactionSizeBytes / 1000;
+
+                    long transactionFeeSatoshis = (long)(transactionSizeKB * 10000);
+
+                    if (transactionFeeSatoshis > Money.Zero.Satoshi)
+                    {
+                        changeAmount -= new Money(transactionFeeSatoshis);
+
+                        if (changeAmount < Money.Zero.Satoshi)
+                            return GenerateTransaction(ticker, utxos, seedHex, amountToSend, toAddress, changeAmount.Abs());
+                    }
+
+                    if (changeAmount > Money.Zero)
+                    {
+                        TxOut txOutChange = new TxOut(changeAmount, changeAddress);
+                        transaction.Outputs.Add(txOutChange);
+                    }
+
+                    Coin[] inputCoins = utxoSelected.Select(x => new Coin(new OutPoint(new uint256(x.Txid), x.Vout), txOutRecipient)).ToArray();
+
+                    transaction.Sign(key, inputCoins);
+
+                    TransactionDetails transactionDetails = new()
+                    {
+                        Transaction = transaction,
+                        ToAddress = toAddress,
+                        Balance = totalInputAmount,
+                        Amount = amount,
+                        Change = changeAmount,
+                        Fee = new Money(transactionFeeSatoshis),
+                        SizeKb = transactionSizeKB,
+                        Utxos = utxoSelected,
+                        Message = "The transaction was created successfully.",
+                        Status = "OK"
+
+                    };
+
+                    return transactionDetails;
+                }
+                else
+                {
+                    TransactionDetails transactionDetails = new()
+                    {
+                        Status = "Error",
+                        Message = "The UTXOs or balance are insufficient for this transaction."
+                    };
+
+                    return transactionDetails;
+                }
+            }
+            catch (Exception ex)
+            {
+                TransactionDetails transactionDetails = new()
+                {
+                    Status = "Error",
+                    Message = ex.Message
+                };
+
+                return transactionDetails;
+            }
+        }
+
+        private List<UtxoObject> SelectUtxos(List<UtxoObject> utxos, long targetValue, long fee = 0)
+        {
+            long totalValue = 0;
+            var selectedUtxos = new List<UtxoObject>();
+
+            if (utxos != null && utxos!.Count > 0)
+            {
+                if (fee > 0)
+                    targetValue += fee;
+
+                var exactMatch = utxos.FirstOrDefault(utxo => utxo.Value?.ToLong() == targetValue);
+
+                if (exactMatch != null)
+                    return new List<UtxoObject> { exactMatch };
+
+                var sortedUtxos = utxos.OrderByDescending(utxo => utxo.Value!.ToULong()).ToList();
+
+
+                while (totalValue < targetValue && sortedUtxos.Count > 0)
+                {
+                    long value = targetValue - totalValue;
+
+                    var closestLowerValueUtxo = sortedUtxos.FirstOrDefault(utxo => utxo.Value!.ToLong() < value);
+
+                    if (closestLowerValueUtxo != null)
+                    {
+                        selectedUtxos.Add(closestLowerValueUtxo);
+                        totalValue += closestLowerValueUtxo.Value!.ToLong();
+                        sortedUtxos.Remove(closestLowerValueUtxo);
+                    }
+                    else
+                    {
+                        var remainingUtxos = sortedUtxos.OrderBy(utxo => utxo.Value!.ToLong()).ToList();
+                        foreach (var utxo in remainingUtxos)
+                        {
+                            selectedUtxos.Add(utxo);
+                            totalValue += utxo.Value!.ToLong();
+                            remainingUtxos.Remove(utxo);
+
+                            if (totalValue >= targetValue)
+                                break;
+                        }
+                    }
+                }
+
+                if (totalValue < targetValue && sortedUtxos.Count == 0)
+                    return new List<UtxoObject>();
+            }
+
+            return selectedUtxos;
+        }
+
     }
 }

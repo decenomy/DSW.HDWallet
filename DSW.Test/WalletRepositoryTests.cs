@@ -3,6 +3,8 @@ using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Infrastructure;
 using NBitcoin;
 using Moq;
+using DSW.HDWallet.Application;
+using DSW.HDWallet.Infrastructure.Api;
 
 namespace DSW.Test
 {
@@ -12,12 +14,14 @@ namespace DSW.Test
         public void Create_WalletWithoutPassword_ReturnsWallet()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
-            var repository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
 
             // Act
-            var wallet = repository.Create(mnemonic);
+            var wallet = service.CreateWallet(WordCount.Twelve);
 
             // Assert
             Assert.NotNull(wallet);
@@ -28,14 +32,15 @@ namespace DSW.Test
         public void CreateWithPassword_WalletWithPassword_ReturnsWallet()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
 
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             var password = "test_password_123456";
-            var repository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
 
             // Act
-            var wallet = repository.CreateWithPassword(mnemonic, password);
+            var wallet = service.CreateWallet(WordCount.Twelve, password);
 
             // Assert
             Assert.NotNull(wallet);
@@ -46,12 +51,13 @@ namespace DSW.Test
         public void Recover_WalletWithoutPassword_ReturnsSeedHex()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
-            var repository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
 
             // Act
-            var seedHex = repository.GetSeedHex(mnemonic);
+            var seedHex = service.GetSeedHex(mnemonic);
 
             // Assert
             Assert.NotNull(seedHex);
@@ -61,13 +67,15 @@ namespace DSW.Test
         public void Recover_WalletWithPassword_ReturnsSeedHex()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             var password = "test_password_123456";
-            var repository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
 
             // Act
-            var seedHex = repository.GetSeedHex(mnemonic, password);
+            var seedHex = service.GetSeedHex(mnemonic, password);
 
             // Assert
             Assert.NotNull(seedHex);
@@ -77,13 +85,15 @@ namespace DSW.Test
         public void GeneratePubkey_ValidParameters_ReturnsPubKeyDetails()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
             var coinType = "SAPP";
             var seedHex = "e921e0e1ce42a426cd403e98502c723e4f731f33e7e182db36428cd96952f3e75d6f8cc91856662f9f5425313aa321edee629d613abb18f7cf86f22726e9d95c";
-            var repository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
 
             // Act
-            var pubKeyDetails = repository.GeneratePubkey(coinType, seedHex);
+            var pubKeyDetails = service.GeneratePubkey(coinType, seedHex);
 
             // Assert
             Assert.NotNull(pubKeyDetails);
@@ -94,14 +104,16 @@ namespace DSW.Test
         public void GenerateDerivePubKey_ValidParameters_ReturnsDerivedPublicKey()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
             var coinType = "SAPP";
             var pubKey = "ToEGySqfw8Gkddh6h4TzjvfQyZLLFnbEVgQ7adzz3wKtzucZr734aL1f5E7rcarfLubc8vbLb4ZfQncrDXpAeWGuzuqzyPaQP4TKVcT1FbXaVnK";
             var index = 0;
-            var repository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
 
             // Act
-            var derivedPubKey = repository.GetAddress(pubKey, coinType, index);
+            var derivedPubKey = service.GetAddress(pubKey, coinType, index);
 
             // Assert
             Assert.NotNull(derivedPubKey);
@@ -128,17 +140,19 @@ namespace DSW.Test
         public void GenerateTransaction_WithValidUtxos_ShouldCreateTransactionDetails()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
-            var walletRepository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
             string ticker = "TKYAN"; 
-            List<UtxoObject> utxos = GetMockUtxos(); 
+            //List<UtxoObject> utxos = GetMockUtxos(); 
             long amountToSend = 100000000; 
             string seedHex = "03da1ed344a3094a4869339844849b98499fc8d56309d6951fabefec35d7f5f3302a8870cb8e64e8e6015295300690feea202ec93af818dc92546ba36143a7fd";
             string toAddress = "Kjs13q3bxt9Hcpsy9EKJ9fvPBBgnoKLiB9"; 
-            long fee = 500; 
+            //long fee = 500; 
 
             // Act
-            var transactionDetails = walletRepository.GenerateTransaction(ticker, utxos, amountToSend, seedHex, toAddress, fee);
+            var transactionDetails = service.GenerateTransactionAsync(ticker, seedHex, amountToSend, toAddress);
 
             // Assert
             Assert.NotNull(transactionDetails);
@@ -148,8 +162,10 @@ namespace DSW.Test
         public void GenerateTransaction_WithInsufficientFunds_ShouldReturnNull()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
-            var walletRepository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
             string ticker= "TKYAN";
             List<UtxoObject> utxos = GetMockUtxosLowValues(); 
             long amountToSend = 995200000000; 
@@ -158,19 +174,21 @@ namespace DSW.Test
             long fee = 900; 
 
             // Act
-            var transactionDetails = walletRepository.GenerateTransaction(ticker, utxos, amountToSend, seedHex, toAddress, fee);
+            var transactionDetails = service.GenerateTransactionAsync(ticker, seedHex, amountToSend, toAddress);
 
             // Assert
             Assert.NotNull(transactionDetails);
-            Assert.Equal("The UTXOs or balance are insufficient for this transaction.", transactionDetails?.Message);
+            Assert.Equal("The UTXOs or balance are insufficient for this transaction.", transactionDetails?.Result.Message);
         }
 
         [Fact]
         public void GenerateTransaction_WithInvalidSeed_ShouldReturnErrorMessage()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
-            var walletRepository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
             string ticker = "TKYAN";
             List<UtxoObject> utxos = GetMockUtxos();
             long amountToSend = 900000000;
@@ -179,11 +197,11 @@ namespace DSW.Test
             long fee = 1450;
 
             // Act
-            var transactionDetails = walletRepository.GenerateTransaction(ticker, utxos, amountToSend, seedHex, toAddress, fee);
+            var transactionDetails = service.GenerateTransactionAsync(ticker, seedHex, amountToSend, toAddress);
 
             // Assert
             Assert.NotNull(transactionDetails);
-            Assert.Equal("Invalid Hex String", transactionDetails?.Message);
+            Assert.Equal("Invalid Hex String", transactionDetails?.Result.Message);
         }
 
         [Theory]
@@ -192,11 +210,13 @@ namespace DSW.Test
         public void ValidateAddress_ValidAddresses_ReturnsTrue(string ticker, string address)
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
-            var walletRepository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
 
             // Act
-            bool isValid = walletRepository.ValidateAddress(ticker, address);
+            bool isValid = service.ValidateAddress(ticker, address);
 
             // Assert
             Assert.True(isValid);
@@ -208,11 +228,13 @@ namespace DSW.Test
         public void ValidateAddress_InvalidAddresses_ReturnsFalse(string ticker, string address)
         {
             var mockCoinRepository = new Mock<CoinRepository>();
+            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+
             // Arrange
-            var walletRepository = new WalletRepository(mockCoinRepository.Object);
+            var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
 
             // Act
-            bool isValid = walletRepository.ValidateAddress(ticker, address);
+            bool isValid = service.ValidateAddress(ticker, address);
 
             // Assert
             Assert.False(isValid);

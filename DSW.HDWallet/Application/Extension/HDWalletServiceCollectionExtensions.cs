@@ -11,7 +11,6 @@ namespace DSW.HDWallet.Application.Extension
         public static void AddHDWalletServices(this IServiceCollection services)
         {
             services.AddScoped<IWalletService, WalletService>();
-            services.AddScoped<IWalletRepository, WalletRepository>();
             services.AddSingleton<IBlockbookHttpClient, BlockbookHttpClient>();
             services.AddScoped<IWebSocketDecenomyExplorerRepository, WebSocketDecenomyExplorerRepository>();
             services.AddSingleton<ICoinRepository, CoinRepository>();

@@ -3,6 +3,7 @@ using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Domain.WSObject;
+using NBitcoin;
 using Words = NBitcoin.WordCount;
 
 namespace DSW.HDWallet.Application
@@ -20,11 +21,12 @@ namespace DSW.HDWallet.Application
         Task<XpubObject> GetXpub(string coin, string xpub, int page = 1, int pageSize = 1000);
         Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed = false);
 
-        Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId);
-        Task<WSSubscribeObject> SubscribeNewTransaction(string coin);
+        //Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId);
+        //Task<WSSubscribeObject> SubscribeNewTransaction(string coin);
 
-        Task<TransactionDetails> GenerateTransactionAsync(string ticker, long amountToSend, string seedHex, string fromAddress, string toAddress);
+        Task<TransactionDetails> GenerateTransactionAsync(string ticker, string seedHex, long amountToSend, string toAddress);
 
         bool ValidateAddress(string ticker, string address);
+        string GetSeedHex(Mnemonic mnemo, string? password = null);
     }
 }

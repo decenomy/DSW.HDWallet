@@ -224,7 +224,7 @@ namespace Decenomy
                         long transactionValue = Console.ReadLine()!.ToLong();
 
 
-                        var _tr = walletAppService?.GenerateTransactionAsync(transactionCoin.Ticker, transactionValue, walletSeed, fromAddress, toAddress).Result;
+                        var _tr = walletAppService?.GenerateTransactionAsync(transactionCoin.Ticker, walletSeed, transactionValue, toAddress).Result;
 
                         WriteLine($"\n Transaction Details", ConsoleColor.DarkRed);
                         ulong trTotal = 0;
@@ -471,18 +471,19 @@ namespace Decenomy
 
                         Console.Write(" Enter TxId: ");
                         string? wsaddressCoin = Console.ReadLine();
-                        
-                        var wss = walletAppService?.GetWSTransactionAsync(wsCoinName!, wsaddressCoin!).Result;
 
-                        WriteLine($"\n Block Hash: \t {wss?.data?.blockHash}", ConsoleColor.DarkGreen);
-                        WriteLine($" Block time: \t {wss?.data?.blockTime}", ConsoleColor.DarkGreen);
-                        WriteLine($" Block Height: \t {wss?.data?.blockHeight}", ConsoleColor.DarkGreen);
-                        WriteLine($" Txid: \t\t {wss?.data?.txid}", ConsoleColor.DarkGreen);
-                        WriteLine($" Value In: \t {wss?.data?.valueIn}", ConsoleColor.DarkGreen);
-                        WriteLine($" Value: \t {wss?.data?.value}", ConsoleColor.DarkGreen);
-                        WriteLine($" Size: \t\t {wss?.data?.size}", ConsoleColor.DarkGreen);
-                        WriteLine($" Confirmations:  {wss?.data?.confirmations}", ConsoleColor.DarkGreen);
-                        WriteLine($" Hex: \t\t {wss?.data?.hex}", ConsoleColor.DarkGreen);
+                        //var wss = walletAppService?.GetWSTransactionAsync(wsCoinName!, wsaddressCoin!).Result;
+
+                        //WriteLine($"\n Block Hash: \t {wss?.data?.blockHash}", ConsoleColor.DarkGreen);
+                        //WriteLine($" Block time: \t {wss?.data?.blockTime}", ConsoleColor.DarkGreen);
+                        //WriteLine($" Block Height: \t {wss?.data?.blockHeight}", ConsoleColor.DarkGreen);
+                        //WriteLine($" Txid: \t\t {wss?.data?.txid}", ConsoleColor.DarkGreen);
+                        //WriteLine($" Value In: \t {wss?.data?.valueIn}", ConsoleColor.DarkGreen);
+                        //WriteLine($" Value: \t {wss?.data?.value}", ConsoleColor.DarkGreen);
+                        //WriteLine($" Size: \t\t {wss?.data?.size}", ConsoleColor.DarkGreen);
+                        //WriteLine($" Confirmations:  {wss?.data?.confirmations}", ConsoleColor.DarkGreen);
+                        //WriteLine($" Hex: \t\t {wss?.data?.hex}", ConsoleColor.DarkGreen);
+                        WriteLine($"Not implemented yet", ConsoleColor.DarkGreen);
 
                         Console.ReadLine();
                         Console.Clear();
@@ -495,7 +496,7 @@ namespace Decenomy
                         Console.Write("\n Enter Coin Name: ");
                         string? subCoinName = Console.ReadLine();
 
-                        var subS = walletAppService?.SubscribeNewTransaction(subCoinName!).Result;
+                        //var subS = walletAppService?.SubscribeNewTransaction(subCoinName!).Result;
 
                         Console.ReadLine();
                         Console.Clear();
