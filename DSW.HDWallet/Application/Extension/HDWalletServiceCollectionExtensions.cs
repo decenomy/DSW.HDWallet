@@ -1,4 +1,5 @@
-﻿using DSW.HDWallet.Domain.Wallets;
+﻿using DSW.HDWallet.Domain.Utils;
+using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.WS;
@@ -14,6 +15,7 @@ namespace DSW.HDWallet.Application.Extension
             services.AddSingleton<IBlockbookHttpClient, BlockbookHttpClient>();
             services.AddScoped<IWebSocketDecenomyExplorerRepository, WebSocketDecenomyExplorerRepository>();
             services.AddSingleton<ICoinRepository, CoinRepository>();
+            services.AddSingleton<IAddressValidator, AddressValidator>();
         }
     }
 }
