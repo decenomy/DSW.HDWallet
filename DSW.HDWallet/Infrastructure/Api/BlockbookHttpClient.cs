@@ -1,5 +1,8 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Coins;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 
 namespace DSW.HDWallet.Infrastructure.Api
@@ -66,6 +69,14 @@ namespace DSW.HDWallet.Infrastructure.Api
             return await SendGetRequest<UtxoObject[]>(apiUrl);
         }
 
+        public async Task<TransactionSendResponse> SendTransaction(string rawTransaction)
+        {
+            var content = new StringContent(rawTransaction, Encoding.UTF8, "text/plain");
+
+            string endpoint = $"/api/v2/sendtx/{content}";
+            return await SendPostRequest<TransactionSendResponse>(endpoint, content);
+        }
+
         private string BuildApiUrl(string coin, string endpoint, Dictionary<string, string>? queryParams = null)
         {
             var uriBuilder = new UriBuilder($"https://{coin.ToLower()}.decenomy.net{endpoint}");
@@ -102,6 +113,32 @@ namespace DSW.HDWallet.Infrastructure.Api
             catch (Exception ex)
             {
                 throw new Exception($"Error in API request: {ex.Message}");
+            }
+        }
+
+        private async Task<T> SendPostRequest<T>(string apiUrl, HttpContent content)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+
+                var response = await client.PostAsync(apiUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                    return JsonSerializer.Deserialize<T>(responseBody, options)!;
+                }
+                else
+                {
+                    throw new Exception($"Error in API POST request: {response.Content} StatusCode: {response.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error in API POST request: {ex.Message}");
             }
         }
 

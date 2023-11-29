@@ -10,5 +10,6 @@ namespace DSW.HDWallet.Infrastructure.Api
         Task<BlockHashObject> GetBlockHash(string coin, string blockHeight);
         Task<XpubObject> GetXpub(string coin, string xpub, int page = 1, int pageSize = 1000);
         Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed = false);
+        Task<TransactionSendResponse> SendTransaction(string rawTransaction);
     }
 }
