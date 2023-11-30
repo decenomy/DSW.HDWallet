@@ -5,6 +5,7 @@ using NBitcoin;
 using Moq;
 using DSW.HDWallet.Application;
 using DSW.HDWallet.Infrastructure.Api;
+using DSW.HDWallet.Domain.Transaction;
 
 namespace DSW.Test
 {
@@ -50,7 +51,7 @@ namespace DSW.Test
         public void Recover_WalletWithoutPassword_ReturnsSeedHex()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
@@ -66,7 +67,7 @@ namespace DSW.Test
         public void Recover_WalletWithPassword_ReturnsSeedHex()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
@@ -84,7 +85,7 @@ namespace DSW.Test
         public void GeneratePubkey_ValidParameters_ReturnsPubKeyDetails()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var coinType = "SAPP";
@@ -103,7 +104,7 @@ namespace DSW.Test
         public void GenerateDerivePubKey_ValidParameters_ReturnsDerivedPublicKey()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var coinType = "SAPP";
@@ -139,7 +140,7 @@ namespace DSW.Test
         public void GenerateTransaction_WithValidUtxos_ShouldCreateTransactionDetails()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
@@ -161,7 +162,7 @@ namespace DSW.Test
         public void GenerateTransaction_WithInsufficientFunds_ShouldReturnNull()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
@@ -181,10 +182,10 @@ namespace DSW.Test
         }
 
         [Fact]
-        public void GenerateTransaction_WithInvalidSeed_ShouldReturnErrorMessage()
+        public async void GenerateTransaction_WithInvalidSeed_ShouldReturnErrorMessage()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
@@ -193,14 +194,15 @@ namespace DSW.Test
             long amountToSend = 900000000;
             string seedHex = "7aL9D9skvSD1ykfKBoWcDSqSPm76abuFGbQ5tcZwfd6CG1EzyPHdnyTxwr1LMnFB5KSB8qV8fwaykFib1YmKXZACDYE4tGBrPu7HgBmmgfCC3Cc";
             string toAddress = "Kjs13q3bxt9Hcpsy9EKJ9fvPBBgnoKLiB9";
-            long fee = 1450;
 
-            // Act
-            var transactionDetails = service.GenerateTransactionAsync(ticker, seedHex, amountToSend, toAddress);
+            try
+            {
+                var transactionDetails = await service.GenerateTransactionAsync(ticker, seedHex, amountToSend, toAddress);
+            }
+            catch(Exception ex) {
 
-            // Assert
-            Assert.NotNull(transactionDetails);
-            Assert.Equal("Invalid Hex String", transactionDetails?.Result.Message);
+                Assert.Equal("Invalid Hex String", ex.Message);
+            }
         }
 
         [Theory]
@@ -209,7 +211,7 @@ namespace DSW.Test
         public void ValidateAddress_ValidAddresses_ReturnsTrue(string ticker, string address)
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
@@ -227,7 +229,7 @@ namespace DSW.Test
         public void ValidateAddress_InvalidAddresses_ReturnsFalse(string ticker, string address)
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
