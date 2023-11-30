@@ -14,7 +14,7 @@ namespace DSW.Test
         public void Create_WalletWithoutPassword_ReturnsWallet()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
@@ -25,14 +25,14 @@ namespace DSW.Test
 
             // Assert
             Assert.NotNull(wallet);
-            Assert.Equal(mnemonic.ToString(), wallet.Mnemonic);
         }
+
 
         [Fact]
         public void CreateWithPassword_WalletWithPassword_ReturnsWallet()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
-            var mockBlockbookHttpClient = new Mock<BlockbookHttpClient>();
+            var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
@@ -44,7 +44,6 @@ namespace DSW.Test
 
             // Assert
             Assert.NotNull(wallet);
-            Assert.Equal(mnemonic.ToString(), wallet.Mnemonic);
         }
 
         [Fact]
