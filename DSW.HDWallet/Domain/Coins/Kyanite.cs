@@ -150,11 +150,11 @@ namespace DSW.HDWallet.Infrastructure.Coins
                 SupportSegwit = false,
                 CoinType = 1
             })
-               .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 46 })
-                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 16 })
-                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 43 })
-                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x88, 0xB2, 0x1E })
-                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x88, 0xAD, 0xE4 })
+               .SetBase58Bytes(Base58Type.PUBKEY_ADDRESS, new byte[] { 140 })
+                .SetBase58Bytes(Base58Type.SCRIPT_ADDRESS, new byte[] { 19 })
+                .SetBase58Bytes(Base58Type.SECRET_KEY, new byte[] { 239 })
+                .SetBase58Bytes(Base58Type.EXT_PUBLIC_KEY, new byte[] { 0x35, 0x87, 0xCF })
+                .SetBase58Bytes(Base58Type.EXT_SECRET_KEY, new byte[] { 0x04, 0x35, 0x83, 0x94 })
                 .SetBech32(Bech32Type.WITNESS_PUBKEY_ADDRESS, Encoders.Bech32("Kyanite"))
                 .SetBech32(Bech32Type.WITNESS_SCRIPT_ADDRESS, Encoders.Bech32("Kyanite"))
                 .SetMagic(0x191643a0)
