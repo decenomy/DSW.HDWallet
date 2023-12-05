@@ -137,26 +137,31 @@ namespace DSW.Test
         //}
 
         [Fact]
-        public void GenerateTransaction_WithValidUtxos_ShouldCreateTransactionDetails()
+        public async Task GenerateTransaction_WithValidUtxos_ShouldCreateTransactionDetails()
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object);
-            string ticker = "TKYAN"; 
-            //List<UtxoObject> utxos = GetMockUtxos(); 
-            long amountToSend = 100000000; 
-            string seedHex = "03da1ed344a3094a4869339844849b98499fc8d56309d6951fabefec35d7f5f3302a8870cb8e64e8e6015295300690feea202ec93af818dc92546ba36143a7fd";
-            string toAddress = "Kjs13q3bxt9Hcpsy9EKJ9fvPBBgnoKLiB9"; 
-            //long fee = 500; 
+            string ticker = "TKYAN";
+            long amountToSend = 200;
+            string seedHex = "18c9ea841bb7c8fd9ec5c0a721925abc6262b10df638a99dac2f9153a47a196dece486e692583dc22f44662824a8cb0330f719c0ac75e9bd237842c83210f982";
+            string toAddress = "kTEGTDVr6TnAyT7mxzhBZcwbC97DNui9hh";
+
+            var mockUtxos = GetMockUtxos();
+
+            // Setup BlockbookHttpClient mock to return mock UTXO data
+            mockBlockbookHttpClient.Setup(m => m.GetUtxo(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+                                   .ReturnsAsync(mockUtxos.ToArray()); // Convert the list to an array
 
             // Act
-            var transactionDetails = service.GenerateTransactionAsync(ticker, seedHex, amountToSend, toAddress);
+            var transactionDetails = await service.GenerateTransactionAsync(ticker, seedHex, amountToSend, toAddress);
 
             // Assert
             Assert.NotNull(transactionDetails);
         }
+
 
         [Fact]
         public void GenerateTransaction_WithInsufficientFunds_ShouldReturnNull()
