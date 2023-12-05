@@ -69,14 +69,14 @@ namespace DSW.HDWallet.Application
             return pubKeyDetails;
         }
 
-        public AddressInfo GetAddress(string pubKey, string ticker, int Index, bool isChange = false)
+        public AddressInfo GetAddress(string pubKey, string ticker, int index, bool isChange = false)
         {
             var changeType = isChange ? 1 : 0;
 
             Network network = _coinRepository.GetNetwork(ticker);
             ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
 
-            var keypath = $"{changeType}/{Index}";
+            var keypath = $"{changeType}/{index}";
 
             var address = extPubKey.Derive(new KeyPath(keypath))
                                     .GetPublicKey()
@@ -218,6 +218,7 @@ namespace DSW.HDWallet.Application
                     {
                         Transaction = transaction,
                         ToAddress = toAddress,
+                        ChangeAddress = changeAddress.ToString(),
                         Balance = totalInputAmount,
                         Amount = amount,
                         Change = changeAmount,

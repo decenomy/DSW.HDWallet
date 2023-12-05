@@ -6,6 +6,7 @@ namespace DSW.HDWallet.Domain.Transaction
     public class TransactionDetails
     {
         public string? ToAddress { get; set; }
+        public string? ChangeAddress { get; set; }
         public Money? Balance { get; set; }
         public Money? Amount { get; set; }
         public Money? Change { get; set; }
