@@ -1,4 +1,5 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
+using DSW.HDWallet.Domain.Wallets;
 using NBitcoin;
 
 namespace DSW.HDWallet.Domain.Transaction
@@ -6,7 +7,7 @@ namespace DSW.HDWallet.Domain.Transaction
     public class TransactionDetails
     {
         public string? ToAddress { get; set; }
-        public string? ChangeAddress { get; set; }
+        public AddressInfo? ChangeAddress { get; set; }
         public Money? Balance { get; set; }
         public Money? Amount { get; set; }
         public Money? Change { get; set; }

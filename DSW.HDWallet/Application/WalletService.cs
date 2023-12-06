@@ -82,7 +82,6 @@ namespace DSW.HDWallet.Application
                                     .GetPublicKey()
                                     .GetAddress(ScriptPubKeyType.Legacy, network);
 
-
             AddressInfo deriveKeyDetails = new()
             {
                 Address = address.ToString(),
@@ -132,14 +131,6 @@ namespace DSW.HDWallet.Application
         //    return await _webSocket.SubscribeNewTransaction(coin);
         //}
 
-        public async Task<TransactionDetails> GenerateTransactionAsync(string ticker, string seedHex, long amountToSend, string toAddress)
-        {
-            string pubKey = GeneratePubkey(ticker, seedHex).PubKey;
-            var utxos = await GetUtxo(ticker, pubKey);
-
-            return GenerateTransaction(ticker, utxos.ToList(), seedHex, amountToSend, toAddress);
-        }
-
         public bool ValidateAddress(string ticker, string address)
         {
             Network network = _coinRepository.GetNetwork(ticker);
@@ -159,8 +150,10 @@ namespace DSW.HDWallet.Application
             return false;
         }
 
-        private TransactionDetails GenerateTransaction(string ticker, List<UtxoObject> utxos, string seedHex, long amountToSend, string toAddress, long fee = 0)
+        public async Task<TransactionDetails> GenerateTransaction(string ticker, string seedHex, long amountToSend, string toAddress, long fee = 0)
         {
+            string pubKey = GeneratePubkey(ticker, seedHex).PubKey;
+            List<UtxoObject> utxos = (await GetUtxo(ticker, pubKey)).ToList();
             Network network = _coinRepository.GetNetwork(ticker);
             var utxoSelected = SelectUtxos(utxos, amountToSend, fee);
 
@@ -173,7 +166,7 @@ namespace DSW.HDWallet.Application
                     var inputs = new List<TxIn>();
                     var key = extendedKey.PrivateKey.GetBitcoinSecret(network);
 
-                    BitcoinAddress changeAddress = extendedKey.PrivateKey.GetAddress(ScriptPubKeyType.Legacy, network);
+                    AddressInfo changeAddress = GetAddress(pubKey, ticker, 0, true);
                     BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
 
                     Money amount = Money.Coins(amountToSend.ToDecimalPoint());
@@ -201,12 +194,12 @@ namespace DSW.HDWallet.Application
                         changeAmount -= new Money(transactionFeeSatoshis);
 
                         if (changeAmount < Money.Zero.Satoshi)
-                            return GenerateTransaction(ticker, utxos, seedHex, amountToSend, toAddress, changeAmount.Abs());
+                            return await GenerateTransaction(ticker, seedHex, amountToSend, toAddress, changeAmount.Abs());
                     }
 
                     if (changeAmount > Money.Zero)
                     {
-                        TxOut txOutChange = new TxOut(changeAmount, changeAddress);
+                        TxOut txOutChange = new TxOut(changeAmount, BitcoinAddress.Create(changeAddress.Address, network));
                         transaction.Outputs.Add(txOutChange);
                     }
 
@@ -218,7 +211,7 @@ namespace DSW.HDWallet.Application
                     {
                         Transaction = transaction,
                         ToAddress = toAddress,
-                        ChangeAddress = changeAddress.ToString(),
+                        ChangeAddress = changeAddress,
                         Balance = totalInputAmount,
                         Amount = amount,
                         Change = changeAmount,
