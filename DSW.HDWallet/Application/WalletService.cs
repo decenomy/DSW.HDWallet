@@ -16,12 +16,15 @@ namespace DSW.HDWallet.Application
     {
         private readonly IBlockbookHttpClient _blockbookHttpClient;
         private readonly ICoinRepository _coinRepository;
+        private readonly ICoinIndexProvider _coinIndexProvider;
 
         public WalletService(IBlockbookHttpClient blockbookHttpClient,
-            ICoinRepository coinRepository)
+            ICoinRepository coinRepository,
+            ICoinIndexProvider coinIndexProvider)
         {
             _blockbookHttpClient = blockbookHttpClient;
             _coinRepository = coinRepository;
+            _coinIndexProvider = coinIndexProvider;
         }
 
         public Wallet CreateWallet(WordCount wordCount, string? password = null)
