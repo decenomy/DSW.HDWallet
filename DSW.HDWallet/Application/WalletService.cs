@@ -14,17 +14,17 @@ namespace DSW.HDWallet.Application
 {
     public class WalletService : IWalletService
     {
-        private readonly IBlockbookHttpClient _blockbookHttpClient;
-        private readonly ICoinRepository _coinRepository;
-        private readonly ICoinIndexProvider _coinIndexProvider;
+        private readonly IBlockbookHttpClient blockbookHttpClient;
+        private readonly ICoinRepository coinRepository;
+        private readonly ICoinIndexProvider coinIndexProvider;
 
         public WalletService(IBlockbookHttpClient blockbookHttpClient,
             ICoinRepository coinRepository,
             ICoinIndexProvider coinIndexProvider)
         {
-            _blockbookHttpClient = blockbookHttpClient;
-            _coinRepository = coinRepository;
-            _coinIndexProvider = coinIndexProvider;
+            this.blockbookHttpClient = blockbookHttpClient;
+            this.coinRepository = coinRepository;
+            this.coinIndexProvider = coinIndexProvider;
         }
 
         public Wallet CreateWallet(WordCount wordCount, string? password = null)
@@ -53,8 +53,8 @@ namespace DSW.HDWallet.Application
             var purpose = 44;
             var accountIndex = 0;
 
-            Network network = _coinRepository.GetNetwork(ticker);
-            int coinCode = _coinRepository.GetCoin(ticker).Code;
+            Network network = coinRepository.GetNetwork(ticker);
+            int coinCode = coinRepository.GetCoin(ticker).Code;
 
             ExtKey masterPrivKey = new ExtKey(seedHex);
 
@@ -76,7 +76,7 @@ namespace DSW.HDWallet.Application
         {
             var changeType = isChange ? 1 : 0;
 
-            Network network = _coinRepository.GetNetwork(ticker);
+            Network network = coinRepository.GetNetwork(ticker);
             ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
 
             var keypath = $"{changeType}/{index}";
@@ -88,7 +88,8 @@ namespace DSW.HDWallet.Application
             AddressInfo deriveKeyDetails = new()
             {
                 Address = address.ToString(),
-                Path = keypath.ToString()
+                Path = keypath.ToString(),
+                Index = index
             };
 
             return deriveKeyDetails;
@@ -96,32 +97,32 @@ namespace DSW.HDWallet.Application
 
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
         {
-            return await _blockbookHttpClient.GetAddressAsync(coin, address);
+            return await blockbookHttpClient.GetAddressAsync(coin, address);
         }
 
         public async Task<TransactionObject> GetTransactionAsync(string coin, string txid)
         {
-            return await _blockbookHttpClient.GetTransactionAsync(coin, txid);
+            return await blockbookHttpClient.GetTransactionAsync(coin, txid);
         }
 
         public async Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid)
         {
-            return await _blockbookHttpClient.GetTransactionSpecificAsync(coin, txid);
+            return await blockbookHttpClient.GetTransactionSpecificAsync(coin, txid);
         }
 
         public async Task<BlockHashObject> GetBlockHash(string coin, string blockHeight)
         {
-            return await _blockbookHttpClient.GetBlockHash(coin, blockHeight);
+            return await blockbookHttpClient.GetBlockHash(coin, blockHeight);
         }
 
         public async Task<XpubObject> GetXpub(string coin, string xpub, int page = 1, int pageSize = 1000)
         {
-            return await _blockbookHttpClient.GetXpub(coin, xpub, page, pageSize);
+            return await blockbookHttpClient.GetXpub(coin, xpub, page, pageSize);
         }
 
         public async Task<UtxoObject[]> GetUtxo(string coin, string address, bool confirmed = false)
         {
-            return await _blockbookHttpClient.GetUtxo(coin, address, confirmed);
+            return await blockbookHttpClient.GetUtxo(coin, address, confirmed);
         }
 
         //public async Task<WSTransactionObject> GetWSTransactionAsync(string coin, string txId)
@@ -136,7 +137,7 @@ namespace DSW.HDWallet.Application
 
         public bool ValidateAddress(string ticker, string address)
         {
-            Network network = _coinRepository.GetNetwork(ticker);
+            Network network = coinRepository.GetNetwork(ticker);
 
             try
             {
@@ -157,7 +158,7 @@ namespace DSW.HDWallet.Application
         {
             string pubKey = GeneratePubkey(ticker, seedHex).PubKey;
             List<UtxoObject> utxos = (await GetUtxo(ticker, pubKey)).ToList();
-            Network network = _coinRepository.GetNetwork(ticker);
+            Network network = coinRepository.GetNetwork(ticker);
             var utxoSelected = SelectUtxos(utxos, amountToSend, fee);
 
             try
@@ -169,7 +170,7 @@ namespace DSW.HDWallet.Application
                     var inputs = new List<TxIn>();
                     var key = extendedKey.PrivateKey.GetBitcoinSecret(network);
 
-                    AddressInfo changeAddress = GetAddress(pubKey, ticker, 0, true);
+                    AddressInfo changeAddress = GetAddress(pubKey, ticker, coinIndexProvider.GetCoinIndex(ticker), true);
                     BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
 
                     Money amount = Money.Coins(amountToSend.ToDecimalPoint());

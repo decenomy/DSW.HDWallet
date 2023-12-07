@@ -11,6 +11,7 @@
     {
         public required string Address { get; set; }
         public required string Path { get; set; }
+        public required int Index { get; set; }   
     }
 
 }
