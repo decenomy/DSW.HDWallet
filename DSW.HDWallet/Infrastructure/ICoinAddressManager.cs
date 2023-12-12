@@ -9,6 +9,5 @@ namespace DSW.HDWallet.Infrastructure
         Task<int> GetCoinIndex(string ticker);
         Task<AddressInfo?> GetLastUnusedAddress(string ticker);
         Task<bool> AddressExists(string addressString);
-        Task IncrementCoinIndex(string ticker);
     }
 }
