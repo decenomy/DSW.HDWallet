@@ -163,7 +163,7 @@ namespace Decenomy
                         for (int i = 0; i < Convert.ToInt32(indexKey); i++)
                         {
                             var createDeriveKey = walletAppService?.GetAddress(generatePubKey?.PubKey!, generatePubKey?.Ticker, i, true);
-                            WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Path}", ConsoleColor.DarkGreen);
+                            WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Index}", ConsoleColor.DarkGreen);
                         }
 
                         Console.ReadLine();
@@ -224,7 +224,7 @@ namespace Decenomy
                         long transactionValue = Console.ReadLine()!.ToLong();
 
 
-                        var _tr = walletAppService?.GenerateTransactionAsync(transactionCoin.Ticker, walletSeed, transactionValue, toAddress).Result;
+                        var _tr = walletAppService?.GenerateTransaction(transactionCoin.Ticker, walletSeed, transactionValue, toAddress).Result;
 
                         WriteLine($"\n Transaction Details", ConsoleColor.DarkRed);
                         ulong trTotal = 0;

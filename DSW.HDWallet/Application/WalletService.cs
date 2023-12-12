@@ -170,6 +170,7 @@ namespace DSW.HDWallet.Application
                     var key = extendedKey.PrivateKey.GetBitcoinSecret(network);
 
                     AddressInfo? changeAddress = await coinAddressManager.GetLastUnusedAddress(ticker);
+
                     if(changeAddress == null)
                     {
                         changeAddress = GetAddress(pubKey, ticker, await coinAddressManager.GetCoinIndex(ticker), true);
