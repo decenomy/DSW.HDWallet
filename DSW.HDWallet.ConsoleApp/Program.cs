@@ -1,33 +1,33 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using DSW.HDWallet.ConsoleApp.Interfaces;
-using DSW.HDWallet.ConsoleApp.Services;
+using DSW.HDWallet.Application;
+using DSW.HDWallet.ConsoleApp.Application;
+using DSW.HDWallet.ConsoleApp.Domain;
+using DSW.HDWallet.ConsoleApp.Infrastructure;
+using DSW.HDWallet.Infrastructure.Api;
+using DSW.HDWallet.Infrastructure.WS;
+using DSW.HDWallet.Infrastructure;
 
-var serviceProvider = new ServiceCollection()
-    .AddSingleton<IWalletService, WalletService>()
-    .BuildServiceProvider();
-
-var walletService = serviceProvider.GetService<IWalletService>();
-
-while (true)
+class Program
 {
-    Console.WriteLine("1. Create Wallet");
-    Console.WriteLine("2. Recover Wallet");
-    Console.WriteLine("Select an option: ");
-
-    var choice = Console.ReadLine();
-
-    switch (choice)
+    static void Main(string[] args)
     {
-        case "1":
-            Console.WriteLine(walletService.CreateWallet());
-            break;
-        case "2":
-            Console.WriteLine("Enter Mnemonic: ");
-            var mnemonic = Console.ReadLine();
-            Console.WriteLine(walletService.RecoverWallet(mnemonic));
-            break;
-        default:
-            Console.WriteLine("Invalid choice");
-            break;
+        var services = new ServiceCollection();
+        ConfigureServices(services);
+
+        services.AddHttpClient();
+        var serviceProvider = services.BuildServiceProvider();
+        var app = serviceProvider.GetService<Application>();
+        app.Run();
+    }
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
+        // Register services with DI container
+        services.AddSingleton<IWalletService, WalletService>();
+        services.AddSingleton<IWalletManagerService, WalletManagerService>();
+        services.AddSingleton<ICoinAddressManager, CoinAddressManager>();
+        services.AddSingleton<ICoinRepository, CoinRepository>();
+        services.AddSingleton<IBlockbookHttpClient, BlockbookHttpClient>();
+        services.AddSingleton<Application>();
     }
 }

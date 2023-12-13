@@ -15,4 +15,8 @@
     <ProjectReference Include="..\DSW.HDWallet\DSW.HDWallet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Presentation\" />
+  </ItemGroup>
+
 </Project>
