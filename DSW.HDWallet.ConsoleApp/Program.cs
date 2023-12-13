@@ -22,7 +22,6 @@ class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        // Register services with DI container
         services.AddSingleton<IWalletService, WalletService>();
         services.AddSingleton<IWalletManagerService, WalletManagerService>();
         services.AddSingleton<ICoinAddressManager, CoinAddressManager>();
