@@ -17,7 +17,10 @@ class Program
         services.AddHttpClient();
         var serviceProvider = services.BuildServiceProvider();
         var app = serviceProvider.GetService<Application>();
-        app.Run();
+        if (app != null)
+        {
+            app.Run();
+        }
     }
 
     private static void ConfigureServices(IServiceCollection services)

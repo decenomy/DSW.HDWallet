@@ -2,7 +2,7 @@
 {
     public class WalletCoin
     {
-        public string Ticker { get; set; }
+        public string? Ticker { get; set; }
         public string? PublicKey { get; set; }
         public string? Path { get; set; }
         public int CoinIndex { get; set; }
