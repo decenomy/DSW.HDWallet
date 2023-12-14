@@ -2,7 +2,6 @@
 {
     public class Wallet
     {
-        public int Id { get; set; }
         public string? Mnemonic { get; set; }
     }
 }
