@@ -24,14 +24,18 @@ namespace DSW.HDWallet.ConsoleApp.Application
             switch (choice)
             {
                 case "1":
-                    var wallet = walletManagerService.CreateWallet();
-                    Console.WriteLine(wallet);
+                    Console.WriteLine("Enter a password (or leave blank):");
+                    var createPassword = Console.ReadLine();
+                    var wallet = walletManagerService.CreateWallet(createPassword);
+                    Console.WriteLine($"Wallet created. Mnemonic: {wallet}");
                     break;
                 case "2":
                     Console.WriteLine("Enter Mnemonic:");
                     var mnemonic = Console.ReadLine();
-                    var recoveredWallet = walletManagerService.RecoverWallet(mnemonic ?? "");
-                    Console.WriteLine(recoveredWallet);
+                    Console.WriteLine("Enter a password (or leave blank):");
+                    var recoverPassword = Console.ReadLine();
+                    var recoveredWallet = walletManagerService.RecoverWallet(mnemonic ?? "", recoverPassword);
+                    Console.WriteLine($"Wallet recovered: {recoveredWallet}");
                     break;
                 default:
                     Console.WriteLine("Invalid choice.");

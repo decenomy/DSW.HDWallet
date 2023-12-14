@@ -15,9 +15,9 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             this.dataStore = dataStore;
             this.walletService = walletService;
         }
-        public string CreateWallet()
+        public string CreateWallet(string? password = null)
         {
-            var createdWallet = walletService.CreateWallet(NBitcoin.WordCount.Twelve, null);
+            var createdWallet = walletService.CreateWallet(NBitcoin.WordCount.Twelve, password);
             var wallet = new Wallet { Mnemonic = createdWallet.Mnemonic };
             try
             {
@@ -31,9 +31,9 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             return wallet.Mnemonic ?? "No mnemonic";
         }
 
-        public string RecoverWallet(string mnemonic)
+        public string RecoverWallet(string mnemonic, string? password = null)
         {
-            var recoveredWallet = walletService.RecoverWallet(mnemonic);
+            var recoveredWallet = walletService.RecoverWallet(mnemonic, password);
             var wallet = new Wallet { Mnemonic = recoveredWallet };
             try
             {

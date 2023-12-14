@@ -2,7 +2,7 @@
 {
     public interface IWalletManagerService
     {
-        string CreateWallet();
-        string RecoverWallet(string mnemonic);
+        string CreateWallet(string? password = null);
+        string RecoverWallet(string mnemonic, string? password = null);
     }
 }
