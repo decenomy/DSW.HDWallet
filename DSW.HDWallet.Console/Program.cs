@@ -162,7 +162,8 @@ namespace Decenomy
 
                         for (int i = 0; i < Convert.ToInt32(indexKey); i++)
                         {
-                            var createDeriveKey = walletAppService?.GetAddress(generatePubKey?.PubKey!, generatePubKey?.Ticker, i, true);
+                            var createDeriveKey = walletAppService?.GetAddress(generatePubKey?.PubKey!, generatePubKey?.Ticker!, i, true);
+
                             WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Index}", ConsoleColor.DarkGreen);
                         }
 
