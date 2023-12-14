@@ -6,6 +6,7 @@ using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.WS;
 using DSW.HDWallet.Infrastructure;
+using DSW.HDWallet.ConsoleApp.Infrastructure.HDWalletConsoleApp.Infrastructure.DataStore;
 
 class Program
 {
@@ -25,6 +26,7 @@ class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton<IDataStore, DataStore>();
         services.AddSingleton<IWalletService, WalletService>();
         services.AddSingleton<IWalletManagerService, WalletManagerService>();
         services.AddSingleton<ICoinAddressManager, CoinAddressManager>();
