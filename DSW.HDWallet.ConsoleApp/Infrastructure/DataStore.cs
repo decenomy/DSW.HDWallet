@@ -18,15 +18,40 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
                 _data = LoadData();
             }
 
-            public List<Wallet> Wallets => _data.GetValueOrDefault(nameof(Wallets)) as List<Wallet> ?? new List<Wallet>();
-            public List<CoinAddress> CoinAddresses => _data.GetValueOrDefault(nameof(CoinAddresses)) as List<CoinAddress> ?? new List<CoinAddress>();
-            public List<Rate> Rates => _data.GetValueOrDefault(nameof(Rates)) as List<Rate> ?? new List<Rate>();
-            public List<WalletCoin> WalletCoins => _data.GetValueOrDefault(nameof(WalletCoins)) as List<WalletCoin> ?? new List<WalletCoin>();
-            public List<Setting> Settings => _data.GetValueOrDefault(nameof(Settings)) as List<Setting> ?? new List<Setting>();
+            public List<Wallet> Wallets
+            {
+                get => GetCollection<Wallet>(nameof(Wallets));
+                set => _data[nameof(Wallets)] = value;
+            }
+
+            public List<CoinAddress> CoinAddresses
+            {
+                get => GetCollection<CoinAddress>(nameof(CoinAddresses));
+                set => _data[nameof(CoinAddresses)] = value;
+            }
+
+            public List<Rate> Rates
+            {
+                get => GetCollection<Rate>(nameof(Rates));
+                set => _data[nameof(Rates)] = value;
+            }
+
+            public List<WalletCoin> WalletCoins
+            {
+                get => GetCollection<WalletCoin>(nameof(WalletCoins));
+                set => _data[nameof(WalletCoins)] = value;
+            }
+
+            public List<Setting> Settings
+            {
+                get => GetCollection<Setting>(nameof(Settings));
+                set => _data[nameof(Settings)] = value;
+            }
 
             public void SaveChanges()
             {
-                var json = JsonSerializer.Serialize(_data);
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                var json = JsonSerializer.Serialize(_data, options);
                 File.WriteAllText(_filePath, json);
             }
 
@@ -36,6 +61,26 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
                 var json = File.ReadAllText(_filePath);
                 return JsonSerializer.Deserialize<Dictionary<string, object>>(json) ?? new Dictionary<string, object>();
+            }
+
+            private List<T> GetCollection<T>(string key) where T : new()
+            {
+                if (!_data.TryGetValue(key, out var collection))
+                {
+                    collection = new List<T>();
+                    _data[key] = collection;
+                }
+
+                if (collection is List<T> typedCollection)
+                {
+                    return typedCollection;
+                }
+                else
+                {
+                    var newCollection = new List<T>();
+                    _data[key] = newCollection;
+                    return newCollection;
+                }
             }
         }
     }
