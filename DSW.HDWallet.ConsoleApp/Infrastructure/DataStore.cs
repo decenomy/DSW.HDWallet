@@ -67,13 +67,22 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
             private List<T> GetCollection<T>(string key) where T : new()
             {
-                if (_data.TryGetValue(key, out var element) && element.ValueKind == JsonValueKind.Array)
+                if (!_data.TryGetValue(key, out var element) || element.ValueKind != JsonValueKind.Array)
                 {
-                    return JsonSerializer.Deserialize<List<T>>(element.GetRawText()) ?? new List<T>();
+                    var newList = new List<T>();
+                    _data[key] = JsonSerializer.SerializeToElement(newList);
+                    return newList;
                 }
 
-                return new List<T>();
+                var deserializedList = JsonSerializer.Deserialize<List<T>>(element.GetRawText());
+                if (deserializedList == null)
+                {
+                    deserializedList = new List<T>();
+                    _data[key] = JsonSerializer.SerializeToElement(deserializedList);
+                }
+                return deserializedList;
             }
+
         }
     }
 }

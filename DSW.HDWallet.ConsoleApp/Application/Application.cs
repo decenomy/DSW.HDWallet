@@ -8,6 +8,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
         private readonly IWalletService walletService;
         private readonly IWalletManagerService walletManagerService;
         private readonly IDataStore dataStore;
+        private bool exitApp = false;
 
         public Application(IWalletService walletService, IWalletManagerService walletManager, IDataStore dataStore)
         {
@@ -18,13 +19,16 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         public void Run()
         {
-            if (dataStore.Wallets.Any())
+            while (!exitApp)
             {
-                DisplayOptionsForExistingWallet();
-            }
-            else
-            {
-                DisplayOptionsForNewWallet();
+                if (dataStore.Wallets.Any())
+                {
+                    DisplayOptionsForExistingWallet();
+                }
+                else
+                {
+                    DisplayOptionsForNewWallet();
+                }
             }
         }
 
@@ -33,6 +37,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             Console.WriteLine("Choose an option:");
             Console.WriteLine("3: Delete Wallet");
             Console.WriteLine("4: Add Coin");
+            Console.WriteLine("5: Exit App");
             var choice = Console.ReadLine();
 
             switch (choice)
@@ -42,6 +47,9 @@ namespace DSW.HDWallet.ConsoleApp.Application
                     break;
                 case "4":
                     AddCoin();
+                    break;
+                case "5":
+                    exitApp = true;
                     break;
                 default:
                     Console.WriteLine("Invalid choice.");
@@ -54,6 +62,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             Console.WriteLine("Choose an option:");
             Console.WriteLine("1: Create Wallet");
             Console.WriteLine("2: Recover Wallet");
+            Console.WriteLine("5: Exit App");
             var choice = Console.ReadLine();
 
             switch (choice)
@@ -64,12 +73,14 @@ namespace DSW.HDWallet.ConsoleApp.Application
                 case "2":
                     RecoverWallet();
                     break;
+                case "5":
+                    exitApp = true;
+                    break;
                 default:
                     Console.WriteLine("Invalid choice.");
                     break;
             }
         }
-
         private void CreateWallet()
         {
             Console.WriteLine("Enter a password (or leave blank):");
