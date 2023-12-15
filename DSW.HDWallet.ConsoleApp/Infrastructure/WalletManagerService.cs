@@ -9,20 +9,19 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
         private readonly IDataStore dataStore;
         private readonly IWalletService walletService;
 
-        public WalletManagerService(IDataStore dataStore, 
-            IWalletService walletService)
+        public WalletManagerService(IDataStore dataStore, IWalletService walletService)
         {
             this.dataStore = dataStore;
             this.walletService = walletService;
         }
+
         public string CreateWallet(string? password = null)
         {
             var createdWallet = walletService.CreateWallet(NBitcoin.WordCount.Twelve, password);
             var wallet = new Wallet { Mnemonic = createdWallet.Mnemonic };
             try
             {
-                dataStore.Wallets.Add(wallet);
-                dataStore.SaveChanges();
+                dataStore.AddWallet(wallet);
             }
             catch (Exception ex)
             {
@@ -37,8 +36,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             var wallet = new Wallet { Mnemonic = recoveredWallet };
             try
             {
-                dataStore.Wallets.Add(wallet);
-                dataStore.SaveChanges();
+                dataStore.AddWallet(wallet);
             }
             catch (Exception ex)
             {
@@ -51,15 +49,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
         {
             try
             {
-                dataStore.Wallets.Clear();
-                dataStore.CoinAddresses.Clear();
-                dataStore.Rates.Clear();
-                dataStore.WalletCoins.Clear();
-                dataStore.Settings.Clear();
-
-
-                dataStore.SaveChanges();
-
+                dataStore.DeleteAllData();
                 return "Wallet data deleted.";
             }
             catch
@@ -67,6 +57,6 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
                 return "Error deleting data from storage.";
             }
         }
-
     }
+
 }

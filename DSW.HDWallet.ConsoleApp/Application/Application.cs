@@ -21,7 +21,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
         {
             while (!exitApp)
             {
-                if (dataStore.Wallets.Any())
+                if (dataStore.HasWallets())
                 {
                     DisplayOptionsForExistingWallet();
                 }
