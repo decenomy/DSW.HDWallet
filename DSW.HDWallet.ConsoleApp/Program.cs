@@ -4,9 +4,8 @@ using DSW.HDWallet.ConsoleApp.Application;
 using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
-using DSW.HDWallet.Infrastructure.WS;
 using DSW.HDWallet.Infrastructure;
-using DSW.HDWallet.ConsoleApp.Infrastructure.HDWalletConsoleApp.Infrastructure.DataStore;
+using HDWalletConsoleApp.Infrastructure.DataStore;
 
 class Program
 {
