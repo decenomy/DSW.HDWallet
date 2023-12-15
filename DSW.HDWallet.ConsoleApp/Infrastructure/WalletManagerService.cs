@@ -46,5 +46,27 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             }
             return wallet.Mnemonic ?? "Error recovering wallet";
         }
+
+        public string DeleteWallet()
+        {
+            try
+            {
+                dataStore.Wallets.Clear();
+                dataStore.CoinAddresses.Clear();
+                dataStore.Rates.Clear();
+                dataStore.WalletCoins.Clear();
+                dataStore.Settings.Clear();
+
+
+                dataStore.SaveChanges();
+
+                return "Wallet data deleted.";
+            }
+            catch
+            {
+                return "Error deleting data from storage.";
+            }
+        }
+
     }
 }

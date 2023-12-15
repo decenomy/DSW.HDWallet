@@ -90,8 +90,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         private void DeleteWallet()
         {
-            // Mock-up for deleting wallet
-            Console.WriteLine("Wallet deleted.");
+            walletManagerService.DeleteWallet();
         }
 
         private void AddCoin()
