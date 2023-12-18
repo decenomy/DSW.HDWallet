@@ -13,7 +13,6 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         public List<Wallet> Wallets { get; private set; }
         public List<CoinAddress> CoinAddresses { get; private set; }
         public List<Rate> Rates { get; private set; }
-        public List<Setting> Settings { get; private set; }
         public List<WalletCoin> WalletCoins { get; private set; }
         public DataStore()
         {
@@ -23,7 +22,6 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             Wallets = GetCollection<Wallet>(nameof(Wallets));
             CoinAddresses = GetCollection<CoinAddress>(nameof(CoinAddresses));
             Rates = GetCollection<Rate>(nameof(Rates));
-            Settings = GetCollection<Setting>(nameof(Settings));
             WalletCoins = GetCollection<WalletCoin>(nameof(WalletCoins));
 
         }
@@ -33,7 +31,6 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             UpdateData(nameof(Wallets), Wallets);
             UpdateData(nameof(CoinAddresses), CoinAddresses);
             UpdateData(nameof(Rates), Rates);
-            UpdateData(nameof(Settings), Settings);
             UpdateData(nameof(WalletCoins), WalletCoins);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
@@ -75,7 +72,6 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             CoinAddresses.Clear();
             Rates.Clear();
             WalletCoins.Clear();
-            Settings.Clear();
             SaveChanges();
         }
 
