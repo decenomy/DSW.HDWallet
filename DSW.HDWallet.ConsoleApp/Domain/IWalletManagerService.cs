@@ -5,5 +5,6 @@
         string CreateWallet(string? password = null);
         string RecoverWallet(string mnemonic, string? password = null);
         string DeleteWallet();
+        bool HasSeed();
     }
 }

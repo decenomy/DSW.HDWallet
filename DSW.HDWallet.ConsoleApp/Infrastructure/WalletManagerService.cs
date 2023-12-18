@@ -8,11 +8,13 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
     public class WalletManagerService : IWalletManagerService
     {
         private readonly IStorage storage;
+        private readonly ISecureStorage secureStorage;
         private readonly IWalletService walletService;
 
-        public WalletManagerService(IStorage storage, IWalletService walletService)
+        public WalletManagerService(IStorage storage, ISecureStorage secureStorage, IWalletService walletService)
         {
             this.storage = storage;
+            this.secureStorage = secureStorage;
             this.walletService = walletService;
         }
 
@@ -57,6 +59,11 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             {
                 return "Error deleting data from storage.";
             }
+        }
+
+        public bool HasSeed()
+        {
+            return secureStorage.HasSeed();
         }
     }
 

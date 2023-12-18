@@ -6,23 +6,19 @@ namespace DSW.HDWallet.ConsoleApp.Application
 {
     public class Application
     {
-        private readonly IWalletService walletService;
         private readonly IWalletManagerService walletManagerService;
-        private readonly ISecureStorage secureStorage;
         private bool exitApp = false;
 
-        public Application(IWalletService walletService, IWalletManagerService walletManager, ISecureStorage secureStorage)
+        public Application(IWalletManagerService walletManager)
         {
-            this.walletService = walletService;
             this.walletManagerService = walletManager;
-            this.secureStorage = secureStorage;
         }
 
         public void Run()
         {
             while (!exitApp)
             {
-                if (secureStorage.HasSeeds())
+                if (walletManagerService.HasSeed())
                 {
                     DisplayHomeScreenWithWallet();
                 }
