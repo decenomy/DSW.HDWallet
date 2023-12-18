@@ -1,6 +1,6 @@
 ﻿using DSW.HDWallet.Application;
 using DSW.HDWallet.ConsoleApp.Domain;
-using DSW.HDWallet.ConsoleApp.Domain.Models;
+using DSW.HDWallet.Domain.Models;
 
 namespace DSW.HDWallet.ConsoleApp.Infrastructure
 {
@@ -17,32 +17,32 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
         public string CreateWallet(string? password = null)
         {
-            var createdWallet = walletService.CreateWallet(NBitcoin.WordCount.Twelve, password);
-            var wallet = new Wallet { Mnemonic = createdWallet.Mnemonic };
+            var createdSeed = walletService.CreateWallet(NBitcoin.WordCount.Twelve, password);
+            var seed = new Seed { Mnemonic = createdSeed.Mnemonic };
             try
             {
-                dataStore.AddWallet(wallet);
+                dataStore.AddWallet(seed);
             }
             catch (Exception ex)
             {
                 return ex.Message;
             }
-            return wallet.Mnemonic ?? "No mnemonic";
+            return seed.Mnemonic ?? "No mnemonic";
         }
 
         public string RecoverWallet(string mnemonic, string? password = null)
         {
             var recoveredWallet = walletService.RecoverWallet(mnemonic, password);
-            var wallet = new Wallet { Mnemonic = recoveredWallet };
+            var seed = new Seed { Mnemonic = recoveredWallet };
             try
             {
-                dataStore.AddWallet(wallet);
+                dataStore.AddWallet(seed);
             }
             catch (Exception ex)
             {
                 return ex.Message;
             }
-            return wallet.Mnemonic ?? "Error recovering wallet";
+            return seed.Mnemonic ?? "Error recovering wallet";
         }
 
         public string DeleteWallet()

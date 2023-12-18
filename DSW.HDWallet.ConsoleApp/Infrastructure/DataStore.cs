@@ -1,7 +1,6 @@
 ﻿using DSW.HDWallet.ConsoleApp.Domain;
-using DSW.HDWallet.ConsoleApp.Domain.Models;
+using DSW.HDWallet.Domain.Models;
 using System.Text.Json;
-using Wallet = DSW.HDWallet.ConsoleApp.Domain.Models.Wallet;
 
 namespace HDWalletConsoleApp.Infrastructure.DataStore
 {
@@ -10,28 +9,28 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         private readonly string _filePath;
         private Dictionary<string, JsonElement> _data;
 
-        public List<Wallet> Wallets { get; private set; }
+        public List<Seed> Seeds { get; private set; }
         public List<CoinAddress> CoinAddresses { get; private set; }
         public List<Rate> Rates { get; private set; }
-        public List<WalletCoin> WalletCoins { get; private set; }
+        public List<Wallet> Wallets { get; private set; }
         public DataStore()
         {
             _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mnconsolestore.json");
             _data = LoadData();
 
-            Wallets = GetCollection<Wallet>(nameof(Wallets));
+            Seeds = GetCollection<Seed>(nameof(Seeds));
             CoinAddresses = GetCollection<CoinAddress>(nameof(CoinAddresses));
             Rates = GetCollection<Rate>(nameof(Rates));
-            WalletCoins = GetCollection<WalletCoin>(nameof(WalletCoins));
+            Wallets = GetCollection<Wallet>(nameof(Wallets));
 
         }
 
         public void SaveChanges()
         {
-            UpdateData(nameof(Wallets), Wallets);
+            UpdateData(nameof(Seeds), Seeds);
             UpdateData(nameof(CoinAddresses), CoinAddresses);
             UpdateData(nameof(Rates), Rates);
-            UpdateData(nameof(WalletCoins), WalletCoins);
+            UpdateData(nameof(Wallets), Wallets);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             var json = JsonSerializer.Serialize(_data, options);
@@ -60,18 +59,18 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             _data[key] = JsonSerializer.SerializeToElement(collection);
         }
 
-        public void AddWallet(Wallet wallet)
+        public void AddWallet(Seed seed)
         {
-            Wallets.Add(wallet);
+            Seeds.Add(seed);
             SaveChanges();
         }
 
         public void DeleteAllData()
         {
-            Wallets.Clear();
+            Seeds.Clear();
             CoinAddresses.Clear();
             Rates.Clear();
-            WalletCoins.Clear();
+            Wallets.Clear();
             SaveChanges();
         }
 

@@ -1,11 +1,11 @@
-﻿using DSW.HDWallet.ConsoleApp.Domain.Models;
+﻿using DSW.HDWallet.Domain.Models;
 
 namespace DSW.HDWallet.ConsoleApp.Domain
 {
     public interface IDataStore
     {
         void SaveChanges();
-        void AddWallet(Wallet wallet);
+        void AddWallet(Seed seed);
         public void DeleteAllData();
         bool HasWallets();
     }

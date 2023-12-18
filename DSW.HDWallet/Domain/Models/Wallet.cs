@@ -1,6 +1,6 @@
-﻿namespace DSW.HDWallet.ConsoleApp.Domain.Models
+﻿namespace DSW.HDWallet.Domain.Models
 {
-    public class WalletCoin
+    public class Wallet
     {
         public string? Ticker { get; set; }
         public string? PublicKey { get; set; }

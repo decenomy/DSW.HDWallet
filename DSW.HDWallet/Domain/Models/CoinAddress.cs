@@ -1,4 +1,4 @@
-﻿namespace DSW.HDWallet.ConsoleApp.Domain.Models
+﻿namespace DSW.HDWallet.Domain.Models
 {
     public class CoinAddress
     {
