@@ -1,5 +1,6 @@
 ﻿using DSW.HDWallet.Application;
 using DSW.HDWallet.ConsoleApp.Domain;
+using DSW.HDWallet.Infrastructure;
 
 namespace DSW.HDWallet.ConsoleApp.Application
 {
@@ -7,21 +8,21 @@ namespace DSW.HDWallet.ConsoleApp.Application
     {
         private readonly IWalletService walletService;
         private readonly IWalletManagerService walletManagerService;
-        private readonly IDataStore dataStore;
+        private readonly ISecureStorage secureStorage;
         private bool exitApp = false;
 
-        public Application(IWalletService walletService, IWalletManagerService walletManager, IDataStore dataStore)
+        public Application(IWalletService walletService, IWalletManagerService walletManager, ISecureStorage secureStorage)
         {
             this.walletService = walletService;
             this.walletManagerService = walletManager;
-            this.dataStore = dataStore;
+            this.secureStorage = secureStorage;
         }
 
         public void Run()
         {
             while (!exitApp)
             {
-                if (dataStore.HasWallets())
+                if (secureStorage.HasSeeds())
                 {
                     DisplayHomeScreenWithWallet();
                 }

@@ -25,7 +25,8 @@ class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<IDataStore, DataStore>();
+        services.AddSingleton<IStorage, DataStore>();
+        services.AddSingleton<ISecureStorage, DataStore>();
         services.AddSingleton<IWalletService, WalletService>();
         services.AddSingleton<IWalletManagerService, WalletManagerService>();
         services.AddSingleton<ICoinAddressManager, CoinAddressManager>();

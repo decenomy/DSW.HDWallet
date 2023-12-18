@@ -1,10 +1,10 @@
-﻿using DSW.HDWallet.ConsoleApp.Domain;
-using DSW.HDWallet.Domain.Models;
+﻿using DSW.HDWallet.Domain.Models;
+using DSW.HDWallet.Infrastructure;
 using System.Text.Json;
 
 namespace HDWalletConsoleApp.Infrastructure.DataStore
 {
-    public class DataStore : IDataStore
+    public class DataStore : IStorage, ISecureStorage
     {
         private readonly string _filePath;
         private Dictionary<string, JsonElement> _data;
@@ -74,9 +74,9 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             SaveChanges();
         }
 
-        public bool HasWallets()
+        public bool HasSeeds()
         {
-            return Wallets.Any();
+            return Seeds.Any();
         }
     }
 }

@@ -1,17 +1,18 @@
 ﻿using DSW.HDWallet.Application;
 using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.Domain.Models;
+using DSW.HDWallet.Infrastructure;
 
 namespace DSW.HDWallet.ConsoleApp.Infrastructure
 {
     public class WalletManagerService : IWalletManagerService
     {
-        private readonly IDataStore dataStore;
+        private readonly IStorage storage;
         private readonly IWalletService walletService;
 
-        public WalletManagerService(IDataStore dataStore, IWalletService walletService)
+        public WalletManagerService(IStorage storage, IWalletService walletService)
         {
-            this.dataStore = dataStore;
+            this.storage = storage;
             this.walletService = walletService;
         }
 
@@ -21,7 +22,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             var seed = new Seed { Mnemonic = createdSeed.Mnemonic };
             try
             {
-                dataStore.AddWallet(seed);
+                storage.AddWallet(seed);
             }
             catch (Exception ex)
             {
@@ -36,7 +37,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             var seed = new Seed { Mnemonic = recoveredWallet };
             try
             {
-                dataStore.AddWallet(seed);
+                storage.AddWallet(seed);
             }
             catch (Exception ex)
             {
@@ -49,7 +50,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
         {
             try
             {
-                dataStore.DeleteAllData();
+                storage.DeleteAllData();
                 return "Wallet data deleted.";
             }
             catch
