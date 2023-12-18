@@ -74,7 +74,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             SaveChanges();
         }
 
-        public bool HasSeeds()
+        public bool HasSeed()
         {
             return Seeds.Any();
         }
