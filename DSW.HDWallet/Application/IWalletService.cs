@@ -11,6 +11,7 @@ namespace DSW.HDWallet.Application
     public interface IWalletService
     {
         Wallet CreateWallet(Words wordCount, string? password = null);
+        string GetSeedHex(Mnemonic mnemo, string? password = null);
         string RecoverWallet(string secretWords, string? password = null);
         PubKeyDetails GeneratePubkey(string ticker, string seedHex);
         AddressInfo GetAddress(string pubKey, string ticker, int Index, bool IsChange = false);
@@ -27,6 +28,5 @@ namespace DSW.HDWallet.Application
         Task<TransactionDetails> GenerateTransaction(string ticker, string seedHex, long amountToSend, string toAddress, long fee = 0);
 
         bool ValidateAddress(string ticker, string address);
-        string GetSeedHex(Mnemonic mnemo, string? password = null);
     }
 }
