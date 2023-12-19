@@ -29,7 +29,10 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
         public IEnumerable<ICoinExtension> GetAvailableCoins()
         {
-            return coinRepository.Coins;
+            var allWallets = storage.GetAllWallets();
+
+            // Return coins that are not already in the wallets
+            return coinRepository.Coins.Where(coin => !allWallets.Any(wallet => wallet.Ticker == coin.Ticker));
         }
 
         public bool AddCoin(string ticker, string? password = null)

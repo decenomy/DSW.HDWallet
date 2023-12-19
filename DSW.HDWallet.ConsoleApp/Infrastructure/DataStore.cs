@@ -97,6 +97,10 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             SaveChanges();
             return true;
         }
+        public List<Wallet> GetAllWallets()
+        {
+            return Wallets;
+        }
     }
 }
 
