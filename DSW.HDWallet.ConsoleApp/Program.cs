@@ -29,6 +29,8 @@ class Program
         services.AddSingleton<IStorage>(dataStoreInstance);
         services.AddSingleton<ISecureStorage>(dataStoreInstance);
 
+        services.AddSingleton<ICoinRepository, CoinRepository>();
+        services.AddSingleton<ICoinManagerService, CoinManagerService>();
         services.AddSingleton<IWalletService, WalletService>();
         services.AddSingleton<IWalletManagerService, WalletManagerService>();
         services.AddSingleton<ICoinAddressManager, CoinAddressManager>();

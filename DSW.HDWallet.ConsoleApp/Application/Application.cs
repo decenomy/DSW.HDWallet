@@ -1,5 +1,6 @@
 ﻿using DSW.HDWallet.Application;
 using DSW.HDWallet.ConsoleApp.Domain;
+using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Infrastructure;
 
 namespace DSW.HDWallet.ConsoleApp.Application
@@ -7,11 +8,13 @@ namespace DSW.HDWallet.ConsoleApp.Application
     public class Application
     {
         private readonly IWalletManagerService walletManagerService;
+        private readonly ICoinManagerService coinManagerService;
         private bool exitApp = false;
 
-        public Application(IWalletManagerService walletManager)
+        public Application(IWalletManagerService walletManager, ICoinManagerService coinManagerService)
         {
             this.walletManagerService = walletManager;
+            this.coinManagerService = coinManagerService;
         }
 
         public void Run()
@@ -93,19 +96,40 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         private void DisplayAddCoinScreen()
         {
-            Console.WriteLine("Available Coins: BTC, ETH, XRP (mocked)");
-            Console.WriteLine("Select Coin to Add:");
-            Console.WriteLine("1: BTC");
-            Console.WriteLine("2: ETH");
-            Console.WriteLine("3: XRP");
-            Console.WriteLine("4: Back");
-            var choice = Console.ReadLine();
-            if (choice == "4")
+            var coins = coinManagerService.GetAvailableCoins().ToList();
+            Console.WriteLine("Available Coins:");
+            for (int index = 1; index <= coins.Count; index++)
             {
-                return; // Go back to home
+                Console.WriteLine($"{index}: {coins[index - 1].Ticker} - {coins[index - 1].Name}");
             }
-            AddCoin();
+
+            Console.WriteLine("Select Coin to Add (enter number):");
+            Console.WriteLine("Type '0' to return to the previous menu");
+
+            if (int.TryParse(Console.ReadLine(), out int choice) && choice > 0 && choice <= coins.Count)
+            {
+                Console.WriteLine("Enter your password:");
+                var password = Console.ReadLine();
+                var success = coinManagerService.AddCoin(coins[choice - 1].Ticker, password);
+                if (success)
+                {
+                    Console.WriteLine("Coin successfully added.");
+                }
+                else
+                {
+                    Console.WriteLine("Failed to add coin.");
+                }
+            }
+            else if (choice == 0)
+            {
+                return;
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice. Please try again.");
+            }
         }
+
 
         private void DisplaySelectCoinScreen()
         {
