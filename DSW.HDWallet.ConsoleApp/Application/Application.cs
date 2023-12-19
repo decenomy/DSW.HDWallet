@@ -123,9 +123,17 @@ namespace DSW.HDWallet.ConsoleApp.Application
         }
         private void CreateWallet()
         {
+            Console.WriteLine("Choose the number of words for your mnemonic:");
+            Console.WriteLine("1: 12 words");
+            Console.WriteLine("2: 24 words");
+            var wordCountChoice = Console.ReadLine();
+
+            int wordCount = wordCountChoice == "2" ? 24 : 12;
+
             Console.WriteLine("Enter a password (or leave blank):");
             var createPassword = Console.ReadLine();
-            var wallet = walletManagerService.CreateWallet(createPassword);
+
+            var wallet = walletManagerService.CreateWallet(wordCount, createPassword);
             Console.WriteLine($"Wallet created. Mnemonic: {wallet}");
         }
 

@@ -18,10 +18,12 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             this.walletService = walletService;
         }
 
-        public string CreateWallet(string? password = null)
+        public string CreateWallet(int wordCount, string? password = null)
         {
-            var createdSeed = walletService.CreateWallet(NBitcoin.WordCount.Twelve, password);
+            var mnemonicWordCount = wordCount == 24 ? NBitcoin.WordCount.TwentyFour : NBitcoin.WordCount.Twelve;
+            var createdSeed = walletService.CreateWallet(mnemonicWordCount, password);
             var seed = new Seed { Mnemonic = createdSeed.Mnemonic };
+
             try
             {
                 storage.AddWallet(seed);
