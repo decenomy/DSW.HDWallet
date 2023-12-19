@@ -6,5 +6,7 @@ namespace DSW.HDWallet.Infrastructure
     {
         void AddWallet(Seed seed);
         public void DeleteAllData();
+        bool AddCoin(Wallet wallet);
+        bool AddAddress(CoinAddress coinAddress);
     }
 }

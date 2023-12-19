@@ -3,5 +3,6 @@
     public interface ISecureStorage
     {
         bool HasSeed();
+        string GetMnemonic();
     }
 }
