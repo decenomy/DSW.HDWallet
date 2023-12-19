@@ -8,5 +8,6 @@ namespace DSW.HDWallet.Infrastructure
         public void DeleteAllData();
         bool AddCoin(Wallet wallet);
         bool AddAddress(CoinAddress coinAddress);
+        List<Wallet> GetAllWallets();
     }
 }
