@@ -6,5 +6,6 @@ namespace DSW.HDWallet.ConsoleApp.Domain
     {
         IEnumerable<ICoinExtension> GetAvailableCoins();
         bool AddCoin(string ticker, string? password = null);
+
     }
 }

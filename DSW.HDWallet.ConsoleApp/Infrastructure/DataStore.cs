@@ -78,6 +78,25 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         {
             return Seeds.Any();
         }
+
+        public string GetMnemonic()
+        {
+            return Seeds.First().Mnemonic ?? "No mnemonic available";
+        }
+
+        public bool AddCoin(Wallet wallet)
+        {
+            Wallets.Add(wallet); 
+            SaveChanges();       
+            return true;
+        }
+
+        public bool AddAddress(CoinAddress coinAddress)
+        {
+            CoinAddresses.Add(coinAddress);
+            SaveChanges();
+            return true;
+        }
     }
 }
 
