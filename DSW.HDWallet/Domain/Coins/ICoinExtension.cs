@@ -1,6 +1,4 @@
-﻿using DSW.HDWallet.Infrastructure.Coins;
-
-namespace DSW.HDWallet.Domain.Coins;
+﻿namespace DSW.HDWallet.Domain.Coins;
 
 public interface ICoinExtension
 {
