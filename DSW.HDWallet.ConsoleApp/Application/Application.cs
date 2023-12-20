@@ -217,12 +217,6 @@ namespace DSW.HDWallet.ConsoleApp.Application
             walletManagerService.DeleteWallet();
         }
 
-        private void AddCoin()
-        {
-            // Mock-up for adding a coin
-            Console.WriteLine("Coin added.");
-        }
-
         private void SendCoins(Wallet coin)
         {
             // Mock implementation
