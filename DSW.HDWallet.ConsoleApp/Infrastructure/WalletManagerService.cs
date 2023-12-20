@@ -2,6 +2,7 @@
 using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Infrastructure;
+using NBitcoin;
 
 namespace DSW.HDWallet.ConsoleApp.Infrastructure
 {
@@ -38,7 +39,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
         public string RecoverWallet(string mnemonic, string? password = null)
         {
             var recoveredWallet = walletService.RecoverWallet(mnemonic, password);
-            var seed = new Seed { Mnemonic = recoveredWallet };
+            var seed = new Seed { Mnemonic = mnemonic };
             try
             {
                 storage.AddWallet(seed);
