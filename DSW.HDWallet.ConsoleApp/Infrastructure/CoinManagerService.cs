@@ -72,6 +72,11 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
             return false;
         }
+
+        public List<Wallet> GetWalletCoins()
+        {
+            return storage.GetAllWallets();
+        }
     }
 
 }
