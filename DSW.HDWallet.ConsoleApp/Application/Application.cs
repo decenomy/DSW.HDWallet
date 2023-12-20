@@ -2,7 +2,9 @@
 using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Domain.Models;
+using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Infrastructure;
+using System.Net;
 
 namespace DSW.HDWallet.ConsoleApp.Application
 {
@@ -219,9 +221,39 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         private void SendCoins(Wallet coin)
         {
-            // Mock implementation
-            Console.WriteLine($"Mocked sending for {coin.Ticker}.");
+            Console.WriteLine($"Send {coin.Ticker}");
+            Console.WriteLine("Enter the number of coins to send (or type 'Back' to return):");
+            string input = Console.ReadLine() ?? "";
+
+            // Check for 'Back' option
+            if (input?.ToLower() == "back")
+            {
+                return;
+            }
+
+            if (decimal.TryParse(input, out decimal numberOfCoins))
+            {
+                Console.WriteLine("Enter the address to send to:");
+                string address = Console.ReadLine() ?? "";
+
+                if (string.IsNullOrWhiteSpace(address))
+                {
+                    Console.WriteLine("Invalid address. Operation cancelled.");
+                    return;
+                }
+
+                Console.WriteLine("Enter your password:");
+                string password = Console.ReadLine() ?? "";
+
+                coinManagerService.SendCoins(coin.Ticker ?? "", numberOfCoins, address, password);
+                Console.WriteLine($"Mocked sending {numberOfCoins} {coin.Ticker} to {address}.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid number of coins. Please try again.");
+            }
         }
+
 
         private void ReceiveCoins(Wallet coin)
         {

@@ -8,6 +8,7 @@ namespace DSW.HDWallet.ConsoleApp.Domain
         IEnumerable<ICoinExtension> GetAvailableCoins();
         bool AddCoin(string ticker, string? password = null);
         List<Wallet> GetWalletCoins();
+        void SendCoins(string ticker, decimal numberOfCoins, string address, string? password)
 
     }
 }
