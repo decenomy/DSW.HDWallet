@@ -9,5 +9,9 @@ namespace DSW.HDWallet.Infrastructure
         bool AddCoin(Wallet wallet);
         bool AddAddress(CoinAddress coinAddress);
         List<Wallet> GetAllWallets();
+        void AddCoinAddress(CoinAddress coinAddress);
+        void IncrementCoinIndex(string ticker);
+        CoinAddress GetAddressByAddress(string address);
+        void UpdateAddressUsed(CoinAddress coinAddress);
     }
 }

@@ -54,6 +54,43 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             return new List<T>();
         }
 
+        public void AddCoinAddress(CoinAddress coinAddress)
+        {
+            if (CoinAddresses.Any(ca => ca.Address == coinAddress.Address))
+            {
+                // Address already exists
+                return;
+            }
+
+            CoinAddresses.Add(coinAddress);
+            SaveChanges();
+        }
+
+        public void IncrementCoinIndex(string ticker)
+        {
+            var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
+            if (wallet != null)
+            {
+                wallet.CoinIndex++;
+                SaveChanges();
+            }
+        }
+
+        public CoinAddress GetAddressByAddress(string address)
+        {
+            return CoinAddresses.FirstOrDefault(ca => ca.Address == address)!;
+        }
+
+        public void UpdateAddressUsed(CoinAddress coinAddress)
+        {
+            var existingAddress = CoinAddresses.FirstOrDefault(ca => ca.Address == coinAddress.Address);
+            if (existingAddress != null)
+            {
+                existingAddress.IsUsed = true;
+                SaveChanges();
+            }
+        }
+
         private void UpdateData<T>(string key, List<T> collection)
         {
             _data[key] = JsonSerializer.SerializeToElement(collection);

@@ -97,38 +97,37 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             }
             else
             {
-                //string rawTransaction = transactionDetails.Transaction.ToHex();
+                string rawTransaction = transactionDetails.Transaction.ToHex();
 
-                //var response = blockbookHttpClient.SendTransaction(rawTransaction).Result;
+                var response = blockbookHttpClient.SendTransaction(rawTransaction).Result;
 
-                //if (response.Error == null)
-                //{
-                //    CoinAddressDataObject changeAddress = new()
-                //    {
-                //        Ticker = ticker,
-                //        Address = transactionDetails.ChangeAddress?.Address,
-                //        AddressIndex = transactionDetails.ChangeAddress?.Index ?? 0,
-                //        IsUsed = true,
-                //        IsChange = true
-                //    };
+                if (response.Error == null)
+                {
+                    CoinAddress changeAddress = new()
+                    {
+                        Ticker = ticker,
+                        Address = transactionDetails.ChangeAddress?.Address,
+                        AddressIndex = transactionDetails.ChangeAddress?.Index ?? 0,
+                        IsUsed = true,
+                        IsChange = true
+                    };
 
-                //    if (await repository.GetAddressByAddress(changeAddress.Address ?? "") == null)
-                //    {
-                //        await repository.AddCoinAddress(changeAddress);
-                //        await repository.IncrementCoinIndex(ticker);
-                //    }
-                //    else
-                //    {
-                //        await repository.UpdateAddressUsed(changeAddress);
-                //    }
+                    if (storage.GetAddressByAddress(changeAddress.Address ?? "") == null)
+                    {
+                        storage.AddCoinAddress(changeAddress);
+                        storage.IncrementCoinIndex(ticker);
+                    }
+                    else
+                    {
+                        storage.UpdateAddressUsed(changeAddress);
+                    }
 
-                //    return (true, response.Result ?? "Transaction submitted successfully, but no result was returned.");
-                //}
-                //else
-                //{
-                //    logger.LogError("Error sending transaction: {ErrorMessage}", response.Error.Message);
-                //    return (false, response.Error.Message ?? "Unknown error occurred.");
-                //}
+                    Console.WriteLine("Transaction submitted successfully, but no result was returned.");
+                }
+                else
+                {
+                    Console.WriteLine("response.Error.Message");
+                }
             }
 
         }
