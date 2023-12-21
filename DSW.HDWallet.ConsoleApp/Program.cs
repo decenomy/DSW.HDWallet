@@ -25,9 +25,9 @@ class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        var dataStoreInstance = new DataStore();
-        services.AddSingleton<IStorage>(dataStoreInstance);
-        services.AddSingleton<ISecureStorage>(dataStoreInstance);
+        services.AddSingleton<DataStore>();
+        services.AddSingleton<IStorage>(sp => sp.GetService<DataStore>()!);
+        services.AddSingleton<ISecureStorage>(sp => sp.GetService<DataStore>()!);
 
         services.AddSingleton<ICoinRepository, CoinRepository>();
         services.AddSingleton<ICoinManagerService, CoinManagerService>();
