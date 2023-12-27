@@ -6,6 +6,7 @@ using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure;
 using HDWalletConsoleApp.Infrastructure.DataStore;
+using Microsoft.Extensions.Logging;
 
 class Program
 {
@@ -15,6 +16,8 @@ class Program
         ConfigureServices(services);
 
         services.AddHttpClient();
+        services.AddLogging();
+
         var serviceProvider = services.BuildServiceProvider();
         var app = serviceProvider.GetService<Application>();
         if (app != null)
@@ -25,6 +28,7 @@ class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        services.AddLogging(configure => configure.AddConsole());
         services.AddSingleton<DataStore>();
         services.AddSingleton<IStorage>(sp => sp.GetService<DataStore>()!);
         services.AddSingleton<ISecureStorage>(sp => sp.GetService<DataStore>()!);

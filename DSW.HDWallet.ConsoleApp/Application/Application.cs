@@ -4,6 +4,7 @@ using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Infrastructure;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace DSW.HDWallet.ConsoleApp.Application
@@ -13,20 +14,24 @@ namespace DSW.HDWallet.ConsoleApp.Application
         private readonly IWalletManagerService walletManagerService;
         private readonly ICoinManagerService coinManagerService;
         private readonly ICoinAddressManager coinAddressManager;
+        private readonly ILogger<Application> logger;
 
         private bool exitApp = false;
 
         public Application(IWalletManagerService walletManager, 
             ICoinManagerService coinManagerService, 
-            ICoinAddressManager coinAddressManager)
+            ICoinAddressManager coinAddressManager,
+            ILogger<Application> logger)
         {
             this.walletManagerService = walletManager;
             this.coinManagerService = coinManagerService;
             this.coinAddressManager = coinAddressManager;
+            this.logger = logger;
         }
 
         public void Run()
         {
+            logger.LogInformation("Application starting");
             while (!exitApp)
             {
                 if (walletManagerService.HasSeed())
