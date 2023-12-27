@@ -134,9 +134,20 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             SaveChanges();
             return true;
         }
+
         public List<Wallet> GetAllWallets()
         {
             return Wallets;
+        }
+
+        public CoinAddress? GetUnusedAddress(string ticker)
+        {
+            return CoinAddresses.FirstOrDefault(ca => ca.Ticker == ticker && !ca.IsUsed);
+        }
+
+        public Wallet? GetWallet(string ticker)
+        {
+            return Wallets.FirstOrDefault(w => w.Ticker == ticker);
         }
     }
 }

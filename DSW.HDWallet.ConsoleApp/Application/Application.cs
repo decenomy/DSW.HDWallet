@@ -12,12 +12,17 @@ namespace DSW.HDWallet.ConsoleApp.Application
     {
         private readonly IWalletManagerService walletManagerService;
         private readonly ICoinManagerService coinManagerService;
+        private readonly ICoinAddressManager coinAddressManager;
+
         private bool exitApp = false;
 
-        public Application(IWalletManagerService walletManager, ICoinManagerService coinManagerService)
+        public Application(IWalletManagerService walletManager, 
+            ICoinManagerService coinManagerService, 
+            ICoinAddressManager coinAddressManager)
         {
             this.walletManagerService = walletManager;
             this.coinManagerService = coinManagerService;
+            this.coinAddressManager = coinAddressManager;
         }
 
         public void Run()
@@ -255,10 +260,24 @@ namespace DSW.HDWallet.ConsoleApp.Application
         }
 
 
-        private void ReceiveCoins(Wallet coin)
+        private async void ReceiveCoins(Wallet coin)
         {
-            // Mock implementation
-            Console.WriteLine($"Mocked receiving for {coin.Ticker}.");
+            try
+            {
+                var addressInfo = await coinAddressManager.GetUnusedAddress(coin.Ticker!);
+                if (addressInfo != null)
+                {
+                    Console.WriteLine($"Your address to receive {coin.Ticker}: {addressInfo.Address}");
+                }
+                else
+                {
+                    Console.WriteLine($"No address available for {coin.Ticker}.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving address: {ex.Message}");
+            }
         }
     }
 

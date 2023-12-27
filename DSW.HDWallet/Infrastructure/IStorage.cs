@@ -13,5 +13,7 @@ namespace DSW.HDWallet.Infrastructure
         void IncrementCoinIndex(string ticker);
         CoinAddress GetAddressByAddress(string address);
         void UpdateAddressUsed(CoinAddress coinAddress);
+        CoinAddress? GetUnusedAddress(string ticker);
+        Wallet? GetWallet(string ticker);
     }
 }
