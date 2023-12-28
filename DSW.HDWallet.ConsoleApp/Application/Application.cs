@@ -13,6 +13,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
     {
         private readonly IWalletManagerService walletManagerService;
         private readonly ICoinManagerService coinManagerService;
+        private readonly ITransactionManager transactionManager;
         private readonly IAddressManager addressManager;
         private readonly ILogger<Application> logger;
 
@@ -21,11 +22,13 @@ namespace DSW.HDWallet.ConsoleApp.Application
         public Application(IWalletManagerService walletManager, 
             ICoinManagerService coinManagerService, 
             IAddressManager addressManager,
+            ITransactionManager transactionManager,
             ILogger<Application> logger)
         {
             this.walletManagerService = walletManager;
             this.coinManagerService = coinManagerService;
             this.addressManager = addressManager;
+            this.transactionManager = transactionManager;
             this.logger = logger;
         }
 
@@ -255,7 +258,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
                 Console.WriteLine("Enter your password:");
                 string password = Console.ReadLine() ?? "";
 
-                coinManagerService.SendCoins(coin.Ticker ?? "", numberOfCoins, address, password);
+                transactionManager.SendCoins(coin.Ticker ?? "", numberOfCoins, address, password);
                 Console.WriteLine($"Mocked sending {numberOfCoins} {coin.Ticker} to {address}.");
             }
             else

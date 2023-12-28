@@ -34,6 +34,7 @@ class Program
         services.AddSingleton<IStorage>(sp => sp.GetService<DataStore>()!);
         services.AddSingleton<ISecureStorage>(sp => sp.GetService<DataStore>()!);
 
+        services.AddSingleton<ITransactionManager, TransactionManager>();
         services.AddSingleton<ICoinRepository, CoinRepository>();
         services.AddSingleton<ICoinManagerService, CoinManagerService>();
         services.AddSingleton<IWalletService, WalletService>();
