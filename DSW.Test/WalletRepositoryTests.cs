@@ -16,7 +16,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
@@ -35,7 +35,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
@@ -54,7 +54,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object, mockCoinAddressManager.Object);
@@ -71,7 +71,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
@@ -90,7 +90,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var coinType = "SAPP";
@@ -110,7 +110,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var coinType = "SAPP";
@@ -147,7 +147,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object, mockCoinAddressManager.Object);
@@ -175,7 +175,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object, mockCoinAddressManager.Object);
@@ -199,7 +199,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object, mockCoinAddressManager.Object);
@@ -226,7 +226,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object, mockCoinAddressManager.Object);
@@ -245,7 +245,7 @@ namespace DSW.Test
         {
             var mockCoinRepository = new Mock<CoinRepository>();
             var mockBlockbookHttpClient = new Mock<IBlockbookHttpClient>();
-            var mockCoinAddressManager = new Mock<ICoinAddressManager>();
+            var mockCoinAddressManager = new Mock<IAddressManager>();
 
             // Arrange
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object, mockCoinAddressManager.Object);
