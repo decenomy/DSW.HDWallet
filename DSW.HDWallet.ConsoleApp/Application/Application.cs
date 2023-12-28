@@ -154,7 +154,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
             for (int i = 0; i < walletCoins.Count; i++)
             {
-                Console.WriteLine($"{i + 1}: {walletCoins[i].Ticker} - {walletCoins[i].Balance}");
+                Console.WriteLine($"{i + 1}: {walletCoins[i].Ticker} - {walletCoins[i].Balance ?? 0}");
             }
 
             Console.WriteLine("Select a coin number for more options or type '0' to return to the home screen:");
