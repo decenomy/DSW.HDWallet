@@ -119,7 +119,7 @@ namespace DSW.Test
             var service = new WalletService(mockBlockbookHttpClient.Object, mockCoinRepository.Object, mockCoinAddressManager.Object);
 
             // Act
-            var derivedPubKey = service.GetAddress(pubKey, coinType, index);
+            var derivedPubKey = mockCoinAddressManager.Object.GetAddress(pubKey, coinType, index);
 
             // Assert
             Assert.NotNull(derivedPubKey);

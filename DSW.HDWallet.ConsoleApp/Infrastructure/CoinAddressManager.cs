@@ -1,20 +1,20 @@
 ﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure;
+using NBitcoin;
 
 namespace DSW.HDWallet.ConsoleApp.Infrastructure
 {
     public class CoinAddressManager : ICoinAddressManager
     {
         private readonly IStorage storage;
-        private readonly IWalletService walletService;
+        private readonly ICoinRepository coinRepository;
 
-        public CoinAddressManager(IStorage storage, IWalletService walletService)
+        public CoinAddressManager(IStorage storage, ICoinRepository coinRepository)
         {
             this.storage = storage;
-            this.walletService = walletService;
+            this.coinRepository = coinRepository;
         }
 
         public Task<bool> AddressExists(string addressString)
@@ -34,7 +34,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             {
                 HDWallet.Domain.Models.Wallet wallet = storage.GetWallet(ticker)!;
 
-                var addressInfo = walletService.GetAddress(wallet.PublicKey!, ticker, wallet.CoinIndex + 1, false);
+                var addressInfo = GetAddress(wallet.PublicKey!, ticker, wallet.CoinIndex + 1, false);
 
                 coinAddress = new CoinAddress()
                 {
@@ -56,6 +56,28 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
                     Index = coinAddress.AddressIndex,
                     IsUsed = coinAddress.IsUsed
                 });
+        }
+
+        public AddressInfo GetAddress(string pubKey, string ticker, int index, bool isChange = false)
+        {
+            var changeType = isChange ? 1 : 0;
+
+            Network network = coinRepository.GetNetwork(ticker);
+            ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
+
+            var keypath = $"{changeType}/{index}";
+
+            var address = extPubKey.Derive(new KeyPath(keypath))
+                                    .GetPublicKey()
+                                    .GetAddress(ScriptPubKeyType.Legacy, network);
+
+            AddressInfo deriveKeyDetails = new()
+            {
+                Address = address.ToString(),
+                Index = index
+            };
+
+            return deriveKeyDetails;
         }
     }
 }

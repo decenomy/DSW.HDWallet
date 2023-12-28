@@ -1,4 +1,5 @@
 ﻿using DSW.HDWallet.Application;
+using DSW.HDWallet.Application.Features;
 using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Models;
@@ -17,19 +18,22 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
         private readonly ISecureStorage secureStorage;
         private readonly IWalletService walletService;
         private readonly IBlockbookHttpClient blockbookHttpClient;
+        private readonly ICoinAddressManager coinAddressManager;
 
         public CoinManagerService(
             ICoinRepository coinRepository,
             IStorage storage,
             ISecureStorage secureStorage,
             IWalletService walletService,
-            IBlockbookHttpClient blockbookHttpClient)
+            IBlockbookHttpClient blockbookHttpClient,
+            ICoinAddressManager coinAddressManager)
         {
             this.coinRepository = coinRepository;
             this.storage = storage;
             this.secureStorage = secureStorage;
             this.walletService = walletService;
             this.blockbookHttpClient = blockbookHttpClient;
+            this.coinAddressManager = coinAddressManager;
         }
 
         public IEnumerable<ICoinExtension> GetAvailableCoins()
@@ -61,7 +65,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
             if (coinAddSuccess)
             {
-                AddressInfo addressInfo = walletService.GetAddress(pubKeyDetails.PubKey, ticker, pubKeyDetails.Index, false);
+                AddressInfo addressInfo = coinAddressManager.GetAddress(pubKeyDetails.PubKey, ticker, pubKeyDetails.Index, false);
 
                 CoinAddress walletAddress = new()
                 {

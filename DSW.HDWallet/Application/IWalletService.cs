@@ -14,7 +14,6 @@ namespace DSW.HDWallet.Application
         string GetSeedHex(Mnemonic mnemo, string? password = null);
         string RecoverWallet(string secretWords, string? password = null);
         PubKeyDetails GeneratePubkey(string ticker, string seedHex);
-        AddressInfo GetAddress(string pubKey, string ticker, int Index, bool IsChange = false);
         Task<AddressObject> GetAddressAsync(string coin, string address);
         Task<TransactionObject> GetTransactionAsync(string coin, string txid);
         Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid);

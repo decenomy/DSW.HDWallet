@@ -160,12 +160,12 @@ namespace Decenomy
                         Console.Write("\n Enter derived number of keys: ");
                         string? indexKey = Console.ReadLine();
 
-                        for (int i = 0; i < Convert.ToInt32(indexKey); i++)
-                        {
-                            var createDeriveKey = walletAppService?.GetAddress(generatePubKey?.PubKey!, generatePubKey?.Ticker!, i, true);
+                        //for (int i = 0; i < Convert.ToInt32(indexKey); i++)
+                        //{
+                        //    var createDeriveKey = walletAppService?.GetAddress(generatePubKey?.PubKey!, generatePubKey?.Ticker!, i, true);
 
-                            WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Index}", ConsoleColor.DarkGreen);
-                        }
+                        //    WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Index}", ConsoleColor.DarkGreen);
+                        //}
 
                         Console.ReadLine();
                         Console.Clear();

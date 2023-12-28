@@ -1,13 +1,12 @@
-﻿using DSW.HDWallet.Domain.Coins;
-using DSW.HDWallet.Domain.Wallets;
-using NBitcoin;
+﻿using DSW.HDWallet.Domain.Wallets;
 
 namespace DSW.HDWallet.Infrastructure
 {
     public interface ICoinAddressManager
     {
         Task<int> GetCoinIndex(string ticker);
-        Task<AddressInfo?> GetUnusedAddress(string ticker);
         Task<bool> AddressExists(string addressString);
+        Task<AddressInfo?> GetUnusedAddress(string ticker);
+        AddressInfo GetAddress(string pubKey, string ticker, int Index, bool IsChange = false);
     }
 }

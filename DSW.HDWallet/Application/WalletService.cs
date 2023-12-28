@@ -1,14 +1,10 @@
 ﻿using DSW.HDWallet.Application.Extension;
 using DSW.HDWallet.Domain.ApiObjects;
-using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
-using DSW.HDWallet.Domain.WSObject;
 using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
-using DSW.HDWallet.Infrastructure.WS;
 using NBitcoin;
-using System.Security.Cryptography.X509Certificates;
 
 namespace DSW.HDWallet.Application
 {
@@ -70,28 +66,6 @@ namespace DSW.HDWallet.Application
             };
 
             return pubKeyDetails;
-        }
-
-        public AddressInfo GetAddress(string pubKey, string ticker, int index, bool isChange = false)
-        {
-            var changeType = isChange ? 1 : 0;
-
-            Network network = coinRepository.GetNetwork(ticker);
-            ExtPubKey extPubKey = ExtPubKey.Parse(pubKey, network);
-
-            var keypath = $"{changeType}/{index}";
-
-            var address = extPubKey.Derive(new KeyPath(keypath))
-                                    .GetPublicKey()
-                                    .GetAddress(ScriptPubKeyType.Legacy, network);
-
-            AddressInfo deriveKeyDetails = new()
-            {
-                Address = address.ToString(),
-                Index = index
-            };
-
-            return deriveKeyDetails;
         }
 
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
@@ -173,7 +147,7 @@ namespace DSW.HDWallet.Application
 
                     if(changeAddress == null)
                     {
-                        changeAddress = GetAddress(pubKey, ticker, await coinAddressManager.GetCoinIndex(ticker), true);
+                        changeAddress = coinAddressManager.GetAddress(pubKey, ticker, await coinAddressManager.GetCoinIndex(ticker), true);
                     }
                     
                     BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
