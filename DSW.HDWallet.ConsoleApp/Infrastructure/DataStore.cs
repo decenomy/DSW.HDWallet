@@ -1,5 +1,5 @@
 ﻿using DSW.HDWallet.Domain.Models;
-using DSW.HDWallet.Infrastructure;
+using DSW.HDWallet.Infrastructure.Interfaces;
 using System.Text.Json;
 
 namespace HDWalletConsoleApp.Infrastructure.DataStore

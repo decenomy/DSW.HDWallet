@@ -1,5 +1,6 @@
 ﻿using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Infrastructure.Coins;
+using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
 namespace DSW.HDWallet.Infrastructure

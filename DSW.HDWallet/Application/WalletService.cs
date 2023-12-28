@@ -2,8 +2,8 @@
 using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
-using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
+using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
 namespace DSW.HDWallet.Application

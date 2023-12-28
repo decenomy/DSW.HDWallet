@@ -1,7 +1,7 @@
 ﻿using DSW.HDWallet.Application;
 using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.Domain.Models;
-using DSW.HDWallet.Infrastructure;
+using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
 namespace DSW.HDWallet.ConsoleApp.Infrastructure

@@ -3,7 +3,7 @@ using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Transaction;
-using DSW.HDWallet.Infrastructure;
+using DSW.HDWallet.Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Net;
 

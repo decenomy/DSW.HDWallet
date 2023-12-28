@@ -6,6 +6,7 @@ using Moq;
 using DSW.HDWallet.Application;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Domain.Transaction;
+using DSW.HDWallet.Infrastructure.Interfaces;
 
 namespace DSW.Test
 {

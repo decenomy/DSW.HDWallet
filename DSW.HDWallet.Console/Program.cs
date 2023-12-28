@@ -2,6 +2,7 @@
 using DSW.HDWallet.Application.Provider;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Infrastructure;
+using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
 Decenomy.Project.HDWallet();

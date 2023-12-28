@@ -1,4 +1,4 @@
-﻿namespace DSW.HDWallet.Infrastructure
+﻿namespace DSW.HDWallet.Infrastructure.Interfaces
 {
     public interface ISecureStorage
     {

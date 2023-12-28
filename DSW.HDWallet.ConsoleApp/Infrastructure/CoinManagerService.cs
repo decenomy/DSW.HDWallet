@@ -5,8 +5,8 @@ using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
-using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
+using DSW.HDWallet.Infrastructure.Interfaces;
 using Wallet = DSW.HDWallet.Domain.Models.Wallet;
 
 namespace DSW.HDWallet.ConsoleApp.Infrastructure

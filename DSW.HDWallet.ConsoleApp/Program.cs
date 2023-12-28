@@ -7,6 +7,7 @@ using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure;
 using HDWalletConsoleApp.Infrastructure.DataStore;
 using Microsoft.Extensions.Logging;
+using DSW.HDWallet.Infrastructure.Interfaces;
 
 class Program
 {
