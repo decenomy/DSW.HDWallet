@@ -12,15 +12,15 @@ namespace DSW.HDWallet.Application
     {
         private readonly IBlockbookHttpClient blockbookHttpClient;
         private readonly ICoinRepository coinRepository;
-        private readonly ICoinAddressManager coinAddressManager;
+        private readonly IAddressManager addressManager;
 
         public WalletService(IBlockbookHttpClient blockbookHttpClient,
             ICoinRepository coinRepository,
-            ICoinAddressManager coinAddressManager)
+            IAddressManager addressManager)
         {
             this.blockbookHttpClient = blockbookHttpClient;
             this.coinRepository = coinRepository;
-            this.coinAddressManager = coinAddressManager;
+            this.addressManager = addressManager;
         }
 
         public Wallet CreateWallet(WordCount wordCount, string? password = null)
@@ -143,11 +143,11 @@ namespace DSW.HDWallet.Application
                     var inputs = new List<TxIn>();
                     var key = extendedKey.PrivateKey.GetBitcoinSecret(network);
 
-                    AddressInfo? changeAddress = await coinAddressManager.GetUnusedAddress(ticker);
+                    AddressInfo? changeAddress = await addressManager.GetUnusedAddress(ticker);
 
                     if(changeAddress == null)
                     {
-                        changeAddress = coinAddressManager.GetAddress(pubKey, ticker, await coinAddressManager.GetCoinIndex(ticker), true);
+                        changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker), true);
                     }
                     
                     BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);

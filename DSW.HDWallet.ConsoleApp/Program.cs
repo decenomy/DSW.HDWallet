@@ -37,7 +37,7 @@ class Program
         services.AddSingleton<ICoinManagerService, CoinManagerService>();
         services.AddSingleton<IWalletService, WalletService>();
         services.AddSingleton<IWalletManagerService, WalletManagerService>();
-        services.AddSingleton<ICoinAddressManager, CoinAddressManager>();
+        services.AddSingleton<IAddressManager, AddressManager>();
         services.AddSingleton<ICoinRepository, CoinRepository>();
         services.AddSingleton<IBlockbookHttpClient, BlockbookHttpClient>();
         services.AddSingleton<Application>();

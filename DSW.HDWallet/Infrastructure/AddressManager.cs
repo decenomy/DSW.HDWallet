@@ -1,17 +1,15 @@
-﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.Domain.Models;
+﻿using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Wallets;
-using DSW.HDWallet.Infrastructure;
 using NBitcoin;
 
-namespace DSW.HDWallet.ConsoleApp.Infrastructure
+namespace DSW.HDWallet.Infrastructure
 {
-    public class CoinAddressManager : ICoinAddressManager
+    public class AddressManager : IAddressManager
     {
         private readonly IStorage storage;
         private readonly ICoinRepository coinRepository;
 
-        public CoinAddressManager(IStorage storage, ICoinRepository coinRepository)
+        public AddressManager(IStorage storage, ICoinRepository coinRepository)
         {
             this.storage = storage;
             this.coinRepository = coinRepository;
@@ -47,11 +45,12 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
                 storage.AddAddress(coinAddress);
                 storage.IncrementCoinIndex(ticker);
-                
+
             }
 
             return Task.FromResult<AddressInfo?>(
-                new AddressInfo() { 
+                new AddressInfo()
+                {
                     Address = coinAddress.Address ?? "",
                     Index = coinAddress.AddressIndex,
                     IsUsed = coinAddress.IsUsed

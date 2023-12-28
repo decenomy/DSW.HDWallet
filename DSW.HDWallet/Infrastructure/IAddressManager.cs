@@ -2,7 +2,7 @@
 
 namespace DSW.HDWallet.Infrastructure
 {
-    public interface ICoinAddressManager
+    public interface IAddressManager
     {
         Task<int> GetCoinIndex(string ticker);
         Task<bool> AddressExists(string addressString);

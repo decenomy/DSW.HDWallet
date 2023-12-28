@@ -13,19 +13,19 @@ namespace DSW.HDWallet.ConsoleApp.Application
     {
         private readonly IWalletManagerService walletManagerService;
         private readonly ICoinManagerService coinManagerService;
-        private readonly ICoinAddressManager coinAddressManager;
+        private readonly IAddressManager addressManager;
         private readonly ILogger<Application> logger;
 
         private bool exitApp = false;
 
         public Application(IWalletManagerService walletManager, 
             ICoinManagerService coinManagerService, 
-            ICoinAddressManager coinAddressManager,
+            IAddressManager addressManager,
             ILogger<Application> logger)
         {
             this.walletManagerService = walletManager;
             this.coinManagerService = coinManagerService;
-            this.coinAddressManager = coinAddressManager;
+            this.addressManager = addressManager;
             this.logger = logger;
         }
 
@@ -269,7 +269,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
         {
             try
             {
-                var addressInfo = await coinAddressManager.GetUnusedAddress(coin.Ticker!);
+                var addressInfo = await addressManager.GetUnusedAddress(coin.Ticker!);
                 if (addressInfo != null)
                 {
                     Console.WriteLine($"Your address to receive {coin.Ticker}: {addressInfo.Address}");
