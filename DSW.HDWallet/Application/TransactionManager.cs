@@ -1,4 +1,5 @@
-﻿using DSW.HDWallet.Domain.Models;
+﻿using DSW.HDWallet.Application.Objects;
+using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.Interfaces;
@@ -23,17 +24,16 @@ namespace DSW.HDWallet.Application
             this.blockbookHttpClient = blockbookHttpClient;
         }
 
-        public void SendCoins(string ticker, decimal numberOfCoins, string address, string? password)
+        public OperationResult SendCoins(string ticker, decimal numberOfCoins, string address, string? password)
         {
             secureStorage.GetMnemonic();
             var recoveredWallet = walletService.RecoverWallet(secureStorage.GetMnemonic(), password);
 
             TransactionDetails transactionDetails = walletService.GenerateTransaction(ticker, recoveredWallet, Convert.ToInt64(numberOfCoins), address).Result;
 
-
             if (transactionDetails.Transaction == null)
             {
-                Console.WriteLine("Transaction object is null.");
+                return OperationResult.Fail("Transaction object is null.");
             }
             else
             {
@@ -62,11 +62,11 @@ namespace DSW.HDWallet.Application
                         storage.UpdateAddressUsed(changeAddress);
                     }
 
-                    Console.WriteLine("Transaction submitted successfully, but no result was returned.");
+                    return OperationResult.Ok("Transaction submitted successfully.");
                 }
                 else
                 {
-                    Console.WriteLine("response.Error.Message");
+                    return OperationResult.Fail($"Error: {transactionDetails.Message}");
                 }
             }
 

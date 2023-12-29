@@ -253,15 +253,14 @@ namespace DSW.HDWallet.ConsoleApp.Application
                 Console.WriteLine("Enter your password:");
                 string password = Console.ReadLine() ?? "";
 
-                transactionManager.SendCoins(coin.Ticker ?? "", numberOfCoins, address, password);
-                Console.WriteLine($"Mocked sending {numberOfCoins} {coin.Ticker} to {address}.");
+                var result = transactionManager.SendCoins(coin.Ticker ?? "", numberOfCoins, address, password);
+                Console.WriteLine(result.Message);
             }
             else
             {
                 Console.WriteLine("Invalid number of coins. Please try again.");
             }
         }
-
 
         private async void ReceiveCoins(Wallet coin)
         {
