@@ -36,7 +36,7 @@ class Program
 
         services.AddSingleton<ITransactionManager, TransactionManager>();
         services.AddSingleton<ICoinRepository, CoinRepository>();
-        services.AddSingleton<ICoinManagerService, CoinManagerService>();
+        services.AddSingleton<ICoinManager, CoinManager>();
         services.AddSingleton<IWalletService, WalletService>();
         services.AddSingleton<IWalletManagerService, WalletManagerService>();
         services.AddSingleton<IAddressManager, AddressManager>();

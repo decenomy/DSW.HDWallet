@@ -1,17 +1,13 @@
 ﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.Application.Features;
-using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Models;
-using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Wallets;
-using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.Interfaces;
-using Wallet = DSW.HDWallet.Domain.Models.Wallet;
+using NBitcoin;
 
-namespace DSW.HDWallet.ConsoleApp.Infrastructure
+namespace DSW.HDWallet.Infrastructure
 {
-    public class CoinManagerService : ICoinManagerService
+    public class CoinManager : ICoinManager
     {
         private readonly ICoinRepository coinRepository;
         private readonly IStorage storage;
@@ -19,7 +15,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
         private readonly IWalletService walletService;
         private readonly IAddressManager addressManager;
 
-        public CoinManagerService(
+        public CoinManager(
             ICoinRepository coinRepository,
             IStorage storage,
             ISecureStorage secureStorage,
@@ -49,7 +45,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
             PubKeyDetails pubKeyDetails = walletService.GeneratePubkey(ticker, seedHex ?? "");
 
-            Wallet wallet = new()
+            Domain.Models.Wallet wallet = new()
             {
                 Ticker = ticker,
                 PublicKey = pubKeyDetails.PubKey,
@@ -79,10 +75,9 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
             return false;
         }
 
-        public List<Wallet> GetWalletCoins()
+        public List<Domain.Models.Wallet> GetWalletCoins()
         {
             return storage.GetAllWallets();
         }
     }
-
 }

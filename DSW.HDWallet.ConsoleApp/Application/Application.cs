@@ -12,7 +12,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
     public class Application
     {
         private readonly IWalletManagerService walletManagerService;
-        private readonly ICoinManagerService coinManagerService;
+        private readonly ICoinManager coinManager;
         private readonly ITransactionManager transactionManager;
         private readonly IAddressManager addressManager;
         private readonly ILogger<Application> logger;
@@ -20,13 +20,13 @@ namespace DSW.HDWallet.ConsoleApp.Application
         private bool exitApp = false;
 
         public Application(IWalletManagerService walletManager, 
-            ICoinManagerService coinManagerService, 
+            ICoinManager coinManager, 
             IAddressManager addressManager,
             ITransactionManager transactionManager,
             ILogger<Application> logger)
         {
             this.walletManagerService = walletManager;
-            this.coinManagerService = coinManagerService;
+            this.coinManager = coinManager;
             this.addressManager = addressManager;
             this.transactionManager = transactionManager;
             this.logger = logger;
@@ -112,7 +112,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         private void DisplayAddCoinScreen()
         {
-            var coins = coinManagerService.GetAvailableCoins().ToList();
+            var coins = coinManager.GetAvailableCoins().ToList();
             Console.WriteLine("Available Coins:");
             for (int index = 1; index <= coins.Count; index++)
             {
@@ -126,7 +126,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             {
                 Console.WriteLine("Enter your password:");
                 var password = Console.ReadLine();
-                var success = coinManagerService.AddCoin(coins[choice - 1].Ticker, password);
+                var success = coinManager.AddCoin(coins[choice - 1].Ticker, password);
                 if (success)
                 {
                     Console.WriteLine("Coin successfully added.");
@@ -148,7 +148,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         private void DisplayWalletCoinsScreen()
         {
-            var walletCoins = coinManagerService.GetWalletCoins();
+            var walletCoins = coinManager.GetWalletCoins();
             if (!walletCoins.Any())
             {
                 Console.WriteLine("No coins in wallet.");
