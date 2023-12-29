@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using DSW.HDWallet.Application;
 using DSW.HDWallet.ConsoleApp.Application;
-using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure;
@@ -38,7 +37,7 @@ class Program
         services.AddSingleton<ICoinRepository, CoinRepository>();
         services.AddSingleton<ICoinManager, CoinManager>();
         services.AddSingleton<IWalletService, WalletService>();
-        services.AddSingleton<IWalletManagerService, WalletManagerService>();
+        services.AddSingleton<IWalletManager, WalletManager>();
         services.AddSingleton<IAddressManager, AddressManager>();
         services.AddSingleton<ICoinRepository, CoinRepository>();
         services.AddSingleton<IBlockbookHttpClient, BlockbookHttpClient>();

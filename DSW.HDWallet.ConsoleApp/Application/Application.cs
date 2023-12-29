@@ -1,17 +1,12 @@
-﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.ConsoleApp.Domain;
-using DSW.HDWallet.ConsoleApp.Infrastructure;
-using DSW.HDWallet.Domain.Models;
-using DSW.HDWallet.Domain.Transaction;
+﻿using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
-using System.Net;
 
 namespace DSW.HDWallet.ConsoleApp.Application
 {
     public class Application
     {
-        private readonly IWalletManagerService walletManagerService;
+        private readonly IWalletManager walletManager;
         private readonly ICoinManager coinManager;
         private readonly ITransactionManager transactionManager;
         private readonly IAddressManager addressManager;
@@ -19,13 +14,13 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         private bool exitApp = false;
 
-        public Application(IWalletManagerService walletManager, 
+        public Application(IWalletManager walletManager, 
             ICoinManager coinManager, 
             IAddressManager addressManager,
             ITransactionManager transactionManager,
             ILogger<Application> logger)
         {
-            this.walletManagerService = walletManager;
+            this.walletManager = walletManager;
             this.coinManager = coinManager;
             this.addressManager = addressManager;
             this.transactionManager = transactionManager;
@@ -37,7 +32,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             logger.LogInformation("Application starting");
             while (!exitApp)
             {
-                if (walletManagerService.HasSeed())
+                if (walletManager.HasSeed())
                 {
                     DisplayHomeScreenWithWallet();
                 }
@@ -213,7 +208,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             Console.WriteLine("Enter a password (or leave blank):");
             var createPassword = Console.ReadLine();
 
-            var wallet = walletManagerService.CreateWallet(wordCount, createPassword);
+            var wallet = walletManager.CreateWallet(wordCount, createPassword);
             Console.WriteLine($"Wallet created. Mnemonic: {wallet}");
         }
 
@@ -223,13 +218,13 @@ namespace DSW.HDWallet.ConsoleApp.Application
             var mnemonic = Console.ReadLine();
             Console.WriteLine("Enter a password (or leave blank):");
             var recoverPassword = Console.ReadLine();
-            var recoveredWallet = walletManagerService.RecoverWallet(mnemonic ?? "", recoverPassword);
+            var recoveredWallet = walletManager.RecoverWallet(mnemonic ?? "", recoverPassword);
             Console.WriteLine($"Wallet recovered: {recoveredWallet}");
         }
 
         private void DeleteWallet()
         {
-            walletManagerService.DeleteWallet();
+            walletManager.DeleteWallet();
         }
 
         private void SendCoins(Wallet coin)

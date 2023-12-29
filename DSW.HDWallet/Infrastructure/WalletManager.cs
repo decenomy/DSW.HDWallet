@@ -1,18 +1,17 @@
 ﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.ConsoleApp.Domain;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
 namespace DSW.HDWallet.ConsoleApp.Infrastructure
 {
-    public class WalletManagerService : IWalletManagerService
+    public class WalletManager : IWalletManager
     {
         private readonly IStorage storage;
         private readonly ISecureStorage secureStorage;
         private readonly IWalletService walletService;
 
-        public WalletManagerService(IStorage storage, ISecureStorage secureStorage, IWalletService walletService)
+        public WalletManager(IStorage storage, ISecureStorage secureStorage, IWalletService walletService)
         {
             this.storage = storage;
             this.secureStorage = secureStorage;

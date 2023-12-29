@@ -1,6 +1,8 @@
-﻿namespace DSW.HDWallet.ConsoleApp.Domain
+﻿using DSW.HDWallet.Domain.Wallets;
+
+namespace DSW.HDWallet.Infrastructure.Interfaces
 {
-    public interface IWalletManagerService
+    public interface IWalletManager
     {
         string CreateWallet(int wordCount, string? password = null);
         string RecoverWallet(string mnemonic, string? password = null);
