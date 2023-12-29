@@ -10,6 +10,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
         private readonly ICoinManager coinManager;
         private readonly ITransactionManager transactionManager;
         private readonly IAddressManager addressManager;
+        private readonly IStorage storage;
         private readonly ILogger<Application> logger;
 
         private bool exitApp = false;
@@ -18,12 +19,14 @@ namespace DSW.HDWallet.ConsoleApp.Application
             ICoinManager coinManager, 
             IAddressManager addressManager,
             ITransactionManager transactionManager,
+            IStorage storage,
             ILogger<Application> logger)
         {
             this.walletManager = walletManager;
             this.coinManager = coinManager;
             this.addressManager = addressManager;
             this.transactionManager = transactionManager;
+            this.storage = storage;
             this.logger = logger;
         }
 
@@ -143,7 +146,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         private void DisplayWalletCoinsScreen()
         {
-            var walletCoins = coinManager.GetWalletCoins();
+            var walletCoins = storage.GetAllWallets();
             if (!walletCoins.Any())
             {
                 Console.WriteLine("No coins in wallet.");

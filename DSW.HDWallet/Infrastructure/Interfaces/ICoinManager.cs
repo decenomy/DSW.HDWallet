@@ -7,6 +7,5 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
     {
         IEnumerable<ICoinExtension> GetAvailableCoins();
         bool AddCoin(string ticker, string? password = null);
-        List<Wallet> GetWalletCoins();
     }
 }

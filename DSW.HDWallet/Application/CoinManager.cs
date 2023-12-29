@@ -73,10 +73,5 @@ namespace DSW.HDWallet.Application
 
             return false;
         }
-
-        public List<Domain.Models.Wallet> GetWalletCoins()
-        {
-            return storage.GetAllWallets();
-        }
     }
 }
