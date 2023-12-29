@@ -73,5 +73,16 @@ namespace DSW.HDWallet.Application
 
             return false;
         }
+
+        public Dictionary<string, string> GetCoinGeckoIds()
+        {
+            var tickers = new Dictionary<string, string>();
+            var allCoins = coinRepository.Coins;
+
+            foreach (var coin in allCoins)
+                tickers.Add(coin.Ticker!, coin.CoinGeckoId!);
+
+            return tickers;
+        }
     }
 }
