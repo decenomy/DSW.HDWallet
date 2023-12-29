@@ -3,7 +3,7 @@ using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
-namespace DSW.HDWallet.Infrastructure
+namespace DSW.HDWallet.Application
 {
     public class AddressManager : IAddressManager
     {
@@ -31,7 +31,7 @@ namespace DSW.HDWallet.Infrastructure
             CoinAddress? coinAddress = storage.GetUnusedAddress(ticker);
             if (coinAddress == null)
             {
-                HDWallet.Domain.Models.Wallet wallet = storage.GetWallet(ticker)!;
+                Domain.Models.Wallet wallet = storage.GetWallet(ticker)!;
 
                 var addressInfo = GetAddress(wallet.PublicKey!, ticker, wallet.CoinIndex + 1, false);
 

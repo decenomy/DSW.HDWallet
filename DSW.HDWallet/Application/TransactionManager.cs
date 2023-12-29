@@ -1,10 +1,9 @@
-﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.Domain.Models;
+﻿using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.Interfaces;
 
-namespace DSW.HDWallet.Infrastructure
+namespace DSW.HDWallet.Application
 {
     public class TransactionManager : ITransactionManager
     {
@@ -13,8 +12,8 @@ namespace DSW.HDWallet.Infrastructure
         private readonly IWalletService walletService;
         private readonly IBlockbookHttpClient blockbookHttpClient;
 
-        public TransactionManager(IStorage storage, 
-            ISecureStorage secureStorage, 
+        public TransactionManager(IStorage storage,
+            ISecureStorage secureStorage,
             IWalletService walletService,
             IBlockbookHttpClient blockbookHttpClient)
         {

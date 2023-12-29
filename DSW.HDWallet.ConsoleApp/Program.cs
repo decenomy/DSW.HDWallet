@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using DSW.HDWallet.Application;
 using DSW.HDWallet.ConsoleApp.Application;
-using DSW.HDWallet.ConsoleApp.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure;
 using HDWalletConsoleApp.Infrastructure.DataStore;

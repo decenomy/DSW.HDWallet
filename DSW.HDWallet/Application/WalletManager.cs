@@ -1,9 +1,8 @@
-﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.Domain.Models;
+﻿using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
-namespace DSW.HDWallet.ConsoleApp.Infrastructure
+namespace DSW.HDWallet.Application
 {
     public class WalletManager : IWalletManager
     {
@@ -20,7 +19,7 @@ namespace DSW.HDWallet.ConsoleApp.Infrastructure
 
         public string CreateWallet(int wordCount, string? password = null)
         {
-            var mnemonicWordCount = wordCount == 24 ? NBitcoin.WordCount.TwentyFour : NBitcoin.WordCount.Twelve;
+            var mnemonicWordCount = wordCount == 24 ? WordCount.TwentyFour : WordCount.Twelve;
             var createdSeed = walletService.CreateWallet(mnemonicWordCount, password);
             var seed = new Seed { Mnemonic = createdSeed.Mnemonic };
 
