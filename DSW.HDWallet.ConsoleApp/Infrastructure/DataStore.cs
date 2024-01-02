@@ -135,9 +135,9 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             return true;
         }
 
-        public List<Wallet> GetAllWallets()
+        public Task<IEnumerable<Wallet>> GetAllWallets()
         {
-            return Wallets;
+            return Task.FromResult<IEnumerable<Wallet>>(Wallets);
         }
 
         public CoinAddress? GetUnusedAddress(string ticker)
@@ -149,6 +149,35 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         {
             return Wallets.FirstOrDefault(w => w.Ticker == ticker);
         }
+
+        public async Task SaveRates(Rate rate)
+        {
+            var existingRate = Rates.FirstOrDefault(r => r.TickerFrom == rate.TickerFrom && r.TickerTo == rate.TickerTo);
+            if (existingRate != null)
+            {
+                existingRate.RateValue = rate.RateValue; // Update the existing rate
+            }
+            else
+            {
+                Rates.Add(rate);
+            }
+
+            SaveChanges();
+            await Task.CompletedTask;
+        }
+
+        public async Task SaveBalance(Wallet coin)
+        {
+            var walletCoin = Wallets.FirstOrDefault(w => w.Ticker == coin.Ticker && w.PublicKey == coin.PublicKey);
+            if (walletCoin != null)
+            {
+                walletCoin.Balance = coin.Balance;
+                SaveChanges();
+            }
+
+            await Task.CompletedTask; 
+        }
+
     }
 }
 

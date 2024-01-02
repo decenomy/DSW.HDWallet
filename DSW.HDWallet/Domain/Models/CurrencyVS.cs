@@ -1,8 +1,8 @@
 ﻿namespace DSW.HDWallet.Domain.Models
 {
-    public class CurrencyVS
+    public static class CurrencyVS
     {
-        public List<string> GetCurrencyTickers()
+        public static List<string> GetCurrencyTickers()
         {
             return new List<string>
             {

@@ -108,9 +108,9 @@ namespace DSW.HDWallet.ConsoleApp.Application
             }
         }
 
-        private void DisplayAddCoinScreen()
+        private async void DisplayAddCoinScreen()
         {
-            var coins = coinManager.GetAvailableCoins().ToList();
+            var coins = (await coinManager.GetAvailableCoins()).ToList();
             Console.WriteLine("Available Coins:");
             for (int index = 1; index <= coins.Count; index++)
             {
@@ -144,28 +144,30 @@ namespace DSW.HDWallet.ConsoleApp.Application
             }
         }
 
-        private void DisplayWalletCoinsScreen()
+        private async void DisplayWalletCoinsScreen()
         {
-            var walletCoins = storage.GetAllWallets();
+            var walletCoins = await storage.GetAllWallets();
             if (!walletCoins.Any())
             {
                 Console.WriteLine("No coins in wallet.");
                 return;
             }
 
-            for (int i = 0; i < walletCoins.Count; i++)
+            for (int i = 0; i < walletCoins.Count(); i++)
             {
-                Console.WriteLine($"{i + 1}: {walletCoins[i].Ticker} - {walletCoins[i].Balance ?? 0}");
+                var coin = walletCoins.ElementAt(i);
+                Console.WriteLine($"{i + 1}: {coin.Ticker} - {coin.Balance ?? 0}");
             }
 
             Console.WriteLine("Select a coin number for more options or type '0' to return to the home screen:");
-            if (int.TryParse(Console.ReadLine(), out int choice) && choice > 0 && choice <= walletCoins.Count)
+            if (int.TryParse(Console.ReadLine(), out int choice) && choice > 0 && choice <= walletCoins.Count())
             {
-                DisplayCoinOptionsScreen(walletCoins[choice - 1]);
+                var selectedCoin = walletCoins.ElementAt(choice - 1);
+                DisplayCoinOptionsScreen(selectedCoin);
             }
             else if (choice == 0)
             {
-                return; // Return to home screen
+                return;
             }
             else
             {

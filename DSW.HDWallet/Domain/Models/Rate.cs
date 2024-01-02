@@ -4,6 +4,6 @@
     {
         public string? TickerFrom { get; set; }
         public string? TickerTo { get; set; }
-        public int RateValue { get; set; }
+        public long RateValue { get; set; }
     }
 }

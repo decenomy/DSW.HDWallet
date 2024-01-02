@@ -1,0 +1,58 @@
+﻿using DSW.HDWallet.Domain.Utils;
+using DSW.HDWallet.Infrastructure.Interfaces;
+using Microsoft.Extensions.Logging;
+
+namespace DSW.HDWallet.Infrastructure.Services
+{
+    public class BalanceUpdateService : BaseBackgroundService<BalanceUpdateService>
+    {
+        private readonly IStorage storage;
+        DSW.HDWallet.Application.IWalletService walletService;
+        public BalanceUpdateService(
+            ILogger<BalanceUpdateService> logger,
+            IStorage storage,
+            DSW.HDWallet.Application.IWalletService walletService
+        ) : base(logger, "0 */1 * * * *") //Cron expression to make the service run every 5 minutes
+        {
+            this.storage = storage;
+            this.walletService = walletService;
+        }
+
+        protected override async Task OnExecute(CancellationToken cancellationToken)
+        {
+            logger.LogTrace("Balance Update Service executing.");
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var walletCoins = await storage.GetAllWallets();
+
+                foreach (var coin in walletCoins)
+                {
+                    if (coin.Ticker != null && coin.PublicKey != null)
+                    {
+                        var balance = await walletService.GetXpub(coin.Ticker, coin.PublicKey, 1, 1);
+
+                        if (decimal.TryParse(balance.Balance, out decimal balanceValue))
+                        {
+                            coin.Balance = SatoshiConverter.ToSubSatoshi(balanceValue);
+                            await storage.SaveBalance(coin);
+                        }
+                        else
+                        {
+                            logger.LogError("Error parsing balance.");
+                        }
+                    }
+                    else
+                    {
+                        logger.LogError("Existing data error on updating balance.");
+                    }
+                }
+
+                var t = DateTime.Now;
+                await Task.Delay(schedule.GetNextOccurrence(t) - t, cancellationToken);
+            }
+            logger.LogTrace("Balance Update Service executed.");
+        }
+
+    }
+}

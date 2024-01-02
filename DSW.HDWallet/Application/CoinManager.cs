@@ -28,9 +28,9 @@ namespace DSW.HDWallet.Application
             this.addressManager = addressManager;
         }
 
-        public IEnumerable<ICoinExtension> GetAvailableCoins()
+        public async Task<IEnumerable<ICoinExtension>> GetAvailableCoins()
         {
-            var allWallets = storage.GetAllWallets();
+            var allWallets = await storage.GetAllWallets();
 
             // Return coins that are not already in the wallets
             return coinRepository.Coins.Where(coin => !allWallets.Any(wallet => wallet.Ticker == coin.Ticker));
