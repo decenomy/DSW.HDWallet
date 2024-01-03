@@ -1,5 +1,4 @@
 ﻿using DSW.HDWallet.Domain.Utils;
-using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.Interfaces;
