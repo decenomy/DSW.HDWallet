@@ -6,6 +6,8 @@ using DSW.HDWallet.Infrastructure;
 using HDWalletConsoleApp.Infrastructure.DataStore;
 using Microsoft.Extensions.Logging;
 using DSW.HDWallet.Infrastructure.Interfaces;
+using DSW.HDWallet.Infrastructure.Services;
+using Microsoft.Extensions.Hosting;
 
 class Program
 {
@@ -13,16 +15,16 @@ class Program
     {
         var services = new ServiceCollection();
         ConfigureServices(services);
-
-        services.AddHttpClient();
         services.AddLogging();
 
         var serviceProvider = services.BuildServiceProvider();
+
+        // Start the background service
+        var hostedService = serviceProvider.GetService<IHostedService>() as RatesUpdateService;
+        hostedService?.StartAsync(new CancellationTokenSource().Token);
+
         var app = serviceProvider.GetService<Application>();
-        if (app != null)
-        {
-            app.Run();
-        }
+        app?.Run();
     }
 
     private static void ConfigureServices(IServiceCollection services)
@@ -32,14 +34,23 @@ class Program
         services.AddSingleton<IStorage>(sp => sp.GetService<DataStore>()!);
         services.AddSingleton<ISecureStorage>(sp => sp.GetService<DataStore>()!);
 
+        // Register other services
         services.AddSingleton<ITransactionManager, TransactionManager>();
         services.AddSingleton<ICoinRepository, CoinRepository>();
         services.AddSingleton<ICoinManager, CoinManager>();
         services.AddSingleton<IWalletService, WalletService>();
         services.AddSingleton<IWalletManager, WalletManager>();
         services.AddSingleton<IAddressManager, AddressManager>();
-        services.AddSingleton<ICoinRepository, CoinRepository>();
         services.AddSingleton<IBlockbookHttpClient, BlockbookHttpClient>();
+
+        services.AddSingleton<ICoinGeckoService, CoingeckoService>();
+        services.AddHttpClient("coingeckoapi", client =>
+        {
+            client.BaseAddress = new Uri("https://api.coingecko.com/api/v3/simple/");
+        });
+        // Register your RatesUpdateService as a hosted service
+        services.AddHostedService<RatesUpdateService>();
+
         services.AddSingleton<Application>();
     }
 }
