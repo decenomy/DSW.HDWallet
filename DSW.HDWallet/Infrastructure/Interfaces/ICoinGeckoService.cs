@@ -4,6 +4,6 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
 {
     public interface ICoinGeckoService
     {
-        Task<string> GetRatesAsync(IEnumerable<string> tickers, IEnumerable<string> currencies);
+        Task<string> GetRatesAsync(IEnumerable<string> coinGeckoIds, IEnumerable<string> currencies);
     }
 }

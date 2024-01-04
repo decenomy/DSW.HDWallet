@@ -44,10 +44,10 @@ namespace DSW.HDWallet.Infrastructure.Services
                 {
                     Dictionary<string, string> tickerMapping = coinManager.GetCoinGeckoIds();
                     List<string> currencies = CurrencyVS.GetCurrencyTickers();
-                    List<string> tickers = new(tickerMapping.Values);
+                    List<string> coinGeckoIds = new(tickerMapping.Values);
 
                     // Fetch rates from Coingecko
-                    string jsonRates = await coingeckoService.GetRatesAsync(tickers, currencies);
+                    string jsonRates = await coingeckoService.GetRatesAsync(coinGeckoIds, currencies);
 
                     var ratesData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, decimal>>>(jsonRates);
 
@@ -55,7 +55,13 @@ namespace DSW.HDWallet.Infrastructure.Services
                     {
                         foreach (var rateData in ratesData)
                         {
-                            var tickerFrom = rateData.Key;
+                            // Find the internal ticker symbol that corresponds to the CoinGecko ID
+                            var tickerFrom = tickerMapping.FirstOrDefault(x => x.Value.Equals(rateData.Key, StringComparison.OrdinalIgnoreCase)).Key;
+                            if (string.IsNullOrEmpty(tickerFrom))
+                            {
+                                continue; // Skip if no matching ticker symbol is found
+                            }
+
                             foreach (var currencyRate in rateData.Value)
                             {
                                 var tickerTo = currencyRate.Key;

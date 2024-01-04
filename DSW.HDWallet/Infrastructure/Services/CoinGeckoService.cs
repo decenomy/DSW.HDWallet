@@ -11,10 +11,10 @@ namespace DSW.HDWallet.Infrastructure.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<string> GetRatesAsync(IEnumerable<string> tickers, IEnumerable<string> currencies)
+        public async Task<string> GetRatesAsync(IEnumerable<string> coinGeckoIds, IEnumerable<string> currencies)
         {
             string currenciesJoined = string.Join(",", currencies);
-            string tickersJoined = string.Join(",", tickers);
+            string tickersJoined = string.Join(",", coinGeckoIds);
 
             var client = _httpClientFactory.CreateClient("coingeckoapi");
             var response = await client.GetAsync($"price?vs_currencies={currenciesJoined}&ids={tickersJoined}");
