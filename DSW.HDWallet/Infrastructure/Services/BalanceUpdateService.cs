@@ -24,28 +24,35 @@ namespace DSW.HDWallet.Infrastructure.Services
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                var walletCoins = await storage.GetAllWallets();
+                try
+                { 
+                    var walletCoins = await storage.GetAllWallets();
 
-                foreach (var coin in walletCoins)
-                {
-                    if (coin.Ticker != null && coin.PublicKey != null)
+                    foreach (var coin in walletCoins)
                     {
-                        var balance = await walletService.GetXpub(coin.Ticker, coin.PublicKey, 1, 1);
-
-                        if (decimal.TryParse(balance.Balance, out decimal balanceValue))
+                        if (coin.Ticker != null && coin.PublicKey != null)
                         {
-                            coin.Balance = SatoshiConverter.ToSubSatoshi(balanceValue);
-                            await storage.SaveBalance(coin);
+                            var balance = await walletService.GetXpub(coin.Ticker, coin.PublicKey, 1, 1);
+
+                            if (decimal.TryParse(balance.Balance, out decimal balanceValue))
+                            {
+                                coin.Balance = SatoshiConverter.ToSubSatoshi(balanceValue);
+                                await storage.SaveBalance(coin);
+                            }
+                            else
+                            {
+                                logger.LogError("Error parsing balance.");
+                            }
                         }
                         else
                         {
-                            logger.LogError("Error parsing balance.");
+                            logger.LogError("Existing data error on updating balance.");
                         }
                     }
-                    else
-                    {
-                        logger.LogError("Existing data error on updating balance.");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex.Message);
                 }
 
                 var t = DateTime.Now;
