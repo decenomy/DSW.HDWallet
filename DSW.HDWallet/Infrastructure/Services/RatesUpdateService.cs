@@ -26,43 +26,42 @@ namespace DSW.HDWallet.Infrastructure.Services
         {
             Dictionary<string, string> tickerMapping = coinManager.GetCoinGeckoIds();
             List<string> currencies = CurrencyVS.GetCurrencyTickers();
-            List<string> coinGeckoIds = new(tickerMapping.Values);
+            List<string> coinGeckoIds = new(tickerMapping.Values.Distinct().ToList());
 
-            // Fetch rates from Coingecko
             string jsonRates = await coingeckoService.GetRatesAsync(coinGeckoIds, currencies);
-
             var ratesData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, decimal>>>(jsonRates);
 
             if (ratesData != null)
             {
                 foreach (var rateData in ratesData)
                 {
-                    // Find the internal ticker symbol that corresponds to the CoinGecko ID
-                    var tickerFrom = tickerMapping.FirstOrDefault(x => x.Value.Equals(rateData.Key, StringComparison.OrdinalIgnoreCase)).Key;
-                    if (string.IsNullOrEmpty(tickerFrom))
+                    var matchingTickers = tickerMapping.Where(x => x.Value.Equals(rateData.Key, StringComparison.OrdinalIgnoreCase)).Select(x => x.Key).ToList();
+                    foreach (var tickerFrom in matchingTickers)
                     {
-                        continue; // Skip if no matching ticker symbol is found
-                    }
-
-                    foreach (var currencyRate in rateData.Value)
-                    {
-                        var tickerTo = currencyRate.Key;
-                        var rateValue = currencyRate.Value;
-
-                        long satoshiValue = SatoshiConverter.ToSubSatoshi(rateValue);
-
-                        var rate = new Rate
+                        if (string.IsNullOrEmpty(tickerFrom))
                         {
-                            TickerFrom = tickerFrom,
-                            TickerTo = tickerTo,
-                            RateValue = satoshiValue
-                        };
+                            continue; // Skip if no matching ticker symbol is found
+                        }
 
-                        await storage.SaveRates(rate);
+                        foreach (var currencyRate in rateData.Value)
+                        {
+                            var tickerTo = currencyRate.Key;
+                            var rateValue = currencyRate.Value;
+                            long satoshiValue = SatoshiConverter.ToSubSatoshi(rateValue);
+
+                            var rate = new Rate
+                            {
+                                TickerFrom = tickerFrom,
+                                TickerTo = tickerTo,
+                                RateValue = satoshiValue
+                            };
+                            await storage.SaveRates(rate);
+                        }
                     }
                 }
             }
-
         }
+
+
     }
 }
