@@ -9,88 +9,60 @@ using Newtonsoft.Json;
 
 namespace DSW.HDWallet.Infrastructure.Services
 {
-    public class RatesUpdateService : BaseBackgroundService<RatesUpdateService>
+    public class RatesUpdateService : IRatesUpdateService
     {
-        private readonly ICoinGeckoService coingeckoService;
-        private readonly IWalletService walletService;
         private readonly ICoinManager coinManager;
+        private readonly ICoinGeckoService coingeckoService;
         private readonly IStorage storage;
-        private readonly ICoinRepository coinRepository;
 
-        public RatesUpdateService(
-            ILogger<RatesUpdateService> logger,
-            ICoinGeckoService coingeckoService,
-            ICoinManager coinManager,
-            IStorage storage,
-            IWalletService walletService,
-            ICoinRepository coinRepository
-        ) : base(logger, "0 */5 * * * *") //Cron expression to make the service run every 5 minutes
+        public RatesUpdateService(ICoinManager coinManager, ICoinGeckoService coingeckoService, IStorage storage)
         {
-            this.coingeckoService = coingeckoService;
             this.coinManager = coinManager;
+            this.coingeckoService = coingeckoService;
             this.storage = storage;
-            this.walletService = walletService;
-            this.coinRepository = coinRepository;
         }
 
-        protected override async Task OnExecute(CancellationToken cancellationToken)
+        public async Task UpdateRatesAsync()
         {
-            logger.LogTrace("Rates Update Service executing.");
+            Dictionary<string, string> tickerMapping = coinManager.GetCoinGeckoIds();
+            List<string> currencies = CurrencyVS.GetCurrencyTickers();
+            List<string> coinGeckoIds = new(tickerMapping.Values);
 
-            try
+            // Fetch rates from Coingecko
+            string jsonRates = await coingeckoService.GetRatesAsync(coinGeckoIds, currencies);
+
+            var ratesData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, decimal>>>(jsonRates);
+
+            if (ratesData != null)
             {
-
-                while (!cancellationToken.IsCancellationRequested)
+                foreach (var rateData in ratesData)
                 {
-                    Dictionary<string, string> tickerMapping = coinManager.GetCoinGeckoIds();
-                    List<string> currencies = CurrencyVS.GetCurrencyTickers();
-                    List<string> coinGeckoIds = new(tickerMapping.Values);
-
-                    // Fetch rates from Coingecko
-                    string jsonRates = await coingeckoService.GetRatesAsync(coinGeckoIds, currencies);
-
-                    var ratesData = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, decimal>>>(jsonRates);
-
-                    if (ratesData != null)
+                    // Find the internal ticker symbol that corresponds to the CoinGecko ID
+                    var tickerFrom = tickerMapping.FirstOrDefault(x => x.Value.Equals(rateData.Key, StringComparison.OrdinalIgnoreCase)).Key;
+                    if (string.IsNullOrEmpty(tickerFrom))
                     {
-                        foreach (var rateData in ratesData)
-                        {
-                            // Find the internal ticker symbol that corresponds to the CoinGecko ID
-                            var tickerFrom = tickerMapping.FirstOrDefault(x => x.Value.Equals(rateData.Key, StringComparison.OrdinalIgnoreCase)).Key;
-                            if (string.IsNullOrEmpty(tickerFrom))
-                            {
-                                continue; // Skip if no matching ticker symbol is found
-                            }
-
-                            foreach (var currencyRate in rateData.Value)
-                            {
-                                var tickerTo = currencyRate.Key;
-                                var rateValue = currencyRate.Value;
-
-                                long satoshiValue = SatoshiConverter.ToSubSatoshi(rateValue);
-
-                                var rate = new Rate
-                                {
-                                    TickerFrom = tickerFrom,
-                                    TickerTo = tickerTo,
-                                    RateValue = satoshiValue
-                                };
-
-                                await storage.SaveRates(rate);
-                            }
-                        }
+                        continue; // Skip if no matching ticker symbol is found
                     }
 
-                    var t = DateTime.Now;
-                    await Task.Delay(schedule.GetNextOccurrence(t) - t, cancellationToken);
+                    foreach (var currencyRate in rateData.Value)
+                    {
+                        var tickerTo = currencyRate.Key;
+                        var rateValue = currencyRate.Value;
+
+                        long satoshiValue = SatoshiConverter.ToSubSatoshi(rateValue);
+
+                        var rate = new Rate
+                        {
+                            TickerFrom = tickerFrom,
+                            TickerTo = tickerTo,
+                            RateValue = satoshiValue
+                        };
+
+                        await storage.SaveRates(rate);
+                    }
                 }
             }
-            catch (Exception ex)
-            {
-                logger.LogError(ex.Message);
-            }
 
-            logger.LogTrace("Rates Update Service executed.");
         }
     }
 }

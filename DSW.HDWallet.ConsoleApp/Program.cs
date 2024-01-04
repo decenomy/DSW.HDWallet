@@ -41,6 +41,7 @@ class Program
         services.AddSingleton<IWalletManager, WalletManager>();
         services.AddSingleton<IAddressManager, AddressManager>();
         services.AddSingleton<IBlockbookHttpClient, BlockbookHttpClient>();
+        services.AddSingleton<IRatesUpdateService, RatesUpdateService>();
 
         // CoinGecko Service
         services.AddSingleton<ICoinGeckoService, CoingeckoService>();
@@ -50,7 +51,7 @@ class Program
         });
 
         // Register your background services as hosted services
-        services.AddHostedService<RatesUpdateService>();
+        services.AddHostedService<RatesBackgroundService>();
         services.AddHostedService<BalanceUpdateService>();
 
         services.AddSingleton<Application>();
