@@ -19,9 +19,8 @@ class Program
 
         var serviceProvider = services.BuildServiceProvider();
 
-        // Start the background service
-        var hostedService = serviceProvider.GetService<IHostedService>() as RatesUpdateService;
-        hostedService?.StartAsync(new CancellationTokenSource().Token);
+        // Start the background services
+        StartBackgroundServices(serviceProvider);
 
         var app = serviceProvider.GetService<Application>();
         app?.Run();
@@ -43,14 +42,27 @@ class Program
         services.AddSingleton<IAddressManager, AddressManager>();
         services.AddSingleton<IBlockbookHttpClient, BlockbookHttpClient>();
 
+        // CoinGecko Service
         services.AddSingleton<ICoinGeckoService, CoingeckoService>();
         services.AddHttpClient("coingeckoapi", client =>
         {
             client.BaseAddress = new Uri("https://api.coingecko.com/api/v3/simple/");
         });
-        // Register your RatesUpdateService as a hosted service
+
+        // Register your background services as hosted services
         services.AddHostedService<RatesUpdateService>();
+        services.AddHostedService<BalanceUpdateService>();
 
         services.AddSingleton<Application>();
+    }
+
+    private static void StartBackgroundServices(ServiceProvider serviceProvider)
+    {
+        var hostedServices = serviceProvider.GetServices<IHostedService>();
+
+        foreach (var service in hostedServices)
+        {
+            service.StartAsync(new CancellationTokenSource().Token);
+        }
     }
 }
