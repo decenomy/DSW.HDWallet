@@ -25,7 +25,7 @@ class Program
         services.AddLogging(builder =>
         {
             builder.AddSerilog();
-            builder.AddConsole(); 
+            //builder.AddConsole(); 
         });
 
         var serviceProvider = services.BuildServiceProvider();
@@ -39,7 +39,6 @@ class Program
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddLogging(configure => configure.AddConsole());
         services.AddSingleton<DataStore>();
         services.AddSingleton<IStorage>(sp => sp.GetService<DataStore>()!);
         services.AddSingleton<ISecureStorage>(sp => sp.GetService<DataStore>()!);
