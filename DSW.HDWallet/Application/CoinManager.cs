@@ -84,5 +84,12 @@ namespace DSW.HDWallet.Application
 
             return tickers;
         }
+
+        public long GetCoinBalance(string ticker)
+        {
+            var a = storage.GetBalanceByTicker(ticker);
+
+            return 1;
+        }
     }
 }

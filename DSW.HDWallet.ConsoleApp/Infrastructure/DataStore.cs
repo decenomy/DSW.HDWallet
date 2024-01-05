@@ -178,6 +178,12 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             await Task.CompletedTask; 
         }
 
+        public long GetBalanceByTicker(string ticker)
+        {
+            var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
+            return wallet?.Balance ?? 0;
+        }
+
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using DSW.HDWallet.Domain.Models;
+using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -156,7 +157,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             for (int i = 0; i < walletCoins.Count(); i++)
             {
                 var coin = walletCoins.ElementAt(i);
-                Console.WriteLine($"{i + 1}: {coin.Ticker} - {coin.Balance ?? 0}");
+                Console.WriteLine($"{i + 1}: {coin.Ticker} - {SatoshiConverter.FromSubSatoshi(coin.Balance ?? 0)}");
             }
 
             Console.WriteLine("Select a coin number for more options or type '0' to return to the home screen:");
@@ -178,7 +179,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
         private void DisplayCoinOptionsScreen(Wallet selectedCoin)
         {
             Console.WriteLine($"Selected Coin: {selectedCoin.Ticker}");
-            Console.WriteLine($"Balance: {selectedCoin.Balance}");
+            Console.WriteLine($"Balance: {SatoshiConverter.FromSubSatoshi(selectedCoin.Balance ?? 0)}");
             Console.WriteLine("Choose an option:");
             Console.WriteLine("1: Send");
             Console.WriteLine("2: Receive");

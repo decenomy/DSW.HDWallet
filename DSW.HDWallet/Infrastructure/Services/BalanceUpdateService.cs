@@ -34,9 +34,10 @@ namespace DSW.HDWallet.Infrastructure.Services
                         {
                             var balance = await walletService.GetXpub(coin.Ticker, coin.PublicKey, 1, 1);
 
-                            if (decimal.TryParse(balance.Balance, out decimal balanceValue))
+                            if (long.TryParse(balance.Balance, out long balanceValue))
                             {
-                                coin.Balance = SatoshiConverter.ToSubSatoshi(balanceValue);
+                                decimal realBalance = SatoshiConverter.FromSatoshi(balanceValue);
+                                coin.Balance = SatoshiConverter.ToSubSatoshi(realBalance);
                                 await storage.SaveBalance(coin);
                             }
                             else
