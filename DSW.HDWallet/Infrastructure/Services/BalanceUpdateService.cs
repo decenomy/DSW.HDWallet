@@ -12,7 +12,7 @@ namespace DSW.HDWallet.Infrastructure.Services
             ILogger<BalanceUpdateService> logger,
             IStorage storage,
             DSW.HDWallet.Application.IWalletService walletService
-        ) : base(logger, "0 */1 * * * *") //Cron expression to make the service run every 5 minutes
+        ) : base(logger, "0 */5 * * * *") //Cron expression to make the service run every 5 minutes
         {
             this.storage = storage;
             this.walletService = walletService;
