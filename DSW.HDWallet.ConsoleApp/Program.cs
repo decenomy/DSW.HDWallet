@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using DSW.HDWallet.Infrastructure.Services;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 class Program
 {
@@ -15,7 +16,17 @@ class Program
     {
         var services = new ServiceCollection();
         ConfigureServices(services);
-        services.AddLogging();
+
+        var logFilePath = Path.Combine(Directory.GetCurrentDirectory(), "consoleapp.log");
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.File(logFilePath)
+            .CreateLogger();
+
+        services.AddLogging(builder =>
+        {
+            builder.AddSerilog();
+            builder.AddConsole(); 
+        });
 
         var serviceProvider = services.BuildServiceProvider();
 
