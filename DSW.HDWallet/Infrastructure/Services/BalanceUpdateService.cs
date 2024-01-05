@@ -1,4 +1,5 @@
-﻿using DSW.HDWallet.Domain.Utils;
+﻿using DSW.HDWallet.Application;
+using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -7,11 +8,11 @@ namespace DSW.HDWallet.Infrastructure.Services
     public class BalanceUpdateService : BaseBackgroundService<BalanceUpdateService>
     {
         private readonly IStorage storage;
-        DSW.HDWallet.Application.IWalletService walletService;
+        IWalletService walletService;
         public BalanceUpdateService(
             ILogger<BalanceUpdateService> logger,
             IStorage storage,
-            DSW.HDWallet.Application.IWalletService walletService
+            IWalletService walletService
         ) : base(logger, "0 */5 * * * *") //Cron expression to make the service run every 5 minutes
         {
             this.storage = storage;

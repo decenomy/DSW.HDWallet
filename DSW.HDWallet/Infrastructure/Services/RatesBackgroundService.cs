@@ -1,11 +1,5 @@
-﻿using DSW.HDWallet.Application;
-using DSW.HDWallet.Domain.Models;
-using DSW.HDWallet.Domain.Utils;
-using DSW.HDWallet.Infrastructure.Interfaces;
-using Microsoft.Extensions.Hosting;
+﻿using DSW.HDWallet.Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
-using NCrontab;
-using Newtonsoft.Json;
 
 namespace DSW.HDWallet.Infrastructure.Services
 {
