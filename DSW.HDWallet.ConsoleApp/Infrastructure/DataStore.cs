@@ -145,9 +145,11 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             return CoinAddresses.FirstOrDefault(ca => ca.Ticker == ticker && !ca.IsUsed);
         }
 
-        public Wallet? GetWallet(string ticker)
+        public Task<Wallet?> GetWallet(string ticker)
         {
-            return Wallets.FirstOrDefault(w => w.Ticker == ticker);
+            var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
+
+            return Task.FromResult(wallet);
         }
 
         public async Task SaveRates(Rate rate)

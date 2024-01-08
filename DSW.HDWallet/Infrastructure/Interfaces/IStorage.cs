@@ -14,7 +14,7 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         CoinAddress GetAddressByAddress(string address);
         void UpdateAddressUsed(CoinAddress coinAddress);
         CoinAddress? GetUnusedAddress(string ticker);
-        Wallet? GetWallet(string ticker);
+        Task<Wallet?> GetWallet(string ticker);
         Task SaveRates(Rate rate);
         Task SaveBalance(Wallet coin);
     }

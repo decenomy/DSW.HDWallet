@@ -1,12 +1,15 @@
-﻿using DSW.HDWallet.Domain.Coins;
+﻿using DSW.HDWallet.Application.Features;
+using DSW.HDWallet.Application.Objects;
+using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Models;
+using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
 namespace DSW.HDWallet.Application
 {
-    public class CoinManager : ICoinManager
+    public class CoinManager : ICoinManager, ICoinBalanceRetriever
     {
         private readonly ICoinRepository coinRepository;
         private readonly IStorage storage;
@@ -84,5 +87,27 @@ namespace DSW.HDWallet.Application
 
             return tickers;
         }
+
+        public async Task<CoinBalance> GetCoinBalance(string ticker)
+        {
+            var wallet = await storage.GetWallet(ticker);
+            if (wallet == null)
+            {
+                throw new InvalidOperationException($"Wallet with ticker {ticker} not found.");
+            }
+
+            decimal balance = SatoshiConverter.FromSubSatoshi(wallet.Balance ?? 0);
+            decimal unconfirmedBalance = SatoshiConverter.FromSubSatoshi(wallet.UnconfirmedBalance ?? 0);
+
+            decimal lockedBalance = 0m;
+
+            return new CoinBalance(balance, unconfirmedBalance, lockedBalance);
+        }
+
+        public Task<decimal> GetCurrencyBalance(string currency, string? ticker = null)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

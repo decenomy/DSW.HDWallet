@@ -46,7 +46,11 @@ class Program
         // Register other services
         services.AddSingleton<ITransactionManager, TransactionManager>();
         services.AddSingleton<ICoinRepository, CoinRepository>();
-        services.AddSingleton<ICoinManager, CoinManager>();
+
+        services.AddSingleton<CoinManager>();
+        services.AddSingleton<ICoinManager>(sp => sp.GetService<CoinManager>()!);
+        services.AddSingleton<ICoinBalanceRetriever>(sp => sp.GetService<CoinManager>()!);
+
         services.AddSingleton<IWalletService, WalletService>();
         services.AddSingleton<IWalletManager, WalletManager>();
         services.AddSingleton<IAddressManager, AddressManager>();

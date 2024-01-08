@@ -26,12 +26,13 @@ namespace DSW.HDWallet.Application
             throw new NotImplementedException();
         }
 
-        public Task<AddressInfo?> GetUnusedAddress(string ticker)
+        public async Task<AddressInfo?> GetUnusedAddress(string ticker)
         {
             CoinAddress? coinAddress = storage.GetUnusedAddress(ticker);
             if (coinAddress == null)
             {
-                Domain.Models.Wallet wallet = storage.GetWallet(ticker)!;
+                // Await the asynchronous call to GetWallet
+                Domain.Models.Wallet wallet = await storage.GetWallet(ticker) ?? throw new InvalidOperationException($"Wallet with ticker {ticker} not found.");
 
                 var addressInfo = GetAddress(wallet.PublicKey!, ticker, wallet.CoinIndex + 1, false);
 
@@ -46,16 +47,14 @@ namespace DSW.HDWallet.Application
 
                 storage.AddAddress(coinAddress);
                 storage.IncrementCoinIndex(ticker);
-
             }
 
-            return Task.FromResult<AddressInfo?>(
-                new AddressInfo()
-                {
-                    Address = coinAddress.Address ?? "",
-                    Index = coinAddress.AddressIndex,
-                    IsUsed = coinAddress.IsUsed
-                });
+            return new AddressInfo()
+            {
+                Address = coinAddress.Address ?? "",
+                Index = coinAddress.AddressIndex,
+                IsUsed = coinAddress.IsUsed
+            };
         }
 
         public AddressInfo GetAddress(string pubKey, string ticker, int index, bool isChange = false)

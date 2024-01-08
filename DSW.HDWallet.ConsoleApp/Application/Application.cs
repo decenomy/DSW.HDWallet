@@ -1,5 +1,4 @@
 ﻿using DSW.HDWallet.Domain.Models;
-using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -12,6 +11,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
         private readonly ITransactionManager transactionManager;
         private readonly IAddressManager addressManager;
         private readonly IStorage storage;
+        private readonly ICoinBalanceRetriever coinBalanceRetriever;
         private readonly ILogger<Application> logger;
 
         private bool exitApp = false;
@@ -21,6 +21,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             IAddressManager addressManager,
             ITransactionManager transactionManager,
             IStorage storage,
+            ICoinBalanceRetriever coinBalanceRetriever,
             ILogger<Application> logger)
         {
             this.walletManager = walletManager;
@@ -28,6 +29,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             this.addressManager = addressManager;
             this.transactionManager = transactionManager;
             this.storage = storage;
+            this.coinBalanceRetriever = coinBalanceRetriever;
             this.logger = logger;
         }
 
@@ -54,8 +56,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             Console.WriteLine("1: Delete Wallet");
             Console.WriteLine("2: Add Coin");
             Console.WriteLine("3: Select Coin");
-            Console.WriteLine("4: List Wallet Coins");
-            Console.WriteLine("5: Exit App");
+            Console.WriteLine("4: Exit App");
             HandleHomeScreenWithWalletChoices(Console.ReadLine() ?? "");
         }
 
@@ -157,11 +158,9 @@ namespace DSW.HDWallet.ConsoleApp.Application
             for (int i = 0; i < walletCoins.Count(); i++)
             {
                 var coin = walletCoins.ElementAt(i);
-                var confirmedBalance = SatoshiConverter.FromSubSatoshi(coin.Balance ?? 0);
-                var unconfirmedBalance = SatoshiConverter.FromSubSatoshi(coin.UnconfirmedBalance ?? 0);
-                var totalBalance = confirmedBalance + unconfirmedBalance;
+                var coinBalance = await coinBalanceRetriever.GetCoinBalance(coin.Ticker!);
 
-                Console.WriteLine($"{i + 1}: {coin.Ticker} - Balance : {totalBalance} (Confirmed : {confirmedBalance}, Unconfirmed : {unconfirmedBalance})");
+                Console.WriteLine($"{i + 1}: {coin.Ticker} - Balance: {coinBalance.TotalBalance} (Confirmed: {coinBalance.Balance}, Unconfirmed: {coinBalance.UnconfirmedBalance}, Locked: {coinBalance.LockedBalance})");
             }
 
             Console.WriteLine("Select a coin number for more options or type '0' to return to the home screen:");
@@ -181,14 +180,12 @@ namespace DSW.HDWallet.ConsoleApp.Application
         }
 
 
-        private void DisplayCoinOptionsScreen(Wallet selectedCoin)
+        private async void DisplayCoinOptionsScreen(Wallet selectedCoin)
         {
-            var confirmedBalance = SatoshiConverter.FromSubSatoshi(selectedCoin.Balance ?? 0);
-            var unconfirmedBalance = SatoshiConverter.FromSubSatoshi(selectedCoin.UnconfirmedBalance ?? 0);
-            var totalBalance = confirmedBalance + unconfirmedBalance;
+            var coinBalance = await coinBalanceRetriever.GetCoinBalance(selectedCoin.Ticker!);
 
             Console.WriteLine($"Selected Coin: {selectedCoin.Ticker}");
-            Console.WriteLine($"Balance = {totalBalance} (Confirmed : {confirmedBalance}, Unconfirmed : {unconfirmedBalance})");
+            Console.WriteLine($"Balance = {coinBalance.TotalBalance} (Confirmed: {coinBalance.Balance}, Unconfirmed: {coinBalance.UnconfirmedBalance}, Locked: {coinBalance.LockedBalance})");
             Console.WriteLine("Choose an option:");
             Console.WriteLine("1: Send");
             Console.WriteLine("2: Receive");
