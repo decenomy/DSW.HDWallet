@@ -1,11 +1,9 @@
-﻿using DSW.HDWallet.Application.Features;
-using DSW.HDWallet.Application.Objects;
+﻿using DSW.HDWallet.Application.Objects;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure.Interfaces;
-using NBitcoin;
 
 namespace DSW.HDWallet.Application
 {
