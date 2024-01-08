@@ -26,7 +26,7 @@ namespace DSW.HDWallet.Infrastructure.Services
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
-                { 
+                {
                     var walletCoins = await storage.GetAllWallets();
 
                     foreach (var coin in walletCoins)
@@ -39,6 +39,17 @@ namespace DSW.HDWallet.Infrastructure.Services
                             {
                                 decimal realBalance = SatoshiConverter.FromSatoshi(balanceValue);
                                 coin.Balance = SatoshiConverter.ToSubSatoshi(realBalance);
+
+                                if (long.TryParse(balance.UnconfirmedBalance, out long unconfirmedBalanceValue))
+                                {
+                                    decimal realUnconfirmedBalance = SatoshiConverter.FromSatoshi(unconfirmedBalanceValue);
+                                    coin.UnconfirmedBalance = SatoshiConverter.ToSubSatoshi(realUnconfirmedBalance);
+                                }
+                                else
+                                {
+                                    logger.LogError("Error parsing unconfirmed balance.");
+                                }
+
                                 await storage.SaveBalance(coin);
                             }
                             else
@@ -62,6 +73,7 @@ namespace DSW.HDWallet.Infrastructure.Services
             }
             logger.LogTrace("Balance Update Service executed.");
         }
+
 
     }
 }

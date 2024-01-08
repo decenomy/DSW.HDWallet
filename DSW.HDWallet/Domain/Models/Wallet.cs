@@ -7,5 +7,6 @@
         public string? Path { get; set; }
         public int CoinIndex { get; set; }
         public long? Balance { get; set; }
+        public long? UnconfirmedBalance { get; set; }
     }
 }

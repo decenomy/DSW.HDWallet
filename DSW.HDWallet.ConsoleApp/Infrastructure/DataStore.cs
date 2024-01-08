@@ -172,17 +172,18 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             if (walletCoin != null)
             {
                 walletCoin.Balance = coin.Balance;
+                walletCoin.UnconfirmedBalance = coin.UnconfirmedBalance;
                 SaveChanges();
             }
 
             await Task.CompletedTask; 
         }
 
-        public long GetBalanceByTicker(string ticker)
-        {
-            var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
-            return wallet?.Balance ?? 0;
-        }
+        //public long GetBalanceByTicker(string ticker)
+        //{
+        //    var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
+        //    return wallet?.Balance ?? 0;
+        //}
 
     }
 }

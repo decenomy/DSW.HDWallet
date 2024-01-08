@@ -8,6 +8,5 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task<IEnumerable<ICoinExtension>> GetAvailableCoins();
         bool AddCoin(string ticker, string? password = null);
         Dictionary<string, string> GetCoinGeckoIds();
-        long GetCoinBalance(string ticker);
     }
 }
