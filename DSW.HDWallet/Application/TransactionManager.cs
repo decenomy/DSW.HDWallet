@@ -26,8 +26,7 @@ namespace DSW.HDWallet.Application
 
         public async Task<OperationResult> SendCoins(string ticker, decimal numberOfCoins, string address, string? password)
         {
-            secureStorage.GetMnemonic();
-            var recoveredWallet = walletService.RecoverWallet(secureStorage.GetMnemonic(), password);
+            var recoveredWallet = walletService.RecoverWallet(secureStorage.GetMnemonic().Result, password);
 
             TransactionDetails transactionDetails = await walletService.GenerateTransaction(ticker, recoveredWallet, Convert.ToInt64(numberOfCoins), address);
 

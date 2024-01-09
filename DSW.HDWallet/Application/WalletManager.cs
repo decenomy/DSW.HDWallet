@@ -64,7 +64,7 @@ namespace DSW.HDWallet.Application
 
         public bool HasSeed()
         {
-            return secureStorage.HasSeed();
+            return secureStorage.HasSeed().Result;
         }
     }
 

@@ -111,14 +111,15 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             SaveChanges();
         }
 
-        public bool HasSeed()
+        public Task<bool> HasSeed()
         {
-            return Seeds.Any();
+            return Task.FromResult(Seeds.Any());
         }
 
-        public string GetMnemonic()
+        public Task<string> GetMnemonic()
         {
-            return Seeds.First().Mnemonic ?? "No mnemonic available";
+            string mnemonic = Seeds.FirstOrDefault()?.Mnemonic ?? "No mnemonic available";
+            return Task.FromResult(mnemonic);
         }
 
         public bool AddCoin(Wallet wallet)

@@ -2,7 +2,7 @@
 {
     public interface ISecureStorage
     {
-        bool HasSeed();
-        string GetMnemonic();
+        Task<bool> HasSeed();
+        Task<string> GetMnemonic();
     }
 }

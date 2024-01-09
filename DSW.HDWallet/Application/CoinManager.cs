@@ -39,7 +39,7 @@ namespace DSW.HDWallet.Application
 
         public async Task<bool> AddCoin(string ticker, string? password = null)
         {
-            var mnemonic = secureStorage.GetMnemonic();
+            var mnemonic = secureStorage.GetMnemonic().Result;
             var seedHex = walletService.RecoverWallet(mnemonic, password);
             PubKeyDetails pubKeyDetails = walletService.GeneratePubkey(ticker, seedHex ?? "");
 
