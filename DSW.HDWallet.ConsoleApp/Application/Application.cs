@@ -139,7 +139,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             {
                 Console.WriteLine("Enter your password:");
                 var password = Console.ReadLine();
-                var success = coinManager.AddCoin(coins[choice - 1].Ticker, password);
+                var success = await coinManager.AddCoin(coins[choice - 1].Ticker, password);
                 if (success)
                 {
                     Console.WriteLine("Coin successfully added.");

@@ -37,12 +37,10 @@ namespace DSW.HDWallet.Application
             return coinRepository.Coins.Where(coin => !allWallets.Any(wallet => wallet.Ticker == coin.Ticker));
         }
 
-        public bool AddCoin(string ticker, string? password = null)
+        public async Task<bool> AddCoin(string ticker, string? password = null)
         {
             var mnemonic = secureStorage.GetMnemonic();
-
             var seedHex = walletService.RecoverWallet(mnemonic, password);
-
             PubKeyDetails pubKeyDetails = walletService.GeneratePubkey(ticker, seedHex ?? "");
 
             Domain.Models.Wallet wallet = new()
@@ -55,33 +53,36 @@ namespace DSW.HDWallet.Application
             };
 
             bool coinAddSuccess = storage.AddCoin(wallet);
-
-            if (coinAddSuccess)
+            if (!coinAddSuccess)
             {
-                AddressInfo addressInfo = addressManager.GetAddress(pubKeyDetails.PubKey, ticker, pubKeyDetails.Index, false).Result;
-
-                CoinAddress walletAddress = new()
-                {
-                    Ticker = ticker,
-                    Address = addressInfo.Address,
-                    AddressIndex = addressInfo.Index,
-                    IsChange = false
-                };
-
-                if (storage.AddAddress(walletAddress))
-                    return true;
+                return false;
             }
 
-            return false;
+            AddressInfo addressInfo = await addressManager.GetAddress(pubKeyDetails.PubKey, ticker, pubKeyDetails.Index, false);
+            CoinAddress walletAddress = new()
+            {
+                Ticker = ticker,
+                Address = addressInfo.Address,
+                AddressIndex = addressInfo.Index,
+                IsChange = false
+            };
+
+            return storage.AddAddress(walletAddress);
         }
 
-        public Dictionary<string, string> GetCoinGeckoIds()
+        public async Task<Dictionary<string, string>> GetCoinGeckoIds()
         {
+            await Task.CompletedTask; // This line is to silence the async warning, as the operation is synchronous
             var tickers = new Dictionary<string, string>();
             var allCoins = coinRepository.Coins;
 
             foreach (var coin in allCoins)
-                tickers.Add(coin.Ticker!, coin.CoinGeckoId!);
+            {
+                if (coin.Ticker != null && coin.CoinGeckoId != null)
+                {
+                    tickers.Add(coin.Ticker, coin.CoinGeckoId);
+                }
+            }
 
             return tickers;
         }

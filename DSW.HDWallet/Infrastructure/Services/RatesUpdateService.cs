@@ -20,7 +20,7 @@ namespace DSW.HDWallet.Infrastructure.Services
 
         public async Task UpdateRatesAsync()
         {
-            Dictionary<string, string> tickerMapping = coinManager.GetCoinGeckoIds();
+            Dictionary<string, string> tickerMapping = await coinManager.GetCoinGeckoIds();
             List<string> currencies = CurrencyVS.GetCurrencyTickers();
             List<string> coinGeckoIds = new(tickerMapping.Values.Distinct().ToList());
 
