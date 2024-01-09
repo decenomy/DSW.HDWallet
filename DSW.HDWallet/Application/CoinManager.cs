@@ -115,7 +115,7 @@ namespace DSW.HDWallet.Application
                     var coinBalance = await GetCoinBalance(wallet.Ticker!);
                     decimal coinTotalBalance = coinBalance.Balance + coinBalance.UnconfirmedBalance; // Assuming TotalBalance includes Unconfirmed
 
-                    var rate = rates.FirstOrDefault(r => r.TickerFrom == wallet.Ticker && r.TickerTo.ToLower() == currency.ToLower());
+                    var rate = rates.FirstOrDefault(r => r.TickerFrom == wallet.Ticker && r.TickerTo!.ToLower() == currency.ToLower());
                     if (rate != null)
                     {
                         var decimalRate = SatoshiConverter.FromSubSatoshi(rate.RateValue);
