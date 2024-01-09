@@ -147,7 +147,7 @@ namespace DSW.HDWallet.Application
 
                     if(changeAddress == null)
                     {
-                        changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker), true);
+                        changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker), true).Result;
                     }
                     
                     BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);

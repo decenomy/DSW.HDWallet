@@ -58,7 +58,7 @@ namespace DSW.HDWallet.Application
 
             if (coinAddSuccess)
             {
-                AddressInfo addressInfo = addressManager.GetAddress(pubKeyDetails.PubKey, ticker, pubKeyDetails.Index, false);
+                AddressInfo addressInfo = addressManager.GetAddress(pubKeyDetails.PubKey, ticker, pubKeyDetails.Index, false).Result;
 
                 CoinAddress walletAddress = new()
                 {

@@ -34,7 +34,7 @@ namespace DSW.HDWallet.Application
                 // Await the asynchronous call to GetWallet
                 Domain.Models.Wallet wallet = await storage.GetWallet(ticker) ?? throw new InvalidOperationException($"Wallet with ticker {ticker} not found.");
 
-                var addressInfo = GetAddress(wallet.PublicKey!, ticker, wallet.CoinIndex + 1, false);
+                var addressInfo = GetAddress(wallet.PublicKey!, ticker, wallet.CoinIndex + 1, false).Result;
 
                 coinAddress = new CoinAddress()
                 {
@@ -57,7 +57,7 @@ namespace DSW.HDWallet.Application
             };
         }
 
-        public AddressInfo GetAddress(string pubKey, string ticker, int index, bool isChange = false)
+        public Task<AddressInfo> GetAddress(string pubKey, string ticker, int index, bool isChange = false)
         {
             var changeType = isChange ? 1 : 0;
 
@@ -67,8 +67,8 @@ namespace DSW.HDWallet.Application
             var keypath = $"{changeType}/{index}";
 
             var address = extPubKey.Derive(new KeyPath(keypath))
-                                    .GetPublicKey()
-                                    .GetAddress(ScriptPubKeyType.Legacy, network);
+                                   .GetPublicKey()
+                                   .GetAddress(ScriptPubKeyType.Legacy, network);
 
             AddressInfo deriveKeyDetails = new()
             {
@@ -76,7 +76,8 @@ namespace DSW.HDWallet.Application
                 Index = index
             };
 
-            return deriveKeyDetails;
+            return Task.FromResult(deriveKeyDetails);
         }
+
     }
 }
