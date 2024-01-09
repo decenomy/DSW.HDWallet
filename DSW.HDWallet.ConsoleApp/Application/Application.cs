@@ -252,7 +252,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             walletManager.DeleteWallet();
         }
 
-        private void SendCoins(Wallet coin)
+        private async void SendCoins(Wallet coin)
         {
             Console.WriteLine($"Send {coin.Ticker}");
             Console.WriteLine("Enter the number of coins to send (or type 'Back' to return):");
@@ -278,7 +278,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
                 Console.WriteLine("Enter your password:");
                 string password = Console.ReadLine() ?? "";
 
-                var result = transactionManager.SendCoins(coin.Ticker ?? "", numberOfCoins, address, password);
+                var result = await transactionManager.SendCoins(coin.Ticker ?? "", numberOfCoins, address, password);
                 Console.WriteLine(result.Message);
             }
             else

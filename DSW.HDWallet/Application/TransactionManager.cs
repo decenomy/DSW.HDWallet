@@ -24,12 +24,12 @@ namespace DSW.HDWallet.Application
             this.blockbookHttpClient = blockbookHttpClient;
         }
 
-        public OperationResult SendCoins(string ticker, decimal numberOfCoins, string address, string? password)
+        public async Task<OperationResult> SendCoins(string ticker, decimal numberOfCoins, string address, string? password)
         {
             secureStorage.GetMnemonic();
             var recoveredWallet = walletService.RecoverWallet(secureStorage.GetMnemonic(), password);
 
-            TransactionDetails transactionDetails = walletService.GenerateTransaction(ticker, recoveredWallet, Convert.ToInt64(numberOfCoins), address).Result;
+            TransactionDetails transactionDetails = await walletService.GenerateTransaction(ticker, recoveredWallet, Convert.ToInt64(numberOfCoins), address);
 
             if (transactionDetails.Transaction == null)
             {
@@ -39,7 +39,7 @@ namespace DSW.HDWallet.Application
             {
                 string rawTransaction = transactionDetails.Transaction.ToHex();
 
-                var response = blockbookHttpClient.SendTransaction(rawTransaction).Result;
+                var response = await blockbookHttpClient.SendTransaction(rawTransaction);
 
                 if (response.Error == null)
                 {
