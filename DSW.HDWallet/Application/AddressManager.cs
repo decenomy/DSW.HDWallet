@@ -28,7 +28,7 @@ namespace DSW.HDWallet.Application
 
         public async Task<AddressInfo?> GetUnusedAddress(string ticker)
         {
-            CoinAddress? coinAddress = storage.GetUnusedAddress(ticker);
+            CoinAddress? coinAddress = await storage.GetUnusedAddress(ticker);
             if (coinAddress == null)
             {
                 // Await the asynchronous call to GetWallet
@@ -45,8 +45,8 @@ namespace DSW.HDWallet.Application
                     IsUsed = false
                 };
 
-                storage.AddAddress(coinAddress);
-                storage.IncrementCoinIndex(ticker);
+                await storage.AddAddress(coinAddress);
+                await storage.IncrementCoinIndex(ticker);
             }
 
             return new AddressInfo()

@@ -53,12 +53,12 @@ namespace DSW.HDWallet.Application
 
                     if (storage.GetAddressByAddress(changeAddress.Address ?? "") == null)
                     {
-                        storage.AddCoinAddress(changeAddress);
-                        storage.IncrementCoinIndex(ticker);
+                        await storage.AddCoinAddress(changeAddress);
+                        await storage.IncrementCoinIndex(ticker);
                     }
                     else
                     {
-                        storage.UpdateAddressUsed(changeAddress);
+                        await storage.UpdateAddressUsed(changeAddress);
                     }
 
                     return OperationResult.Ok("Transaction submitted successfully.");

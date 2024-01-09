@@ -52,7 +52,7 @@ namespace DSW.HDWallet.Application
                 Balance = 0
             };
 
-            bool coinAddSuccess = storage.AddCoin(wallet);
+            bool coinAddSuccess = await storage.AddCoin(wallet);
             if (!coinAddSuccess)
             {
                 return false;
@@ -67,7 +67,7 @@ namespace DSW.HDWallet.Application
                 IsChange = false
             };
 
-            return storage.AddAddress(walletAddress);
+            return await storage.AddAddress(walletAddress);
         }
 
         public async Task<Dictionary<string, string>> GetCoinGeckoIds()

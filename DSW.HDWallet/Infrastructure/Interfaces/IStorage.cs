@@ -4,17 +4,17 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
 {
     public interface IStorage
     {
-        void AddWallet(Seed seed);
-        public void DeleteAllData();
-        bool AddCoin(Wallet wallet);
-        bool AddAddress(CoinAddress coinAddress);
+        Task AddWallet(Seed seed);
+        Task DeleteAllData();
+        Task<bool> AddCoin(Wallet wallet);
+        Task<bool> AddAddress(CoinAddress coinAddress);
         Task<IEnumerable<Wallet>> GetAllWallets();
         Task<IEnumerable<Rate>> GetAllRates();
-        void AddCoinAddress(CoinAddress coinAddress);
-        void IncrementCoinIndex(string ticker);
-        CoinAddress GetAddressByAddress(string address);
-        void UpdateAddressUsed(CoinAddress coinAddress);
-        CoinAddress? GetUnusedAddress(string ticker);
+        Task AddCoinAddress(CoinAddress coinAddress);
+        Task IncrementCoinIndex(string ticker);
+        Task<CoinAddress> GetAddressByAddress(string address);
+        Task UpdateAddressUsed(CoinAddress coinAddress);
+        Task<CoinAddress?> GetUnusedAddress(string ticker);
         Task<Wallet?> GetWallet(string ticker);
         Task SaveRates(Rate rate);
         Task SaveBalance(Wallet coin);

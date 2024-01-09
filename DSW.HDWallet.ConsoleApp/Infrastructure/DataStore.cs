@@ -13,6 +13,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         public List<CoinAddress> CoinAddresses { get; private set; }
         public List<Rate> Rates { get; private set; }
         public List<Wallet> Wallets { get; private set; }
+
         public DataStore()
         {
             _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mnconsolestore.json");
@@ -22,7 +23,6 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             CoinAddresses = GetCollection<CoinAddress>(nameof(CoinAddresses));
             Rates = GetCollection<Rate>(nameof(Rates));
             Wallets = GetCollection<Wallet>(nameof(Wallets));
-
         }
 
         public void SaveChanges()
@@ -53,87 +53,40 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             }
             return new List<T>();
         }
-
-        public void AddCoinAddress(CoinAddress coinAddress)
-        {
-            if (CoinAddresses.Any(ca => ca.Address == coinAddress.Address))
-            {
-                // Address already exists
-                return;
-            }
-
-            CoinAddresses.Add(coinAddress);
-            SaveChanges();
-        }
-
-        public void IncrementCoinIndex(string ticker)
-        {
-            var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
-            if (wallet != null)
-            {
-                wallet.CoinIndex++;
-                SaveChanges();
-            }
-        }
-
-        public CoinAddress GetAddressByAddress(string address)
-        {
-            return CoinAddresses.FirstOrDefault(ca => ca.Address == address)!;
-        }
-
-        public void UpdateAddressUsed(CoinAddress coinAddress)
-        {
-            var existingAddress = CoinAddresses.FirstOrDefault(ca => ca.Address == coinAddress.Address);
-            if (existingAddress != null)
-            {
-                existingAddress.IsUsed = true;
-                SaveChanges();
-            }
-        }
-
         private void UpdateData<T>(string key, List<T> collection)
         {
             _data[key] = JsonSerializer.SerializeToElement(collection);
         }
-
-        public void AddWallet(Seed seed)
+        // IStorage Methods
+        public Task AddWallet(Seed seed)
         {
             Seeds.Add(seed);
             SaveChanges();
+            return Task.CompletedTask;
         }
 
-        public void DeleteAllData()
+        public Task DeleteAllData()
         {
             Seeds.Clear();
             CoinAddresses.Clear();
             Rates.Clear();
             Wallets.Clear();
             SaveChanges();
+            return Task.CompletedTask;
         }
 
-        public Task<bool> HasSeed()
+        public Task<bool> AddCoin(Wallet wallet)
         {
-            return Task.FromResult(Seeds.Any());
+            Wallets.Add(wallet);
+            SaveChanges();
+            return Task.FromResult(true);
         }
 
-        public Task<string> GetMnemonic()
-        {
-            string mnemonic = Seeds.FirstOrDefault()?.Mnemonic ?? "No mnemonic available";
-            return Task.FromResult(mnemonic);
-        }
-
-        public bool AddCoin(Wallet wallet)
-        {
-            Wallets.Add(wallet); 
-            SaveChanges();       
-            return true;
-        }
-
-        public bool AddAddress(CoinAddress coinAddress)
+        public Task<bool> AddAddress(CoinAddress coinAddress)
         {
             CoinAddresses.Add(coinAddress);
             SaveChanges();
-            return true;
+            return Task.FromResult(true);
         }
 
         public Task<IEnumerable<Wallet>> GetAllWallets()
@@ -146,35 +99,34 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             return Task.FromResult<IEnumerable<Rate>>(Rates);
         }
 
-        public CoinAddress? GetUnusedAddress(string ticker)
+        public Task<CoinAddress?> GetUnusedAddress(string ticker)
         {
-            return CoinAddresses.FirstOrDefault(ca => ca.Ticker == ticker && !ca.IsUsed);
+            var unusedAddress = CoinAddresses.FirstOrDefault(ca => ca.Ticker == ticker && !ca.IsUsed);
+            return Task.FromResult<CoinAddress?>(unusedAddress);
         }
 
         public Task<Wallet?> GetWallet(string ticker)
         {
             var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
-
-            return Task.FromResult(wallet);
+            return Task.FromResult<Wallet?>(wallet);
         }
 
-        public async Task SaveRates(Rate rate)
+        public Task SaveRates(Rate rate)
         {
             var existingRate = Rates.FirstOrDefault(r => r.TickerFrom == rate.TickerFrom && r.TickerTo == rate.TickerTo);
             if (existingRate != null)
             {
-                existingRate.RateValue = rate.RateValue; // Update the existing rate
+                existingRate.RateValue = rate.RateValue;
             }
             else
             {
                 Rates.Add(rate);
             }
-
             SaveChanges();
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        public async Task SaveBalance(Wallet coin)
+        public Task SaveBalance(Wallet coin)
         {
             var walletCoin = Wallets.FirstOrDefault(w => w.Ticker == coin.Ticker && w.PublicKey == coin.PublicKey);
             if (walletCoin != null)
@@ -183,16 +135,57 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
                 walletCoin.UnconfirmedBalance = coin.UnconfirmedBalance;
                 SaveChanges();
             }
-
-            await Task.CompletedTask; 
+            return Task.CompletedTask;
         }
 
-        //public long GetBalanceByTicker(string ticker)
-        //{
-        //    var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
-        //    return wallet?.Balance ?? 0;
-        //}
+        public Task AddCoinAddress(CoinAddress coinAddress)
+        {
+            if (!CoinAddresses.Any(ca => ca.Address == coinAddress.Address))
+            {
+                CoinAddresses.Add(coinAddress);
+                SaveChanges();
+            }
+            return Task.CompletedTask;
+        }
 
+        public Task IncrementCoinIndex(string ticker)
+        {
+            var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);
+            if (wallet != null)
+            {
+                wallet.CoinIndex++;
+                SaveChanges();
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task<CoinAddress> GetAddressByAddress(string address)
+        {
+            var addressResult = CoinAddresses.FirstOrDefault(ca => ca.Address == address)!;
+            return Task.FromResult(addressResult);
+        }
+
+        public Task UpdateAddressUsed(CoinAddress coinAddress)
+        {
+            var existingAddress = CoinAddresses.FirstOrDefault(ca => ca.Address == coinAddress.Address);
+            if (existingAddress != null)
+            {
+                existingAddress.IsUsed = true;
+                SaveChanges();
+            }
+            return Task.CompletedTask;
+        }
+
+        // ISecureStorage Methods
+        public Task<bool> HasSeed()
+        {
+            return Task.FromResult(Seeds.Any());
+        }
+
+        public Task<string> GetMnemonic()
+        {
+            string mnemonic = Seeds.FirstOrDefault()?.Mnemonic ?? "No mnemonic available";
+            return Task.FromResult(mnemonic);
+        }
     }
 }
-
