@@ -9,6 +9,7 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         bool AddCoin(Wallet wallet);
         bool AddAddress(CoinAddress coinAddress);
         Task<IEnumerable<Wallet>> GetAllWallets();
+        Task<IEnumerable<Rate>> GetAllRates();
         void AddCoinAddress(CoinAddress coinAddress);
         void IncrementCoinIndex(string ticker);
         CoinAddress GetAddressByAddress(string address);

@@ -49,15 +49,28 @@ namespace DSW.HDWallet.ConsoleApp.Application
             }
         }
 
-        private void DisplayHomeScreenWithWallet()
+        private async void DisplayHomeScreenWithWallet()
         {
-            Console.WriteLine("Balance: $1000 (mocked)");
-            Console.WriteLine("Choose an option:");
-            Console.WriteLine("1: Delete Wallet");
-            Console.WriteLine("2: Add Coin");
-            Console.WriteLine("3: Select Coin");
-            Console.WriteLine("4: Exit App");
-            HandleHomeScreenWithWalletChoices(Console.ReadLine() ?? "");
+            try
+            {
+                // Always use USD as the default currency
+                var defaultCurrency = "usd";
+                var totalBalanceInDefaultCurrency = await coinBalanceRetriever.GetCurrencyBalance(defaultCurrency);
+                Console.WriteLine($"Balance in {defaultCurrency.ToUpper()}: {totalBalanceInDefaultCurrency}");
+
+                // Options for the next actions
+                Console.WriteLine("Choose an option:");
+                Console.WriteLine("1: Delete Wallet");
+                Console.WriteLine("2: Add Coin");
+                Console.WriteLine("3: Select Coin");
+                Console.WriteLine("4: Exit App");
+                HandleHomeScreenWithWalletChoices(Console.ReadLine() ?? "");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to fetch balance: {ex.Message}");
+                // Handle the exception appropriately
+            }
         }
 
         private void DisplayHomeScreenWithoutWallet()

@@ -102,9 +102,45 @@ namespace DSW.HDWallet.Application
             return new CoinBalance(balance, unconfirmedBalance, lockedBalance);
         }
 
-        public Task<decimal> GetCurrencyBalance(string currency, string? ticker = null)
+        public async Task<decimal> GetCurrencyBalance(string currency, string? ticker = null)
         {
-            throw new NotImplementedException();
+            var rates = await storage.GetAllRates();
+            decimal totalBalance = 0;
+
+            if (ticker == null)
+            {
+                var wallets = await storage.GetAllWallets();
+                foreach (var wallet in wallets)
+                {
+                    var coinBalance = await GetCoinBalance(wallet.Ticker!);
+                    decimal coinTotalBalance = coinBalance.Balance + coinBalance.UnconfirmedBalance; // Assuming TotalBalance includes Unconfirmed
+
+                    var rate = rates.FirstOrDefault(r => r.TickerFrom == wallet.Ticker && r.TickerTo.ToLower() == currency.ToLower());
+                    if (rate != null)
+                    {
+                        var decimalRate = SatoshiConverter.FromSubSatoshi(rate.RateValue);
+                        totalBalance += coinTotalBalance * decimalRate;
+                    }
+                }
+            }
+            else
+            {
+                var wallet = await storage.GetWallet(ticker);
+                if (wallet != null)
+                {
+                    var coinBalance = await GetCoinBalance(ticker);
+                    decimal coinTotalBalance = coinBalance.Balance + coinBalance.UnconfirmedBalance;
+
+                    var rate = rates.FirstOrDefault(r => r.TickerFrom == ticker && r.TickerTo.ToLower() == currency.ToLower());
+                    if (rate != null)
+                    {
+                        var decimalRate = SatoshiConverter.FromSubSatoshi(rate.RateValue);
+                        totalBalance = coinTotalBalance * decimalRate;
+                    }
+                }
+            }
+
+            return totalBalance;
         }
 
     }

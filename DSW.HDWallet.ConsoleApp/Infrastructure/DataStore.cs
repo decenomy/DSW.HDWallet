@@ -140,6 +140,11 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             return Task.FromResult<IEnumerable<Wallet>>(Wallets);
         }
 
+        public Task<IEnumerable<Rate>> GetAllRates()
+        {
+            return Task.FromResult<IEnumerable<Rate>>(Rates);
+        }
+
         public CoinAddress? GetUnusedAddress(string ticker)
         {
             return CoinAddresses.FirstOrDefault(ca => ca.Ticker == ticker && !ca.IsUsed);
