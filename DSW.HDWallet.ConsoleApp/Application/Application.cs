@@ -38,7 +38,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             logger.LogInformation("Application starting");
             while (!exitApp)
             {
-                if (walletManager.HasSeed())
+                if (walletManager.HasSeed().Result)
                 {
                     DisplayHomeScreenWithWallet();
                 }
@@ -191,7 +191,6 @@ namespace DSW.HDWallet.ConsoleApp.Application
                 Console.WriteLine("Invalid choice. Please try again.");
             }
         }
-
 
         private async void DisplayCoinOptionsScreen(Wallet selectedCoin)
         {

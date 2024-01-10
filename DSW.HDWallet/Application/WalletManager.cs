@@ -1,6 +1,7 @@
 ﻿using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
+using System.Threading.Tasks;
 
 namespace DSW.HDWallet.Application
 {
@@ -17,7 +18,7 @@ namespace DSW.HDWallet.Application
             this.walletService = walletService;
         }
 
-        public string CreateWallet(int wordCount, string? password = null)
+        public async Task<string> CreateWallet(int wordCount, string? password = null)
         {
             var mnemonicWordCount = wordCount == 24 ? WordCount.TwentyFour : WordCount.Twelve;
             var createdSeed = walletService.CreateWallet(mnemonicWordCount, password);
@@ -25,35 +26,36 @@ namespace DSW.HDWallet.Application
 
             try
             {
-                storage.AddWallet(seed);
+                await storage.AddWallet(seed);
+                return seed.Mnemonic ?? "No mnemonic";
             }
             catch (Exception ex)
             {
                 return ex.Message;
             }
-            return seed.Mnemonic ?? "No mnemonic";
         }
 
-        public string RecoverWallet(string mnemonic, string? password = null)
+        public async Task<string> RecoverWallet(string mnemonic, string? password = null)
         {
             var recoveredWallet = walletService.RecoverWallet(mnemonic, password);
             var seed = new Seed { Mnemonic = mnemonic };
+
             try
             {
-                storage.AddWallet(seed);
+                await storage.AddWallet(seed);
+                return seed.Mnemonic ?? "Error recovering wallet";
             }
             catch (Exception ex)
             {
                 return ex.Message;
             }
-            return seed.Mnemonic ?? "Error recovering wallet";
         }
 
-        public string DeleteWallet()
+        public async Task<string> DeleteWallet()
         {
             try
             {
-                storage.DeleteAllData();
+                await storage.DeleteAllData();
                 return "Wallet data deleted.";
             }
             catch
@@ -62,10 +64,9 @@ namespace DSW.HDWallet.Application
             }
         }
 
-        public bool HasSeed()
+        public async Task<bool> HasSeed()
         {
-            return secureStorage.HasSeed().Result;
+            return await secureStorage.HasSeed();
         }
     }
-
 }

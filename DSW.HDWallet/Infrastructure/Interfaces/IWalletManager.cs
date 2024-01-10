@@ -4,9 +4,9 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
 {
     public interface IWalletManager
     {
-        string CreateWallet(int wordCount, string? password = null);
-        string RecoverWallet(string mnemonic, string? password = null);
-        string DeleteWallet();
-        bool HasSeed();
+        Task<string> CreateWallet(int wordCount, string? password = null);
+        Task<string> RecoverWallet(string mnemonic, string? password = null);
+        Task<string> DeleteWallet();
+        Task<bool> HasSeed();
     }
 }
