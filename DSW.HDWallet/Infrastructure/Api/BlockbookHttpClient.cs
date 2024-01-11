@@ -1,7 +1,4 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
-using DSW.HDWallet.Domain.Coins;
-using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
@@ -69,12 +66,13 @@ namespace DSW.HDWallet.Infrastructure.Api
             return await SendGetRequest<UtxoObject[]>(apiUrl);
         }
 
-        public async Task<TransactionSendResponse> SendTransaction(string rawTransaction)
+        public async Task<TransactionSendResponse> SendTransaction(string ticker, string rawTransaction)
         {
             var content = new StringContent(rawTransaction, Encoding.UTF8, "text/plain");
+            string endpoint = $"/api/v2/sendtx/";
+            var apiUrl = BuildApiUrl(ticker, endpoint);
 
-            string endpoint = $"/api/v2/sendtx/{content}";
-            return await SendPostRequest<TransactionSendResponse>(endpoint, content);
+            return await SendPostRequest<TransactionSendResponse>(apiUrl, content);
         }
 
         private string BuildApiUrl(string coin, string endpoint, Dictionary<string, string>? queryParams = null)
@@ -124,6 +122,8 @@ namespace DSW.HDWallet.Infrastructure.Api
 
                 var response = await client.PostAsync(apiUrl, content);
 
+                // TODO delete as test
+                var a = response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();

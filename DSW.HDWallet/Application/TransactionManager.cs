@@ -38,7 +38,7 @@ namespace DSW.HDWallet.Application
             {
                 string rawTransaction = transactionDetails.Transaction.ToHex();
 
-                var response = await blockbookHttpClient.SendTransaction(rawTransaction);
+                var response = await blockbookHttpClient.SendTransaction(ticker, rawTransaction);
 
                 if (response.Error == null)
                 {
