@@ -7,5 +7,7 @@
         public string? Value { get; set; }
         public int Height { get; set; }
         public int Confirmations { get; set; }
+        public string? Address { get; set; }
+        public string? Path { get; set; }
     }
 }
