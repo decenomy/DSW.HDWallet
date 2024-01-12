@@ -5,6 +5,7 @@ using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
+using NBitcoin.RPC;
 
 namespace DSW.HDWallet.Application
 {
@@ -136,98 +137,70 @@ namespace DSW.HDWallet.Application
 
             try
             {
-                if (utxoSelected != null && utxoSelected!.Count > 0)
+                if (utxoSelected == null || !utxoSelected.Any())
                 {
-                    ExtKey extendedKey = new(seedHex);
-                    var transaction = Transaction.Create(network);
-                    var inputs = new List<TxIn>();
-                    var key = extendedKey.PrivateKey.GetBitcoinSecret(network);
-
-                    AddressInfo? changeAddress = await addressManager.GetUnusedAddress(ticker);
-
-                    if(changeAddress == null)
-                    {
-                        changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker), true).Result;
-                    }
-                    
-                    BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
-
-                    Money amount = Money.Coins(amountToSend.ToDecimalPoint());
-
-                    foreach (var utxo in utxoSelected)
-                    {
-                        OutPoint outPoint = new OutPoint(uint256.Parse(utxo.Txid), utxo.Vout);
-                        var txIn = new TxIn(outPoint);
-                        transaction.Inputs.Add(txIn);
-                    }
-
-                    TxOut txOutRecipient = new TxOut(amount, recipientAddress);
-                    transaction.Outputs.Add(txOutRecipient);
-
-                    Money totalInputAmount = utxoSelected.Select(x => x.Value!.ToLong()).Aggregate((total, current) => total + current);
-                    Money changeAmount = totalInputAmount - amount;
-
-                    int transactionSizeBytes = transaction.GetSerializedSize();
-                    decimal transactionSizeKB = (decimal)transactionSizeBytes / 1000;
-
-                    long transactionFeeSatoshis = (long)(transactionSizeKB * 10000);
-
-                    if (transactionFeeSatoshis > Money.Zero.Satoshi)
-                    {
-                        changeAmount -= new Money(transactionFeeSatoshis);
-
-                        if (changeAmount < Money.Zero.Satoshi)
-                            return await GenerateTransaction(ticker, seedHex, amountToSend, toAddress, changeAmount.Abs());
-                    }
-
-                    if (changeAmount > Money.Zero)
-                    {
-                        TxOut txOutChange = new TxOut(changeAmount, BitcoinAddress.Create(changeAddress.Address, network));
-                        transaction.Outputs.Add(txOutChange);
-                    }
-
-                    Coin[] inputCoins = utxoSelected.Select(x => new Coin(new OutPoint(new uint256(x.Txid), x.Vout), txOutRecipient)).ToArray();
-
-                    transaction.Sign(key, inputCoins);
-
-                    TransactionDetails transactionDetails = new()
-                    {
-                        Transaction = transaction,
-                        ToAddress = toAddress,
-                        ChangeAddress = changeAddress,
-                        Balance = totalInputAmount,
-                        Amount = amount,
-                        Change = changeAmount,
-                        Fee = new Money(transactionFeeSatoshis),
-                        SizeKb = transactionSizeKB,
-                        Utxos = utxoSelected,
-                        Message = "The transaction was created successfully.",
-                        Status = "OK"
-
-                    };
-
-                    return transactionDetails;
-                }
-                else
-                {
-                    TransactionDetails transactionDetails = new()
+                    return new TransactionDetails
                     {
                         Status = "Error",
                         Message = "The UTXOs or balance are insufficient for this transaction."
                     };
-
-                    return transactionDetails;
                 }
+
+                var transaction = Transaction.Create(network);
+                Money totalInputAmount = 0;
+                var groups = utxoSelected.GroupBy(u => u.Path);
+
+                foreach (var group in groups)
+                {
+                    BitcoinSecret key = WalletUtils.DerivePrivateKey(seedHex, group.Key!, network);
+
+                    foreach (var utxo in group)
+                    {
+                        transaction.Inputs.Add(new TxIn(new OutPoint(uint256.Parse(utxo.Txid), utxo.Vout)));
+                        totalInputAmount += new Money(long.Parse(utxo.Value!));
+                    }
+
+                    transaction.Sign(key, transaction.Inputs.Select(txin => new Coin(txin.PrevOut, new TxOut(totalInputAmount, key.PubKey.Hash))).ToArray());
+                }
+
+                BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
+                Money amount = Money.Coins(amountToSend.ToDecimalPoint());
+                transaction.Outputs.Add(new TxOut(amount, recipientAddress));
+
+                Money changeAmount = totalInputAmount - amount - fee;
+                AddressInfo? changeAddress = await addressManager.GetUnusedAddress(ticker);
+
+                if (changeAddress == null)
+                {
+                    changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker), true).Result;
+                }
+                if (changeAmount > Money.Zero)
+                {
+                    transaction.Outputs.Add(new TxOut(changeAmount, BitcoinAddress.Create(changeAddress.Address, network)));
+                }
+
+                return new TransactionDetails
+                {
+                    Transaction = transaction,
+                    ToAddress = toAddress,
+                    ChangeAddress = changeAddress,
+                    Balance = totalInputAmount,
+                    Amount = amount,
+                    Change = changeAmount,
+                    Fee = new Money(fee),
+                    SizeKb = transaction.GetVirtualSize(),
+                    Utxos = utxoSelected,
+                    Message = "The transaction was created successfully.",
+                    Status = "OK"
+                };
             }
             catch (Exception ex)
             {
-                TransactionDetails transactionDetails = new()
+                return new TransactionDetails
                 {
                     Status = "Error",
                     Message = ex.Message
                 };
-
-                return transactionDetails;
             }
         }
 
