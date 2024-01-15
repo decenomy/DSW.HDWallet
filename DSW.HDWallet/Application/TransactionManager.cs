@@ -25,6 +25,11 @@ namespace DSW.HDWallet.Application
             this.blockbookHttpClient = blockbookHttpClient;
         }
 
+        public Task<IEnumerable<object>> GetTransactions(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<OperationResult> SendCoins(string ticker, decimal numberOfCoins, string address, string? password)
         {
             var recoveredWallet = walletService.RecoverWallet(secureStorage.GetMnemonic().Result, password);

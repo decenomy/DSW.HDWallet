@@ -201,7 +201,8 @@ namespace DSW.HDWallet.ConsoleApp.Application
             Console.WriteLine("Choose an option:");
             Console.WriteLine("1: Send");
             Console.WriteLine("2: Receive");
-            Console.WriteLine("3: Back");
+            Console.WriteLine("3: See transactions");
+            Console.WriteLine("4: Back");
 
             string choice = Console.ReadLine() ?? "";
             switch (choice)
@@ -213,10 +214,37 @@ namespace DSW.HDWallet.ConsoleApp.Application
                     ReceiveCoins(selectedCoin);
                     break;
                 case "3":
+                    DisplayTransactions(selectedCoin);
+                    break;
+                case "4":
                     return; // Go back to coin list
                 default:
                     Console.WriteLine("Invalid choice.");
                     break;
+            }
+        }
+
+        private async void DisplayTransactions(Wallet coin)
+        {
+            try
+            {
+                var transactions = await transactionManager.GetTransactions(coin.Ticker!);
+                if (transactions.Any())
+                {
+                    Console.WriteLine($"Transactions for {coin.Ticker}:");
+                    foreach (var tx in transactions)
+                    {
+                        //Console.WriteLine($"- TxId: {tx.TxId}, Amount: {tx.Amount}, Date: {tx.Date}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"No transactions found for {coin.Ticker}.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving transactions: {ex.Message}");
             }
         }
 
