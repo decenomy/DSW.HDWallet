@@ -1,11 +1,13 @@
 ﻿using DSW.HDWallet.Application.Extension;
 using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Transaction;
+using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 using NBitcoin.RPC;
+using System.Linq;
 
 namespace DSW.HDWallet.Application
 {
@@ -128,12 +130,12 @@ namespace DSW.HDWallet.Application
             return false;
         }
 
-        public async Task<TransactionDetails> GenerateTransaction(string ticker, string seedHex, long amountToSend, string toAddress, long fee = 0)
+        public async Task<TransactionDetails> GenerateTransaction(string ticker, string seedHex, long amountToSend, string toAddress)
         {
             string pubKey = GeneratePubkey(ticker, seedHex).PubKey;
             List<UtxoObject> utxos = (await GetUtxo(ticker, pubKey)).ToList();
             Network network = coinRepository.GetNetwork(ticker);
-            var utxoSelected = SelectUtxos(utxos, amountToSend, fee);
+            var utxoSelected = SelectUtxos(utxos, amountToSend);
 
             try
             {
@@ -148,35 +150,51 @@ namespace DSW.HDWallet.Application
 
                 var transaction = Transaction.Create(network);
                 Money totalInputAmount = 0;
-                var groups = utxoSelected.GroupBy(u => u.Path);
 
-                foreach (var group in groups)
+                foreach (var utxo in utxoSelected)
                 {
-                    BitcoinSecret key = WalletUtils.DerivePrivateKey(seedHex, group.Key!, network);
-
-                    foreach (var utxo in group)
-                    {
-                        transaction.Inputs.Add(new TxIn(new OutPoint(uint256.Parse(utxo.Txid), utxo.Vout)));
-                        totalInputAmount += new Money(long.Parse(utxo.Value!));
-                    }
-
-                    transaction.Sign(key, transaction.Inputs.Select(txin => new Coin(txin.PrevOut, new TxOut(totalInputAmount, key.PubKey.Hash))).ToArray());
+                    transaction.Inputs.Add(new TxIn(new OutPoint(uint256.Parse(utxo.Txid), utxo.Vout)));
+                    totalInputAmount += new Money(long.Parse(utxo.Value!));
                 }
 
+                // Outputs
                 BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
                 Money amount = Money.Coins(amountToSend.ToDecimalPoint());
                 transaction.Outputs.Add(new TxOut(amount, recipientAddress));
 
-                Money changeAmount = totalInputAmount - amount - fee;
+                // Change calculation
                 AddressInfo? changeAddress = await addressManager.GetUnusedAddress(ticker);
-
                 if (changeAddress == null)
                 {
                     changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker), true).Result;
                 }
+
+                Money changeAmount = totalInputAmount - amount;
                 if (changeAmount > Money.Zero)
                 {
                     transaction.Outputs.Add(new TxOut(changeAmount, BitcoinAddress.Create(changeAddress.Address, network)));
+                }
+
+                // Fee calculation
+                int transactionSizeBytes = transaction.GetSerializedSize();
+                long fee = transactionSizeBytes * 10; 
+
+                // Update the change output after fee calculation
+                if (transaction.Outputs.Count > 1 && changeAmount > new Money(fee))
+                {
+                    transaction.Outputs[1].Value -= new Money(fee);
+                }
+                else if (transaction.Outputs.Count == 1 && totalInputAmount > amount + new Money(fee))
+                {
+                    // If no change output, reduce the amount sent to include the fee
+                    transaction.Outputs[0].Value = amount - new Money(fee);
+                }
+
+                // Signing the transaction
+                foreach (var group in utxoSelected.GroupBy(u => u.Path))
+                {
+                    BitcoinSecret key = WalletUtils.DerivePrivateKey(seedHex, group.Key!, network);
+                    transaction.Sign(key, group.Select(u => new Coin(new uint256(u.Txid), (uint)u.Vout, new Money(long.Parse(u.Value!)), PayToPubkeyHashTemplate.Instance.GenerateScriptPubKey(key.PubKey.Hash))).ToArray());
                 }
 
                 return new TransactionDetails
@@ -186,9 +204,9 @@ namespace DSW.HDWallet.Application
                     ChangeAddress = changeAddress,
                     Balance = totalInputAmount,
                     Amount = amount,
-                    Change = changeAmount,
+                    Change = transaction.Outputs.Count > 1 ? transaction.Outputs[1].Value : Money.Zero,
                     Fee = new Money(fee),
-                    SizeKb = transaction.GetVirtualSize(),
+                    SizeKb = (decimal)(transactionSizeBytes / 1000.0),
                     Utxos = utxoSelected,
                     Message = "The transaction was created successfully.",
                     Status = "OK"

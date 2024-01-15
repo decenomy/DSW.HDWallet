@@ -1,6 +1,7 @@
 ﻿using DSW.HDWallet.Application.Objects;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Transaction;
+using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.Interfaces;
 
@@ -28,7 +29,7 @@ namespace DSW.HDWallet.Application
         {
             var recoveredWallet = walletService.RecoverWallet(secureStorage.GetMnemonic().Result, password);
 
-            TransactionDetails transactionDetails = await walletService.GenerateTransaction(ticker, recoveredWallet, Convert.ToInt64(numberOfCoins), address);
+            TransactionDetails transactionDetails = await walletService.GenerateTransaction(ticker, recoveredWallet, SatoshiConverter.ToSatoshi(Convert.ToInt64(numberOfCoins)), address);
 
             if (transactionDetails.Transaction == null)
             {
