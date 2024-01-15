@@ -122,8 +122,6 @@ namespace DSW.HDWallet.Infrastructure.Api
 
                 var response = await client.PostAsync(apiUrl, content);
 
-                // TODO delete as test
-                var a = response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
