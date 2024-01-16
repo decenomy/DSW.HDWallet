@@ -2,7 +2,7 @@
 
 namespace DSW.HDWallet.Domain.Models
 {
-    public class Transaction
+    public class TransactionRecord
     {
         public string? TxId { get; set; }
         public string? Ticker { get; set; }

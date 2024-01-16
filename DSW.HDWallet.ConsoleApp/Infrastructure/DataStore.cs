@@ -13,7 +13,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         public List<CoinAddress> CoinAddresses { get; private set; }
         public List<Rate> Rates { get; private set; }
         public List<Wallet> Wallets { get; private set; }
-        public List<Transaction> Transactions { get; private set; }
+        public List<TransactionRecord> TransactionRecords { get; private set; }
 
         public DataStore()
         {
@@ -24,7 +24,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             CoinAddresses = GetCollection<CoinAddress>(nameof(CoinAddresses));
             Rates = GetCollection<Rate>(nameof(Rates));
             Wallets = GetCollection<Wallet>(nameof(Wallets));
-            Transactions = GetCollection<Transaction>(nameof(Transactions));
+            TransactionRecords = GetCollection<TransactionRecord>(nameof(TransactionRecords));
         }
 
         public void SaveChanges()
@@ -190,11 +190,17 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             return Task.FromResult(mnemonic);
         }
 
-        public Task AddTransaction(Transaction transaction)
+        public Task AddTransaction(TransactionRecord transaction)
         {
-            Transactions.Add(transaction);
+            TransactionRecords.Add(transaction);
             SaveChanges();
             return Task.CompletedTask;
+        }
+
+        public Task<TransactionRecord?> GetTransactionByTxId(string txid)
+        {
+            var transaction = TransactionRecords.FirstOrDefault(t => t.TxId == txid);
+            return Task.FromResult<TransactionRecord?>(transaction);
         }
     }
 }
