@@ -18,5 +18,6 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task<Wallet?> GetWallet(string ticker);
         Task SaveRates(Rate rate);
         Task SaveBalance(Wallet coin);
+        Task AddTransaction(Transaction transaction);
     }
 }

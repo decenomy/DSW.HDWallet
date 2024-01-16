@@ -32,11 +32,23 @@ namespace DSW.HDWallet.Infrastructure.Services
 
                     foreach (var wallet in wallets)
                     {
-                            //GetXpub from wallet pubkey
+                        var xpub = await blockbookHttpClient.GetXpub(wallet.Ticker!, wallet.PublicKey!);
 
-                            //loop through TXIDS
-                            //check if txID is already in database
-                            //Save if its not
+                        foreach (var txid in xpub.Txids!)
+                        {
+                            if (true)//check if txID is already in database
+                            {
+                                var transactionDetails = await blockbookHttpClient.GetTransactionAsync(wallet.Ticker!, txid);
+
+                            }
+                            //if (!Database.Contains(txid)) // Assuming a method to check if the txid is in your database
+                            //{
+                            //    var transactionDetails = await blockbookHttpClient.GetTransactionAsync(wallet.Ticker, txid);
+
+                            //    // Save transactionDetails to your database
+                            //    Database.SaveTransaction(transactionDetails); // Assuming a method to save transaction
+                            //}
+                        }
 
                     }
 

@@ -13,6 +13,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         public List<CoinAddress> CoinAddresses { get; private set; }
         public List<Rate> Rates { get; private set; }
         public List<Wallet> Wallets { get; private set; }
+        public List<Transaction> Transactions { get; private set; }
 
         public DataStore()
         {
@@ -23,6 +24,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             CoinAddresses = GetCollection<CoinAddress>(nameof(CoinAddresses));
             Rates = GetCollection<Rate>(nameof(Rates));
             Wallets = GetCollection<Wallet>(nameof(Wallets));
+            Transactions = GetCollection<Transaction>(nameof(Transactions));
         }
 
         public void SaveChanges()
@@ -186,6 +188,13 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         {
             string mnemonic = Seeds.FirstOrDefault()?.Mnemonic ?? "No mnemonic available";
             return Task.FromResult(mnemonic);
+        }
+
+        public Task AddTransaction(Transaction transaction)
+        {
+            Transactions.Add(transaction);
+            SaveChanges();
+            return Task.CompletedTask;
         }
     }
 }
