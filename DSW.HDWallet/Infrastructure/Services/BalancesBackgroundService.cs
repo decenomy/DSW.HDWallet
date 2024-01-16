@@ -5,12 +5,12 @@ using Microsoft.Extensions.Logging;
 
 namespace DSW.HDWallet.Infrastructure.Services
 {
-    public class BalanceUpdateService : BaseBackgroundService<BalanceUpdateService>
+    public class BalancesBackgroundService : BaseBackgroundService<BalancesBackgroundService>
     {
         private readonly IStorage storage;
         IWalletService walletService;
-        public BalanceUpdateService(
-            ILogger<BalanceUpdateService> logger,
+        public BalancesBackgroundService(
+            ILogger<BalancesBackgroundService> logger,
             IStorage storage,
             IWalletService walletService
         ) : base(logger, "0 */5 * * * *") //Cron expression to make the service run every 5 minutes
