@@ -67,6 +67,7 @@ class Program
         // Register your background services as hosted services
         services.AddHostedService<RatesBackgroundService>();
         services.AddHostedService<BalancesBackgroundService>();
+        services.AddHostedService<TransactionsBackgroundService>();
 
         services.AddSingleton<Application>();
     }
