@@ -202,5 +202,11 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             var transaction = TransactionRecords.FirstOrDefault(t => t.TxId == txid);
             return Task.FromResult<TransactionRecord?>(transaction);
         }
+
+        public Task<IEnumerable<CoinAddress>> GetAddressesByTicker(string ticker)
+        {
+            var addresses = CoinAddresses.Where(ca => ca.Ticker == ticker);
+            return Task.FromResult<IEnumerable<CoinAddress>>(addresses);
+        }
     }
 }

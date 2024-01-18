@@ -20,5 +20,6 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task SaveBalance(Wallet coin);
         Task AddTransaction(TransactionRecord transaction);
         Task<TransactionRecord?> GetTransactionByTxId(string txid);
+        Task<IEnumerable<CoinAddress>> GetAddressesByTicker(string ticker);
     }
 }

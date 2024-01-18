@@ -33,6 +33,7 @@ namespace DSW.HDWallet.Infrastructure.Services
                     var wallets = await storage.GetAllWallets();
                     foreach (var wallet in wallets)
                     {
+                        var addresses = storage.GetAddressesByTicker(wallet.Ticker);
                         var xpub = await blockbookHttpClient.GetXpub(wallet.Ticker!, wallet.PublicKey!);
 
                         foreach (var txid in xpub.Txids!)
