@@ -33,7 +33,8 @@ namespace DSW.HDWallet.Infrastructure.Services
                     var wallets = await storage.GetAllWallets();
                     foreach (var wallet in wallets)
                     {
-                        var addresses = storage.GetAddressesByTicker(wallet.Ticker);
+                        var coinAddresses = await storage.GetAddressesByTicker(wallet.Ticker!);
+                        var addresses = coinAddresses.Select(ca => ca.Address).ToList();
                         var xpub = await blockbookHttpClient.GetXpub(wallet.Ticker!, wallet.PublicKey!);
 
                         foreach (var txid in xpub.Txids!)
@@ -43,18 +44,20 @@ namespace DSW.HDWallet.Infrastructure.Services
                             {
                                 var transactionDetails = await blockbookHttpClient.GetTransactionAsync(wallet.Ticker!, txid);
 
-                                var transactionType = DetermineTransactionType(transactionDetails, wallet.PublicKey);
+                                var transactionType = DetermineTransactionType(transactionDetails, addresses);
+                                var transactionAmount = CalculateTransactionAmount(transactionDetails, addresses, transactionType);
+
                                 var transactionRecord = new TransactionRecord
                                 {
                                     TxId = transactionDetails.Txid,
                                     Ticker = wallet.Ticker,
                                     Type = transactionType, 
-                                    Amount = CalculateTransactionAmount(transactionDetails, wallet.PublicKey, transactionType), 
+                                    Amount = transactionAmount, 
                                     FromAddress = transactionDetails.Vin.FirstOrDefault()?.Addresses.FirstOrDefault(),
                                     ToAddress = transactionDetails.Vout.FirstOrDefault()?.Addresses.FirstOrDefault(),
                                     Timestamp = DateTimeOffset.FromUnixTimeSeconds(transactionDetails.BlockTime).UtcDateTime,
                                     IsConfirmed = transactionDetails.Confirmations > 0,
-                                    TransactionFee = Convert.ToDecimal(transactionDetails.Fees) / 100000000, // Example conversion (depends on your decimal implementation)
+                                    TransactionFee = Convert.ToDecimal(transactionDetails.Fees) / 100000000, // Example conversion
                                     Notes = "" // Any additional information or leave empty
                                 };
 
@@ -75,28 +78,52 @@ namespace DSW.HDWallet.Infrastructure.Services
             logger.LogTrace("Rates Update Service executed.");
         }
 
-        private string DetermineTransactionType(TransactionObject transactionDetails, string publicKey)
+        private string DetermineTransactionType(TransactionObject transactionDetails, List<string> walletAddresses)
         {
-            bool isVinMatch = transactionDetails.Vin.Any(v => v.Addresses.Contains(publicKey));
-            bool isVoutMatch = transactionDetails.Vout.Any(v => v.Addresses.Contains(publicKey));
-            bool isMining = transactionDetails.Vin.Count == 1 && string.IsNullOrEmpty(transactionDetails.Vin.First().Txid);
-            bool isStaking = transactionDetails.Vin.Sum(v => Convert.ToDecimal(v.Value)) > transactionDetails.Vout.Sum(v => Convert.ToDecimal(v.Value));
+            // Mining transaction: no Vins and at least one Vout with an address from my wallet
+            bool isMining = !transactionDetails.Vin.Any() && transactionDetails.Vout.Any(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)));
+
+            // Staking transaction: Has one Vin, the first Vout has a value of 0 and an empty script, 
+            // One or more Vouts with the same address as Vin and the sum is greater than the value of Vin
+            bool isStaking = transactionDetails.Vin.Count == 1
+                && transactionDetails.Vout.Count > 0
+                && transactionDetails.Vout.First().Value == "0"
+                && transactionDetails.Vout.Skip(1).Any(vout => vout.Addresses.Contains(transactionDetails.Vin.First().Addresses.First()))
+                && transactionDetails.Vin.Sum(v => Convert.ToDecimal(v.Value)) < transactionDetails.Vout.Sum(v => Convert.ToDecimal(v.Value));
+
+            // Masternode Reward: It is a staking transaction but has a Vout with an address from my wallet (masternode reward)
+            bool isMasternodeReward = isStaking && transactionDetails.Vout.Any(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)));
+
+            // Internal transaction: All addresses from Vins and Vouts belong to my wallet
+            bool isInternal = transactionDetails.Vin.All(vin => vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                && transactionDetails.Vout.All(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)));
+
+            // Outgoing transaction: All Vins are from my wallet and there is at least one address in VOUTs that is not from my wallet
+            bool isOutgoing = transactionDetails.Vin.All(vin => vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                && transactionDetails.Vout.Any(vout => vout.Addresses.All(addr => !walletAddresses.Contains(addr)));
+
+            // Incoming transaction: At least one address from Vouts belongs to the wallet and there are no Vins from the wallet
+            bool isIncoming = transactionDetails.Vout.Any(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                && transactionDetails.Vin.All(vin => vin.Addresses.All(addr => !walletAddresses.Contains(addr)));
 
             if (isMining)
                 return "Mining";
+            if (isMasternodeReward)
+                return "Masternode Reward";
             if (isStaking)
                 return "Staking";
-            if (isVinMatch && isVoutMatch)
+            if (isInternal)
                 return "Internal";
-            if (isVinMatch)
+            if (isOutgoing)
                 return "Outgoing";
-            if (isVoutMatch)
+            if (isIncoming)
                 return "Incoming";
 
             return "Unknown";
         }
 
-        private decimal CalculateTransactionAmount(TransactionObject transactionDetails, string publicKey, string transactionType)
+
+        private decimal CalculateTransactionAmount(TransactionObject transactionDetails, List<string> walletAddresses, string transactionType)
         {
             decimal amount = 0;
 
@@ -104,7 +131,7 @@ namespace DSW.HDWallet.Infrastructure.Services
             {
                 foreach (var vout in transactionDetails.Vout)
                 {
-                    if (vout.Addresses.Contains(publicKey))
+                    if (vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
                     {
                         amount += Convert.ToDecimal(vout.Value);
                     }
@@ -114,7 +141,7 @@ namespace DSW.HDWallet.Infrastructure.Services
             {
                 foreach (var vin in transactionDetails.Vin)
                 {
-                    if (vin.Addresses.Contains(publicKey))
+                    if (vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
                     {
                         amount += Convert.ToDecimal(vin.Value);
                     }
