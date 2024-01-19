@@ -1,5 +1,6 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Models;
+using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Infrastructure.Api;
 using DSW.HDWallet.Infrastructure.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -61,7 +62,7 @@ namespace DSW.HDWallet.Infrastructure.Services
                                     Notes = "" // Any additional information or leave empty
                                 };
 
-                                //await storage.AddTransaction(transactionRecord);
+                                await storage.AddTransaction(transactionRecord);
                             }
                         }
                     }
@@ -78,10 +79,10 @@ namespace DSW.HDWallet.Infrastructure.Services
             logger.LogTrace("Rates Update Service executed.");
         }
 
-        private string DetermineTransactionType(TransactionObject transactionDetails, List<string> walletAddresses)
+        private TransactionType DetermineTransactionType(TransactionObject transactionDetails, List<string> walletAddresses)
         {
             // Mining transaction: no Vins and at least one Vout with an address from my wallet
-            bool isMining = !transactionDetails.Vin.Any() && transactionDetails.Vout.Any(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)));
+            bool isMining = !transactionDetails.Vin.Any()  && transactionDetails.Vout.Any(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)));
 
             // Staking transaction: Has one Vin, the first Vout has a value of 0 and an empty script, 
             // One or more Vouts with the same address as Vin and the sum is greater than the value of Vin
@@ -106,52 +107,59 @@ namespace DSW.HDWallet.Infrastructure.Services
             bool isIncoming = transactionDetails.Vout.Any(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
                 && transactionDetails.Vin.All(vin => vin.Addresses.All(addr => !walletAddresses.Contains(addr)));
 
-            if (isMining)
-                return "Mining";
-            if (isMasternodeReward)
-                return "Masternode Reward";
-            if (isStaking)
-                return "Staking";
-            if (isInternal)
-                return "Internal";
-            if (isOutgoing)
-                return "Outgoing";
-            if (isIncoming)
-                return "Incoming";
+            if (isMining) return TransactionType.Mining;
+            if (isMasternodeReward) return TransactionType.MasternodeReward;
+            if (isStaking) return TransactionType.Staking;
+            if (isInternal) return TransactionType.Internal;
+            if (isOutgoing) return TransactionType.Outgoing;
+            if (isIncoming) return TransactionType.Incoming;
 
-            return "Unknown";
+            return TransactionType.Unknown;
         }
 
-        private decimal CalculateTransactionAmount(TransactionObject transactionDetails, List<string> walletAddresses, string transactionType)
+        private decimal CalculateTransactionAmount(TransactionObject transactionDetails, List<string> walletAddresses, TransactionType transactionType)
         {
             decimal amount = 0;
 
-            if (transactionType == "Incoming")
+            switch (transactionType)
             {
-                foreach (var vout in transactionDetails.Vout)
-                {
-                    if (vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                    {
-                        amount += Convert.ToDecimal(vout.Value);
-                    }
-                }
-            }
-            else if (transactionType == "Outgoing")
-            {
-                foreach (var vin in transactionDetails.Vin)
-                {
-                    if (vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                    {
-                        amount += Convert.ToDecimal(vin.Value);
-                    }
-                }
+                case TransactionType.Incoming:
+                    // Sum the value of all Vouts that contain wallet addresses
+                    amount = transactionDetails.Vout
+                                .Where(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                                .Sum(vout => Convert.ToDecimal(vout.Value));
+                    break;
 
-                // Subtracting the transaction fee from the total amount for outgoing transactions
-                amount -= Convert.ToDecimal(transactionDetails.Fees);
+                case TransactionType.Outgoing:
+                    // Sum the value of all Vins that contain wallet addresses
+                    amount = transactionDetails.Vin
+                                .Where(vin => vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                                .Sum(vin => Convert.ToDecimal(vin.Value));
+
+                    // Subtract the transaction fee
+                    amount -= Convert.ToDecimal(transactionDetails.Fees);
+                    break;
+
+                case TransactionType.Internal:
+                    // For internal transactions, the amount could be considered as zero
+                    amount = 0;
+                    break;
+
+                case TransactionType.Mining:
+                case TransactionType.Staking:
+                case TransactionType.MasternodeReward:
+                    // For mining, staking, and masternode rewards, sum up all Vouts
+                    amount = transactionDetails.Vout.Sum(vout => Convert.ToDecimal(vout.Value));
+                    break;
+
+                default:
+                    break;
             }
 
-            return amount / 100000000; // TODO Convert from Satoshi
+            return amount; // SatoshiConverter.ToSatoshi(amount);
         }
+
+
 
     }
 }

@@ -6,7 +6,7 @@ namespace DSW.HDWallet.Domain.Models
     {
         public string? TxId { get; set; }
         public string? Ticker { get; set; }
-        public string? Type { get; set; } // "Incoming" or "Outgoing"
+        public TransactionType? Type { get; set; }
         public decimal Amount { get; set; }
         public string? FromAddress { get; set; }
         public string? ToAddress { get; set; }

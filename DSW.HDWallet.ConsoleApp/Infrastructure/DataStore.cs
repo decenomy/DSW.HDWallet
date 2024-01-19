@@ -192,9 +192,18 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
 
         public Task AddTransaction(TransactionRecord transaction)
         {
-            TransactionRecords.Add(transaction);
-            SaveChanges();
+            try
+            {
+                TransactionRecords.Add(transaction);
+                SaveChanges();
+                return Task.CompletedTask;
+            }
+            catch(Exception e)
+            {
+                var a = e;
+            }
             return Task.CompletedTask;
+
         }
 
         public Task<TransactionRecord?> GetTransactionByTxId(string txid)
