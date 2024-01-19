@@ -53,9 +53,9 @@ namespace DSW.HDWallet.Infrastructure.Services
                                     TxId = transactionDetails.Txid,
                                     Ticker = wallet.Ticker,
                                     Type = transactionType,// "teste", //TODO Swap for the enumerator
-                                    Amount = transactionAmount, 
-                                    FromAddress = transactionDetails.Vin.FirstOrDefault()?.Addresses.FirstOrDefault(),
-                                    ToAddress = transactionDetails.Vout.FirstOrDefault()?.Addresses.FirstOrDefault(),
+                                    Amount = transactionAmount,
+                                    FromAddress = transactionDetails.Vin != null && transactionDetails.Vin.Any() ? transactionDetails.Vin.First().Addresses?.FirstOrDefault() ?? string.Empty : string.Empty,
+                                    ToAddress = transactionDetails.Vout != null && transactionDetails.Vout.Any() ? transactionDetails.Vout.First().Addresses?.FirstOrDefault() ?? string.Empty : string.Empty,
                                     Timestamp = DateTimeOffset.FromUnixTimeSeconds(transactionDetails.BlockTime).UtcDateTime,
                                     IsConfirmed = transactionDetails.Confirmations > 0,
                                     TransactionFee = Convert.ToDecimal(transactionDetails.Fees) / 100000000, //TODO Example conversion
@@ -124,32 +124,36 @@ namespace DSW.HDWallet.Infrastructure.Services
             switch (transactionType)
             {
                 case TransactionType.Incoming:
-                    // Sum the value of all Vouts that contain wallet addresses
-                    amount = transactionDetails.Vout
-                                .Where(vout => vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                                .Sum(vout => Convert.ToDecimal(vout.Value));
+                    if (transactionDetails.Vout != null)
+                    {
+                        amount = transactionDetails.Vout
+                                    .Where(vout => vout.Addresses != null && vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                                    .Sum(vout => Convert.ToDecimal(vout.Value));
+                    }
                     break;
 
                 case TransactionType.Outgoing:
-                    // Sum the value of all Vins that contain wallet addresses
-                    amount = transactionDetails.Vin
-                                .Where(vin => vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                                .Sum(vin => Convert.ToDecimal(vin.Value));
+                    if (transactionDetails.Vin != null)
+                    {
+                        amount = transactionDetails.Vin
+                                    .Where(vin => vin.Addresses != null && vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                                    .Sum(vin => Convert.ToDecimal(vin.Value));
+                    }
 
-                    // Subtract the transaction fee
-                    amount -= Convert.ToDecimal(transactionDetails.Fees);
+                    amount -= transactionDetails.Fees != null ? Convert.ToDecimal(transactionDetails.Fees) : 0;
                     break;
 
                 case TransactionType.Internal:
-                    // For internal transactions, the amount could be considered as zero
                     amount = 0;
                     break;
 
                 case TransactionType.Mining:
                 case TransactionType.Staking:
                 case TransactionType.MasternodeReward:
-                    // For mining, staking, and masternode rewards, sum up all Vouts
-                    amount = transactionDetails.Vout.Sum(vout => Convert.ToDecimal(vout.Value));
+                    if (transactionDetails.Vout != null)
+                    {
+                        amount = transactionDetails.Vout.Sum(vout => Convert.ToDecimal(vout.Value));
+                    }
                     break;
 
                 default:
