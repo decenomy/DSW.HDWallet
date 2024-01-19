@@ -52,13 +52,13 @@ namespace DSW.HDWallet.Infrastructure.Services
                                 {
                                     TxId = transactionDetails.Txid,
                                     Ticker = wallet.Ticker,
-                                    Type = transactionType, 
+                                    Type = transactionType,// "teste", //TODO Swap for the enumerator
                                     Amount = transactionAmount, 
                                     FromAddress = transactionDetails.Vin.FirstOrDefault()?.Addresses.FirstOrDefault(),
                                     ToAddress = transactionDetails.Vout.FirstOrDefault()?.Addresses.FirstOrDefault(),
                                     Timestamp = DateTimeOffset.FromUnixTimeSeconds(transactionDetails.BlockTime).UtcDateTime,
                                     IsConfirmed = transactionDetails.Confirmations > 0,
-                                    TransactionFee = Convert.ToDecimal(transactionDetails.Fees) / 100000000, // Example conversion
+                                    TransactionFee = Convert.ToDecimal(transactionDetails.Fees) / 100000000, //TODO Example conversion
                                     Notes = "" // Any additional information or leave empty
                                 };
 

@@ -33,6 +33,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             UpdateData(nameof(CoinAddresses), CoinAddresses);
             UpdateData(nameof(Rates), Rates);
             UpdateData(nameof(Wallets), Wallets);
+            UpdateData(nameof(TransactionRecords), TransactionRecords);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             var json = JsonSerializer.Serialize(_data, options);
@@ -59,6 +60,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         {
             _data[key] = JsonSerializer.SerializeToElement(collection);
         }
+
         // IStorage Methods
         public Task AddWallet(Seed seed)
         {
@@ -73,6 +75,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             CoinAddresses.Clear();
             Rates.Clear();
             Wallets.Clear();
+            TransactionRecords.Clear();
             SaveChanges();
             return Task.CompletedTask;
         }
@@ -192,18 +195,10 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
 
         public Task AddTransaction(TransactionRecord transaction)
         {
-            try
-            {
-                TransactionRecords.Add(transaction);
-                SaveChanges();
-                return Task.CompletedTask;
-            }
-            catch(Exception e)
-            {
-                var a = e;
-            }
-            return Task.CompletedTask;
 
+            TransactionRecords.Add(transaction);
+            SaveChanges();
+            return Task.CompletedTask;
         }
 
         public Task<TransactionRecord?> GetTransactionByTxId(string txid)
