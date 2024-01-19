@@ -122,7 +122,6 @@ namespace DSW.HDWallet.Infrastructure.Services
             return "Unknown";
         }
 
-
         private decimal CalculateTransactionAmount(TransactionObject transactionDetails, List<string> walletAddresses, string transactionType)
         {
             decimal amount = 0;
