@@ -276,7 +276,18 @@ namespace DSW.HDWallet.ConsoleApp.Application
 
         private void DeleteWallet()
         {
-            walletManager.DeleteWallet();
+            Console.WriteLine("Are you sure you want to delete the wallet? This action cannot be undone. (Yes/No)");
+            string? confirmation = Console.ReadLine()?.Trim().ToLower();
+
+            if (confirmation == "yes")
+            {
+                walletManager.DeleteWallet();
+                Console.WriteLine("Wallet deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Wallet deletion cancelled.");
+            }
         }
 
         private async void SendCoins(Wallet coin)
