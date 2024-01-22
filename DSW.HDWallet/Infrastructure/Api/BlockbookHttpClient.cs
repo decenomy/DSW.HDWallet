@@ -122,6 +122,9 @@ namespace DSW.HDWallet.Infrastructure.Api
 
                 var response = await client.PostAsync(apiUrl, content);
 
+                // TODO add to logs
+                var a = response.Content.ReadAsStringAsync();
+
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();

@@ -149,7 +149,7 @@ namespace DSW.HDWallet.Application
                 }
 
                 var transaction = Transaction.Create(network);
-                Money totalInputAmount = 0;
+                Money totalInputAmount = 0L;
 
                 foreach (var utxo in utxoSelected)
                 {
