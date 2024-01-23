@@ -1,5 +1,7 @@
 ﻿using DSW.HDWallet.Domain.Models;
+using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Infrastructure.Interfaces;
+using HDWalletConsoleApp.Infrastructure.DataStore;
 using Microsoft.Extensions.Logging;
 
 namespace DSW.HDWallet.ConsoleApp.Application
@@ -63,13 +65,13 @@ namespace DSW.HDWallet.ConsoleApp.Application
                 Console.WriteLine("1: Delete Wallet");
                 Console.WriteLine("2: Add Coin");
                 Console.WriteLine("3: Select Coin");
-                Console.WriteLine("4: Exit App");
+                Console.WriteLine("4: See All Transactions");
+                Console.WriteLine("5: Exit App");
                 HandleHomeScreenWithWalletChoices(Console.ReadLine() ?? "");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Failed to fetch balance: {ex.Message}");
-                // Handle the exception appropriately
             }
         }
 
@@ -96,6 +98,9 @@ namespace DSW.HDWallet.ConsoleApp.Application
                     DisplayWalletCoinsScreen();
                     break;
                 case "4":
+                    DisplayTransactions(null);
+                    break;
+                case "5":
                     exitApp = true;
                     break;
                 default:
@@ -214,7 +219,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
                     ReceiveCoins(selectedCoin);
                     break;
                 case "3":
-                    DisplayTransactions(selectedCoin);
+                    DisplayTransactions(selectedCoin.Ticker);
                     break;
                 case "4":
                     return; // Go back to coin list
@@ -224,22 +229,22 @@ namespace DSW.HDWallet.ConsoleApp.Application
             }
         }
 
-        private async void DisplayTransactions(Wallet coin)
+        private async void DisplayTransactions(string? ticker = null)
         {
             try
             {
-                var transactions = await transactionManager.GetTransactions(coin.Ticker!);
+                var transactions = await storage.GetTransactions(ticker);
                 if (transactions.Any())
                 {
-                    Console.WriteLine($"Transactions for {coin.Ticker}:");
+                    Console.WriteLine($"Transactions for {(ticker ?? "all coins")}:");
                     foreach (var tx in transactions)
                     {
-                        //Console.WriteLine($"- TxId: {tx.TxId}, Amount: {tx.Amount}, Date: {tx.Date}");
+                        Console.WriteLine($"- TxId: {tx.TxId}, Amount: {SatoshiConverter.FromSatoshi(tx.Amount)}, Date: {tx.Timestamp}, Type: {tx.Type}");
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"No transactions found for {coin.Ticker}.");
+                    Console.WriteLine($"No transactions found for {(ticker ?? "all coins")}.");
                 }
             }
             catch (Exception ex)

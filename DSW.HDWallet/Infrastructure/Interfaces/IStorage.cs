@@ -21,5 +21,6 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task AddTransaction(TransactionRecord transaction);
         Task<TransactionRecord?> GetTransactionByTxId(string txid);
         Task<IEnumerable<CoinAddress>> GetAddressesByTicker(string ticker);
+        Task<IEnumerable<TransactionRecord>> GetTransactions(string? ticker = null, int pageNumber = 1, int pageSize = 10, TransactionType? transactionType = null);
     }
 }

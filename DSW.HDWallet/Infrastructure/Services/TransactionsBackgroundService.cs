@@ -140,9 +140,9 @@ namespace DSW.HDWallet.Infrastructure.Services
             return TransactionType.Unknown;
         }
 
-        private decimal CalculateTransactionAmount(TransactionObject transactionDetails, List<string> walletAddresses, TransactionType transactionType)
+        private long CalculateTransactionAmount(TransactionObject transactionDetails, List<string> walletAddresses, TransactionType transactionType)
         {
-            decimal amount = 0;
+            long amount = 0;
 
             switch (transactionType)
             {
@@ -150,8 +150,8 @@ namespace DSW.HDWallet.Infrastructure.Services
                     if (transactionDetails.Vout != null)
                     {
                         amount = transactionDetails.Vout
-                                    .Where(vout => vout.Addresses != null && vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                                    .Sum(vout => Convert.ToDecimal(vout.Value));
+                                     .Where(vout => vout.Addresses != null && vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                                     .Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0);
                     }
                     break;
 
@@ -159,11 +159,12 @@ namespace DSW.HDWallet.Infrastructure.Services
                     if (transactionDetails.Vin != null)
                     {
                         amount = transactionDetails.Vin
-                                    .Where(vin => vin.Addresses != null && vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                                    .Sum(vin => Convert.ToDecimal(vin.Value));
+                                     .Where(vin => vin.Addresses != null && vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                                     .Sum(vin => long.TryParse(vin.Value, out long val) ? val : 0);
                     }
 
-                    amount -= transactionDetails.Fees != null ? Convert.ToDecimal(transactionDetails.Fees) : 0;
+                    long fees = long.TryParse(transactionDetails.Fees, out long feeVal) ? feeVal : 0;
+                    amount -= fees;
                     break;
 
                 case TransactionType.Internal:
@@ -175,7 +176,7 @@ namespace DSW.HDWallet.Infrastructure.Services
                 case TransactionType.MasternodeReward:
                     if (transactionDetails.Vout != null)
                     {
-                        amount = transactionDetails.Vout.Sum(vout => Convert.ToDecimal(vout.Value));
+                        amount = transactionDetails.Vout.Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0);
                     }
                     break;
 
@@ -183,8 +184,9 @@ namespace DSW.HDWallet.Infrastructure.Services
                     break;
             }
 
-            return amount; // SatoshiConverter.ToSatoshi(amount);
+            return amount;
         }
+
 
 
 

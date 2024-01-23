@@ -212,5 +212,26 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             var addresses = CoinAddresses.Where(ca => ca.Ticker == ticker);
             return Task.FromResult<IEnumerable<CoinAddress>>(addresses);
         }
+
+        public Task<IEnumerable<TransactionRecord>> GetTransactions(string? ticker = null, int pageNumber = 1, int pageSize = 10, TransactionType? transactionType = null)
+        {
+            IEnumerable<TransactionRecord> transactions = TransactionRecords;
+
+            if (!string.IsNullOrEmpty(ticker))
+            {
+                transactions = transactions.Where(t => t.Ticker == ticker);
+            }
+
+            if (transactionType.HasValue)
+            {
+                transactions = transactions.Where(t => t.Type == transactionType.Value);
+            }
+
+            // Implement pagination
+            transactions = transactions.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            return Task.FromResult(transactions);
+        }
+
     }
 }
