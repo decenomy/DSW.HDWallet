@@ -29,6 +29,14 @@ namespace DSW.HDWallet.Infrastructure.Api
             return await SendGetRequest<TransactionObject>(apiUrl);
         }
 
+        public async Task<FeeResultObject> GetFeeEstimation(string coin, int blockNumber)
+        {
+            string endpoint = $"/api/v1/estimatefee/{blockNumber}";
+            var apiUrl = BuildApiUrl(coin, endpoint);
+
+            return await SendGetRequest<FeeResultObject>(apiUrl);
+        }
+
         public async Task<TransactionSpecificObject> GetTransactionSpecificAsync(string coin, string txid)
         {
             string endpoint = $"/api/v2/tx-specific/{txid}";
@@ -142,7 +150,6 @@ namespace DSW.HDWallet.Infrastructure.Api
                 throw new Exception($"Error in API POST request: {ex.Message}");
             }
         }
-
 
     }
 }
