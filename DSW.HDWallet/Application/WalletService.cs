@@ -176,8 +176,23 @@ namespace DSW.HDWallet.Application
                 }
 
                 // Fee calculation
-                int transactionSizeBytes = transaction.GetSerializedSize();
-                long fee = transactionSizeBytes * 10; 
+                FeeResultObject feeResult = await blockbookHttpClient.GetFeeEstimation(ticker, 1);
+                long fee = 0L;
+                int transactionSizeBytes = 0;
+
+                // If the fee estimation returns -1, use the minimum network fee
+                if (feeResult.Result == "-1") {
+                    const long minFeePerByte = 10;
+                    transactionSizeBytes = transaction.GetSerializedSize();
+                    fee = transactionSizeBytes * minFeePerByte;
+                }
+                else
+                {
+                    // Use the estimated fee from the response
+                    long feePerByte = long.Parse(feeResult.Result!);
+                    transactionSizeBytes = transaction.GetSerializedSize();
+                    fee = transactionSizeBytes * feePerByte;
+                }
 
                 // Update the change output after fee calculation
                 if (transaction.Outputs.Count > 1 && changeAmount > new Money(fee))
