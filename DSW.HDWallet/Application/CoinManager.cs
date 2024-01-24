@@ -4,6 +4,7 @@ using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Utils;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace DSW.HDWallet.Application
 {
@@ -14,19 +15,22 @@ namespace DSW.HDWallet.Application
         private readonly ISecureStorage secureStorage;
         private readonly IWalletService walletService;
         private readonly IAddressManager addressManager;
+        private readonly ILogger<CoinManager> logger;
 
         public CoinManager(
             ICoinRepository coinRepository,
             IStorage storage,
             ISecureStorage secureStorage,
             IWalletService walletService,
-            IAddressManager addressManager)
+            IAddressManager addressManager,
+            ILogger<CoinManager> logger)
         {
             this.coinRepository = coinRepository;
             this.storage = storage;
             this.secureStorage = secureStorage;
             this.walletService = walletService;
             this.addressManager = addressManager;
+            this.logger = logger;
         }
 
         public async Task<IEnumerable<ICoinExtension>> GetAvailableCoins()
@@ -55,6 +59,7 @@ namespace DSW.HDWallet.Application
             bool coinAddSuccess = await storage.AddCoin(wallet);
             if (!coinAddSuccess)
             {
+                logger.LogError($"Failed to add the wallet for ticker {ticker}.");
                 return false;
             }
 
@@ -67,7 +72,12 @@ namespace DSW.HDWallet.Application
                 IsChange = false
             };
 
-            return await storage.AddAddress(walletAddress);
+            bool addressAddSuccess = await storage.AddAddress(walletAddress);
+            if (!addressAddSuccess)
+            {
+                logger.LogError($"Failed to add the address for ticker {ticker}.");
+            }
+            return addressAddSuccess;
         }
 
         public async Task<Dictionary<string, string>> GetCoinGeckoIds()
@@ -89,18 +99,28 @@ namespace DSW.HDWallet.Application
 
         public async Task<CoinBalance> GetCoinBalance(string ticker)
         {
-            var wallet = await storage.GetWallet(ticker);
-            if (wallet == null)
+            try
             {
-                throw new InvalidOperationException($"Wallet with ticker {ticker} not found.");
+
+                var wallet = await storage.GetWallet(ticker);
+                if (wallet == null)
+                {
+                    logger.LogWarning($"Wallet with ticker {ticker} not found.");
+                    throw new InvalidOperationException($"Wallet with ticker {ticker} not found.");
+                }
+
+                decimal balance = SatoshiConverter.FromSubSatoshi(wallet.Balance ?? 0);
+                decimal unconfirmedBalance = SatoshiConverter.FromSubSatoshi(wallet.UnconfirmedBalance ?? 0);
+
+                decimal lockedBalance = 0m;
+
+                return new CoinBalance(balance, unconfirmedBalance, lockedBalance);
             }
-
-            decimal balance = SatoshiConverter.FromSubSatoshi(wallet.Balance ?? 0);
-            decimal unconfirmedBalance = SatoshiConverter.FromSubSatoshi(wallet.UnconfirmedBalance ?? 0);
-
-            decimal lockedBalance = 0m;
-
-            return new CoinBalance(balance, unconfirmedBalance, lockedBalance);
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Error occurred while getting coin balance for ticker {ticker}.");
+                throw;
+            }
         }
 
         public async Task<decimal> GetCurrencyBalance(string currency, string? ticker = null)
