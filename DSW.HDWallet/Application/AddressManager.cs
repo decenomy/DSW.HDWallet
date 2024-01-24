@@ -1,6 +1,7 @@
 ﻿using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Wallets;
 using DSW.HDWallet.Infrastructure.Interfaces;
+using Microsoft.Extensions.Logging;
 using NBitcoin;
 
 namespace DSW.HDWallet.Application
@@ -9,11 +10,13 @@ namespace DSW.HDWallet.Application
     {
         private readonly IStorage storage;
         private readonly ICoinRepository coinRepository;
+        private readonly ILogger<AddressManager> logger;
 
-        public AddressManager(IStorage storage, ICoinRepository coinRepository)
+        public AddressManager(IStorage storage, ICoinRepository coinRepository, ILogger<AddressManager> logger)
         {
             this.storage = storage;
             this.coinRepository = coinRepository;
+            this.logger = logger;
         }
 
         public Task<bool> AddressExists(string addressString)
