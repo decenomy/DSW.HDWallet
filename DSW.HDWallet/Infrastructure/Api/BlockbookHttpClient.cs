@@ -1,16 +1,20 @@
 ﻿using DSW.HDWallet.Domain.ApiObjects;
+using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.Json;
+using WebSocketSharp;
 
 namespace DSW.HDWallet.Infrastructure.Api
 {
     public class BlockbookHttpClient : IBlockbookHttpClient
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpClientFactory httpClientFactory;
+        private readonly ILogger<BlockbookHttpClient> logger;
 
-        public BlockbookHttpClient(IHttpClientFactory httpClientFactory)
+        public BlockbookHttpClient(IHttpClientFactory httpClientFactory, ILogger<BlockbookHttpClient> logger)
         {
-            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            this.httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            this.logger = logger;
         }
 
         public async Task<AddressObject> GetAddressAsync(string coin, string address)
@@ -100,25 +104,25 @@ namespace DSW.HDWallet.Infrastructure.Api
         {
             try
             {
-                var client = _httpClientFactory.CreateClient();
-
+                var client = httpClientFactory.CreateClient();
                 var response = await client.GetAsync(apiUrl);
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
                     return JsonSerializer.Deserialize<T>(responseBody, options)!;
                 }
                 else
                 {
-                    throw new Exception(message: $"Error in API request: {response.Content} StatusCode: {response.StatusCode} ");
+                    logger.LogError($"Error in API GET request: {response.Content} StatusCode: {response.StatusCode}");
+                    throw new Exception($"Error in API GET request: {response.Content} StatusCode: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error in API request: {ex.Message}");
+                logger.LogError($"Error in API GET request: {ex.Message}");
+                throw;
             }
         }
 
@@ -126,28 +130,25 @@ namespace DSW.HDWallet.Infrastructure.Api
         {
             try
             {
-                var client = _httpClientFactory.CreateClient();
-
+                var client = httpClientFactory.CreateClient();
                 var response = await client.PostAsync(apiUrl, content);
-
-                // TODO add to logs
-                var a = response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
                     return JsonSerializer.Deserialize<T>(responseBody, options)!;
                 }
                 else
                 {
+                    logger.LogError($"Error in API POST request: {response.Content} StatusCode: {response.StatusCode}");
                     throw new Exception($"Error in API POST request: {response.Content} StatusCode: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error in API POST request: {ex.Message}");
+                logger.LogError($"Error in API POST request: {ex.Message}");
+                throw;
             }
         }
 
