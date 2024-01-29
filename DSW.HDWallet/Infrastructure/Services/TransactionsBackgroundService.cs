@@ -140,6 +140,7 @@ namespace DSW.HDWallet.Infrastructure.Services
             return TransactionType.Unknown;
         }
 
+
         private long CalculateTransactionAmount(TransactionObject transactionDetails, List<string> walletAddresses, TransactionType transactionType)
         {
             long amount = 0;
@@ -147,24 +148,18 @@ namespace DSW.HDWallet.Infrastructure.Services
             switch (transactionType)
             {
                 case TransactionType.Incoming:
-                    if (transactionDetails.Vout != null)
-                    {
-                        amount = transactionDetails.Vout
-                                     .Where(vout => vout.Addresses != null && vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                                     .Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0);
-                    }
+                    amount = transactionDetails.Vout?
+                        .Where(vout => vout.Addresses != null && vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                        .Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0) ?? 0;
                     break;
 
                 case TransactionType.Outgoing:
-                    if (transactionDetails.Vin != null)
-                    {
-                        amount = transactionDetails.Vin
-                                     .Where(vin => vin.Addresses != null && vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                                     .Sum(vin => long.TryParse(vin.Value, out long val) ? val : 0);
-                    }
+                    long totalOutgoing = transactionDetails.Vout?
+                        .Where(vout => vout.Addresses == null || vout.Addresses.Any(addr => !walletAddresses.Contains(addr)))
+                        .Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0) ?? 0;
 
                     long fees = long.TryParse(transactionDetails.Fees, out long feeVal) ? feeVal : 0;
-                    amount -= fees;
+                    amount = totalOutgoing - fees;
                     break;
 
                 case TransactionType.Internal:
@@ -174,10 +169,8 @@ namespace DSW.HDWallet.Infrastructure.Services
                 case TransactionType.Mining:
                 case TransactionType.Staking:
                 case TransactionType.MasternodeReward:
-                    if (transactionDetails.Vout != null)
-                    {
-                        amount = transactionDetails.Vout.Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0);
-                    }
+                    amount = transactionDetails.Vout?
+                        .Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0) ?? 0;
                     break;
 
                 default:
@@ -186,9 +179,6 @@ namespace DSW.HDWallet.Infrastructure.Services
 
             return amount;
         }
-
-
-
 
     }
 }

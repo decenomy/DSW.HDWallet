@@ -14,6 +14,7 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task IncrementCoinIndex(string ticker);
         Task<CoinAddress> GetAddressByAddress(string address);
         Task UpdateAddressUsed(CoinAddress coinAddress);
+        Task<int> GetCoinIndex(string ticker);
         Task<CoinAddress?> GetUnusedAddress(string ticker);
         Task<Wallet?> GetWallet(string ticker);
         Task SaveRates(Rate rate);

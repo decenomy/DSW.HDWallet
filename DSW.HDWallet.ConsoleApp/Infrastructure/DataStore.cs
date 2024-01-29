@@ -153,6 +153,12 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             return Task.CompletedTask;
         }
 
+        public Task<int> GetCoinIndex(string ticker)
+        {
+            int maxCoinIndex = Wallets.Where(w => w.Ticker == ticker).Max(w => (int?)w.CoinIndex) ?? 0;
+            return Task.FromResult(maxCoinIndex);
+        }
+
         public Task IncrementCoinIndex(string ticker)
         {
             var wallet = Wallets.FirstOrDefault(w => w.Ticker == ticker);

@@ -164,9 +164,9 @@ namespace DSW.HDWallet.Application
 
                 // Change calculation
                 AddressInfo? changeAddress = await addressManager.GetUnusedAddress(ticker);
-                if (changeAddress == null)
+                if (changeAddress == null || changeAddress.Index == 0)
                 {
-                    changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker), true).Result;
+                    changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker) + 1, true).Result;
                 }
 
                 Money changeAmount = totalInputAmount - amount;
