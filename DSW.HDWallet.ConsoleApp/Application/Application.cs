@@ -234,10 +234,13 @@ namespace DSW.HDWallet.ConsoleApp.Application
             try
             {
                 var transactions = await storage.GetTransactions(ticker);
-                if (transactions.Any())
+                // Order transactions by Timestamp from most recent to least recent
+                var orderedTransactions = transactions.OrderByDescending(tx => tx.Timestamp);
+
+                if (orderedTransactions.Any())
                 {
                     Console.WriteLine($"Transactions for {(ticker ?? "all coins")}:");
-                    foreach (var tx in transactions)
+                    foreach (var tx in orderedTransactions)
                     {
                         Console.WriteLine($"- TxId: {tx.TxId}, Amount: {SatoshiConverter.FromSatoshi(tx.Amount)}, Date: {tx.Timestamp}, Type: {tx.Type}");
                     }
@@ -253,7 +256,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             }
         }
 
-        private void CreateWallet()
+        private async void CreateWallet()
         {
             Console.WriteLine("Choose the number of words for your mnemonic:");
             Console.WriteLine("1: 12 words");
@@ -265,7 +268,7 @@ namespace DSW.HDWallet.ConsoleApp.Application
             Console.WriteLine("Enter a password (or leave blank):");
             var createPassword = Console.ReadLine();
 
-            var wallet = walletManager.CreateWallet(wordCount, createPassword);
+            var wallet = await walletManager.CreateWallet(wordCount, createPassword);
             Console.WriteLine($"Wallet created. Mnemonic: {wallet}");
         }
 

@@ -162,12 +162,22 @@ namespace DSW.HDWallet.Application
                 Money amount = Money.Coins(amountToSend.ToDecimalPoint());
                 transaction.Outputs.Add(new TxOut(amount, recipientAddress));
 
-                // Change calculation
                 AddressInfo? changeAddress = await addressManager.GetUnusedAddress(ticker);
-                if (changeAddress == null || changeAddress.Index == 0)
+
+                // Ensure the changeAddress is not in the utxoSelected list
+                bool isAddressInUtxoSelected;
+                int nextCoinIndex = await addressManager.GetCoinIndex(ticker);
+
+                do
                 {
-                    changeAddress = addressManager.GetAddress(pubKey, ticker, await addressManager.GetCoinIndex(ticker) + 1, true).Result;
-                }
+                    nextCoinIndex++;
+
+                    changeAddress = await addressManager.GetAddress(pubKey, ticker, nextCoinIndex, true);
+
+                    // Check if the newly generated change address is in the utxoSelected list
+                    isAddressInUtxoSelected = utxoSelected.Any(utxo => utxo.Address == changeAddress.Address);
+
+                } while (isAddressInUtxoSelected);
 
                 Money changeAmount = totalInputAmount - amount;
                 if (changeAmount > Money.Zero)
