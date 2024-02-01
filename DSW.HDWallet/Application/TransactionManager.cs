@@ -34,7 +34,7 @@ namespace DSW.HDWallet.Application
 
             if (transactionDetails.Transaction == null)
             {
-                return OperationResult.Fail("Transaction object is null.");
+                return OperationResult.Fail(transactionDetails.Message ?? "Transaction object is null.");
             }
             else
             {

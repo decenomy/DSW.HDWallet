@@ -158,7 +158,16 @@ namespace DSW.HDWallet.Application
                 }
 
                 // Outputs
-                BitcoinAddress recipientAddress = BitcoinAddress.Create(toAddress, network);
+                BitcoinAddress recipientAddress;
+                try
+                {
+                    recipientAddress = BitcoinAddress.Create(toAddress, network);
+                }
+                catch (FormatException)
+                {
+                    throw new ArgumentException("Invalid Address");
+                }
+
                 Money amount = Money.Coins(amountToSend.ToDecimalPoint());
                 transaction.Outputs.Add(new TxOut(amount, recipientAddress));
 
