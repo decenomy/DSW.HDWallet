@@ -243,5 +243,44 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             return Task.FromResult(transactions);
         }
 
+        public Task SetSettingAsync(string key, string value)
+        {
+            return Task.Run(() =>
+            {
+                var setting = Settings.FirstOrDefault(s => s.Key == key);
+                if (setting != null)
+                {
+                    setting.Value = value;
+                }
+                else
+                {
+                    Settings.Add(new Setting { Key = key, Value = value });
+                }
+                SaveChanges();
+            });
+        }
+
+        public Task<string?> GetSettingAsync(string key)
+        {
+            return Task.Run(() =>
+            {
+                return Settings.FirstOrDefault(s => s.Key == key)?.Value;
+            });
+        }
+
+        public Task DeleteSettingAsync(string key)
+        {
+            return Task.Run(() =>
+            {
+                var setting = Settings.FirstOrDefault(s => s.Key == key);
+                if (setting != null)
+                {
+                    Settings.Remove(setting);
+                    SaveChanges();
+                }
+            });
+        }
+
+
     }
 }
