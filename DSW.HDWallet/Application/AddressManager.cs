@@ -24,12 +24,12 @@ namespace DSW.HDWallet.Application
             throw new NotImplementedException();
         }
 
-        public Task<int> GetCoinIndex(string ticker)
+        public async Task<int> GetCoinIndex(string ticker)
         {
-            throw new NotImplementedException();
+            return await storage.GetCoinIndex(ticker);
         }
 
-        public async Task<AddressInfo?> GetUnusedAddress(string ticker)
+        public async Task<AddressInfo?> GetUnusedAddress(string ticker, bool isChange = false)
         {
             CoinAddress? coinAddress = await storage.GetUnusedAddress(ticker);
             if (coinAddress == null)

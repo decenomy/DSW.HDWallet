@@ -25,7 +25,7 @@ namespace DSW.HDWallet.Infrastructure.Services
 
         protected override async Task OnExecute(CancellationToken cancellationToken)
         {
-            logger.LogTrace("Rates Update Service executing.");
+            logger.LogTrace("Transactions Background Service executing.");
 
             try
             {
@@ -35,7 +35,7 @@ namespace DSW.HDWallet.Infrastructure.Services
                     foreach (var wallet in wallets)
                     {
                         var coinAddresses = await storage.GetAddressesByTicker(wallet.Ticker!);
-                        
+
                         // Ensure addresses is List<string> by excluding nulls
                         var addresses = coinAddresses
                             .Where(ca => ca.Address != null)
@@ -44,30 +44,33 @@ namespace DSW.HDWallet.Infrastructure.Services
 
                         var xpub = await blockbookHttpClient.GetXpub(wallet.Ticker!, wallet.PublicKey!);
 
-                        foreach (var txid in xpub.Txids!)
+                        if (xpub.Txids != null)
                         {
-                            var existingTransaction = await storage.GetTransactionByTxId(txid);
-                            if (existingTransaction == null)
+                            foreach (var txid in xpub.Txids!)
                             {
-                                var transactionDetails = await blockbookHttpClient.GetTransactionAsync(wallet.Ticker!, txid);
-                                var transactionType = DetermineTransactionType(transactionDetails, addresses);
-                                var transactionAmount = CalculateTransactionAmount(transactionDetails, addresses, transactionType);
-
-                                var transactionRecord = new TransactionRecord
+                                var existingTransaction = await storage.GetTransactionByTxId(txid);
+                                if (existingTransaction == null)
                                 {
-                                    TxId = transactionDetails.Txid,
-                                    Ticker = wallet.Ticker,
-                                    Type = transactionType,
-                                    Amount = transactionAmount,
-                                    FromAddress = transactionDetails.Vin != null && transactionDetails.Vin.Any() ? transactionDetails.Vin.First().Addresses?.FirstOrDefault() ?? string.Empty : string.Empty,
-                                    ToAddress = transactionDetails.Vout != null && transactionDetails.Vout.Any() ? transactionDetails.Vout.First().Addresses?.FirstOrDefault() ?? string.Empty : string.Empty,
-                                    Timestamp = DateTimeOffset.FromUnixTimeSeconds(transactionDetails.BlockTime).UtcDateTime,
-                                    IsConfirmed = transactionDetails.Confirmations > 0,
-                                    TransactionFee = Convert.ToDecimal(transactionDetails.Fees) / 100000000, //TODO Example conversion
-                                    Notes = "" // Any additional information or leave empty
-                                };
+                                    var transactionDetails = await blockbookHttpClient.GetTransactionAsync(wallet.Ticker!, txid);
+                                    var transactionType = DetermineTransactionType(transactionDetails, addresses);
+                                    var transactionAmount = CalculateTransactionAmount(transactionDetails, addresses, transactionType);
 
-                                await storage.AddTransaction(transactionRecord);
+                                    var transactionRecord = new TransactionRecord
+                                    {
+                                        TxId = transactionDetails.Txid,
+                                        Ticker = wallet.Ticker,
+                                        Type = transactionType,
+                                        Amount = transactionAmount,
+                                        FromAddress = transactionDetails.Vin != null && transactionDetails.Vin.Any() ? transactionDetails.Vin.First().Addresses?.FirstOrDefault() ?? string.Empty : string.Empty,
+                                        ToAddress = transactionDetails.Vout != null && transactionDetails.Vout.Any() ? transactionDetails.Vout.First().Addresses?.FirstOrDefault() ?? string.Empty : string.Empty,
+                                        Timestamp = DateTimeOffset.FromUnixTimeSeconds(transactionDetails.BlockTime).UtcDateTime,
+                                        IsConfirmed = transactionDetails.Confirmations > 0,
+                                        TransactionFee = Convert.ToDecimal(transactionDetails.Fees) / 100000000, // Conversion to standard unit
+                                        Notes = ""
+                                    };
+
+                                    await storage.AddTransaction(transactionRecord);
+                                }
                             }
                         }
                     }
@@ -81,7 +84,7 @@ namespace DSW.HDWallet.Infrastructure.Services
                 logger.LogError(ex.Message);
             }
 
-            logger.LogTrace("Rates Update Service executed.");
+            logger.LogTrace("Transactions Background Service executed.");
         }
 
         private TransactionType DetermineTransactionType(TransactionObject transactionDetails, List<string> walletAddresses)
@@ -147,37 +150,37 @@ namespace DSW.HDWallet.Infrastructure.Services
             switch (transactionType)
             {
                 case TransactionType.Incoming:
-                    if (transactionDetails.Vout != null)
-                    {
-                        amount = transactionDetails.Vout
-                                     .Where(vout => vout.Addresses != null && vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                                     .Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0);
-                    }
+                    // Sum of relevant incoming outputs to the wallet addresses
+                    amount = transactionDetails.Vout?
+                        .Where(vout => vout.Addresses != null && vout.Addresses.Any(addr => walletAddresses.Contains(addr)))
+                        .Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0) ?? 0;
                     break;
 
                 case TransactionType.Outgoing:
-                    if (transactionDetails.Vin != null)
+                    // For outgoing transactions, identify the vout entries sent to external addresses
+                    var externalVouts = transactionDetails.Vout?
+                        .Where(vout => vout.Addresses == null || !vout.Addresses.Any(addr => walletAddresses.Contains(addr)));
+
+                    // Sum up the values of these vout entries, considering the one with the minimum value as the actual amount sent
+                    if (externalVouts != null && externalVouts.Any())
                     {
-                        amount = transactionDetails.Vin
-                                     .Where(vin => vin.Addresses != null && vin.Addresses.Any(addr => walletAddresses.Contains(addr)))
-                                     .Sum(vin => long.TryParse(vin.Value, out long val) ? val : 0);
+                        // Assuming the smallest vout value sent to an external address represents the actual transfer amount
+                        amount = externalVouts.Min(vout => long.TryParse(vout.Value, out long val) ? val : long.MaxValue);
                     }
 
-                    long fees = long.TryParse(transactionDetails.Fees, out long feeVal) ? feeVal : 0;
-                    amount -= fees;
                     break;
 
                 case TransactionType.Internal:
+                    // No amount change for internal transactions
                     amount = 0;
                     break;
 
                 case TransactionType.Mining:
                 case TransactionType.Staking:
                 case TransactionType.MasternodeReward:
-                    if (transactionDetails.Vout != null)
-                    {
-                        amount = transactionDetails.Vout.Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0);
-                    }
+                    // Sum of all outputs for these transaction types
+                    amount = transactionDetails.Vout?
+                        .Sum(vout => long.TryParse(vout.Value, out long val) ? val : 0) ?? 0;
                     break;
 
                 default:
@@ -186,6 +189,8 @@ namespace DSW.HDWallet.Infrastructure.Services
 
             return amount;
         }
+
+
 
 
 

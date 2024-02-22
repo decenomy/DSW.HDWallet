@@ -1,4 +1,5 @@
 ﻿using DSW.HDWallet.Application.Objects;
+using DSW.HDWallet.Domain.ApiObjects;
 using DSW.HDWallet.Domain.Models;
 using DSW.HDWallet.Domain.Transaction;
 using DSW.HDWallet.Domain.Utils;
@@ -33,7 +34,7 @@ namespace DSW.HDWallet.Application
 
             if (transactionDetails.Transaction == null)
             {
-                return OperationResult.Fail("Transaction object is null.");
+                return OperationResult.Fail(transactionDetails.Message ?? "Transaction object is null.");
             }
             else
             {
@@ -43,6 +44,29 @@ namespace DSW.HDWallet.Application
 
                 if (response.Error == null)
                 {
+
+                    foreach (var utxo in transactionDetails.Utxos ?? Enumerable.Empty<UtxoObject>())
+                    {
+                        // Add addresses that are not in our database yet
+                        var addressResult = await storage.GetAddressByAddress(utxo.Address ?? "");
+                        if (addressResult == null)
+                        {
+                            var wallet = await storage.GetWallet(ticker);
+
+                            CoinAddress newAddress = new CoinAddress
+                            {
+                                Ticker = ticker,
+                                Address = utxo.Address,
+                                IsUsed = true,
+                                AddressIndex = wallet!.CoinIndex + 1,
+                                IsChange = false
+                            };
+
+                            await storage.AddCoinAddress(newAddress);
+                            await storage.IncrementCoinIndex(ticker);
+                        }
+                    }
+
                     CoinAddress changeAddress = new()
                     {
                         Ticker = ticker,
@@ -52,7 +76,9 @@ namespace DSW.HDWallet.Application
                         IsChange = true
                     };
 
-                    if (storage.GetAddressByAddress(changeAddress.Address ?? "") == null)
+                    var existingChangeAddress = await storage.GetAddressByAddress(changeAddress.Address ?? "");
+
+                    if (existingChangeAddress == null)
                     {
                         await storage.AddCoinAddress(changeAddress);
                         await storage.IncrementCoinIndex(ticker);
