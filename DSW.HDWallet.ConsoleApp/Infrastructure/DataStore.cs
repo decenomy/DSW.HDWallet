@@ -14,6 +14,8 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         public List<Rate> Rates { get; private set; }
         public List<Wallet> Wallets { get; private set; }
         public List<TransactionRecord> TransactionRecords { get; private set; }
+        public List<Setting> Settings { get; private set; }
+
 
         public DataStore()
         {
@@ -25,6 +27,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             Rates = GetCollection<Rate>(nameof(Rates));
             Wallets = GetCollection<Wallet>(nameof(Wallets));
             TransactionRecords = GetCollection<TransactionRecord>(nameof(TransactionRecords));
+            Settings = GetCollection<Setting>(nameof(Settings));
         }
 
         public void SaveChanges()
@@ -34,6 +37,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             UpdateData(nameof(Rates), Rates);
             UpdateData(nameof(Wallets), Wallets);
             UpdateData(nameof(TransactionRecords), TransactionRecords);
+            UpdateData(nameof(Settings), Settings);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             var json = JsonSerializer.Serialize(_data, options);
