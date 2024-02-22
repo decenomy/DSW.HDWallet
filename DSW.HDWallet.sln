@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSW.HDWallet.Console", "DSW.HDWallet.Console\DSW.HDWallet.Console.csproj", "{8DDA1EC1-1DB3-4A9C-8B8F-9A963657B2B7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSW.HDWallet", "DSW.HDWallet\DSW.HDWallet.csproj", "{75912203-C706-47B9-8B86-15F6ACECF4B0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSW.Test", "DSW.Test\DSW.Test.csproj", "{4425E662-C383-40E2-89DC-7B703AF05BC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSW.HDWallet.ConsoleApp", "DSW.HDWallet.ConsoleApp\DSW.HDWallet.ConsoleApp.csproj", "{F09BD037-B89F-4297-8FF5-0383D4D820AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSW.HDWallet.ConsoleApp", "DSW.HDWallet.ConsoleApp\DSW.HDWallet.ConsoleApp.csproj", "{F09BD037-B89F-4297-8FF5-0383D4D820AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8DDA1EC1-1DB3-4A9C-8B8F-9A963657B2B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8DDA1EC1-1DB3-4A9C-8B8F-9A963657B2B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8DDA1EC1-1DB3-4A9C-8B8F-9A963657B2B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8DDA1EC1-1DB3-4A9C-8B8F-9A963657B2B7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75912203-C706-47B9-8B86-15F6ACECF4B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{75912203-C706-47B9-8B86-15F6ACECF4B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75912203-C706-47B9-8B86-15F6ACECF4B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
