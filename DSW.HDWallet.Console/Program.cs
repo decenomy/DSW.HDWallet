@@ -2,6 +2,7 @@
 using DSW.HDWallet.Application.Provider;
 using DSW.HDWallet.Domain.Coins;
 using DSW.HDWallet.Infrastructure;
+using DSW.HDWallet.Infrastructure.Interfaces;
 using NBitcoin;
 
 Decenomy.Project.HDWallet();
@@ -160,11 +161,12 @@ namespace Decenomy
                         Console.Write("\n Enter derived number of keys: ");
                         string? indexKey = Console.ReadLine();
 
-                        for (int i = 0; i < Convert.ToInt32(indexKey); i++)
-                        {
-                            var createDeriveKey = walletAppService?.GetAddress(generatePubKey?.PubKey!, generatePubKey?.Ticker, i, true);
-                            WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Index}", ConsoleColor.DarkGreen);
-                        }
+                        //for (int i = 0; i < Convert.ToInt32(indexKey); i++)
+                        //{
+                        //    var createDeriveKey = walletAppService?.GetAddress(generatePubKey?.PubKey!, generatePubKey?.Ticker!, i, true);
+
+                        //    WriteLine($" Index [{i}] Address={createDeriveKey?.Address} KeyPath={generatePubKey?.Path}/{createDeriveKey?.Index}", ConsoleColor.DarkGreen);
+                        //}
 
                         Console.ReadLine();
                         Console.Clear();
