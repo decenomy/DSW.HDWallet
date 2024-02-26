@@ -119,7 +119,7 @@ namespace DSW.HDWallet.Application
             catch (Exception ex)
             {
                 logger.LogError(ex, $"Error occurred while getting coin balance for ticker {ticker}.");
-                throw;
+                return new CoinBalance(0, 0, 0);
             }
         }
 
