@@ -26,5 +26,8 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task SetSettingAsync(string key, string value);
         Task<string?> GetSettingAsync(string key);
         Task DeleteSettingAsync(string key);
+        Task SaveAddress(AddressBook addressBook);
+        Task DeleteAddress(AddressBook addressBook);
+        Task<IEnumerable<AddressBook>> GetAllAddresses();
     }
 }

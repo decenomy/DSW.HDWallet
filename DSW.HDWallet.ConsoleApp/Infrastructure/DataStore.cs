@@ -15,6 +15,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
         public List<Wallet> Wallets { get; private set; }
         public List<TransactionRecord> TransactionRecords { get; private set; }
         public List<Setting> Settings { get; private set; }
+        public List<AddressBook> AddressBooks { get; private set; }
 
 
         public DataStore()
@@ -28,6 +29,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             Wallets = GetCollection<Wallet>(nameof(Wallets));
             TransactionRecords = GetCollection<TransactionRecord>(nameof(TransactionRecords));
             Settings = GetCollection<Setting>(nameof(Settings));
+            AddressBooks = GetCollection<AddressBook>(nameof(AddressBooks));
         }
 
         public void SaveChanges()
@@ -38,6 +40,7 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
             UpdateData(nameof(Wallets), Wallets);
             UpdateData(nameof(TransactionRecords), TransactionRecords);
             UpdateData(nameof(Settings), Settings);
+            UpdateData(nameof(AddressBooks), AddressBooks);
 
             var options = new JsonSerializerOptions { WriteIndented = true };
             var json = JsonSerializer.Serialize(_data, options);
@@ -280,6 +283,30 @@ namespace HDWalletConsoleApp.Infrastructure.DataStore
                 }
             });
         }
+
+        public Task SaveAddress(AddressBook addressBook)
+        {
+            AddressBooks.Add(addressBook);
+            SaveChanges();
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAddress(AddressBook addressBook)
+        {
+            var existingAddress = AddressBooks.FirstOrDefault(ab => ab.Address == addressBook.Address && ab.Ticker == addressBook.Ticker);
+            if (existingAddress != null)
+            {
+                AddressBooks.Remove(existingAddress);
+                SaveChanges();
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task<IEnumerable<AddressBook>> GetAllAddresses()
+        {
+            return Task.FromResult<IEnumerable<AddressBook>>(AddressBooks);
+        }
+
 
 
     }
