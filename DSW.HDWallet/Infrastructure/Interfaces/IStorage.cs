@@ -28,6 +28,6 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task DeleteSettingAsync(string key);
         Task SaveAddress(AddressBook addressBook);
         Task DeleteAddress(AddressBook addressBook);
-        Task<IEnumerable<AddressBook>> GetAllAddresses();
+        Task<IEnumerable<AddressBook>> GetAllAddressesByTicker(string ticker);
     }
 }
