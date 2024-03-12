@@ -12,7 +12,7 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task<IEnumerable<Rate>> GetAllRates();
         Task AddCoinAddress(CoinAddress coinAddress);
         Task IncrementCoinIndex(string ticker);
-        Task<CoinAddress> GetAddressByAddress(string address);
+        Task<CoinAddress?> GetAddressByAddress(string address);
         Task UpdateAddressUsed(CoinAddress coinAddress);
         Task<int> GetCoinIndex(string ticker);
         Task<CoinAddress?> GetUnusedAddress(string ticker);
