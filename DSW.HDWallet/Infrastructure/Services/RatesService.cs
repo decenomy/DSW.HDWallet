@@ -5,13 +5,15 @@ using Newtonsoft.Json;
 
 namespace DSW.HDWallet.Infrastructure.Services
 {
-    public class RatesUpdateService : IRatesUpdateService
+    public class RatesService : IRatesService
     {
         private readonly ICoinManager coinManager;
         private readonly ICoinGeckoService coingeckoService;
         private readonly IStorage storage;
 
-        public RatesUpdateService(ICoinManager coinManager, ICoinGeckoService coingeckoService, IStorage storage)
+        public RatesService(ICoinManager coinManager, 
+            ICoinGeckoService coingeckoService, 
+            IStorage storage)
         {
             this.coinManager = coinManager;
             this.coingeckoService = coingeckoService;
