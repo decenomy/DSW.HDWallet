@@ -29,5 +29,6 @@ namespace DSW.HDWallet.Infrastructure.Interfaces
         Task SaveAddress(AddressBook addressBook);
         Task DeleteAddress(AddressBook addressBook);
         Task<IEnumerable<AddressBook>> GetAllAddressesByTicker(string ticker);
+        Task<Rate?> GetRate(string tickerFrom, string tickerTo);
     }
 }
