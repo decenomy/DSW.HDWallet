@@ -1,4 +1,6 @@
-﻿namespace DSW.HDWallet.Application.Extension
+﻿using System.Globalization;
+
+namespace DSW.HDWallet.Application.Extension
 {
     public static class Extensions
     {
@@ -54,7 +56,7 @@
                 }
                 else if (length < 8)
                 {
-                    formattedValue = value.ToString("D7") + ".0" + value.ToString("D1");
+                    formattedValue = "0." + value.ToString("D" + (8 - length)) + value.ToString("D" + length);
                 }
                 else
                 {
@@ -64,7 +66,7 @@
                     formattedValue = integerPart + "." + decimalPart;
                 }
 
-                return Convert.ToDecimal(formattedValue);
+                return Convert.ToDecimal(formattedValue, CultureInfo.InvariantCulture);
             }
             catch (OverflowException)
             {
